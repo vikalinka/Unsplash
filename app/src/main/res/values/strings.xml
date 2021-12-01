@@ -2,4 +2,8 @@
     <string name="app_name">Unsplash</string>
     <string name="sign_in">Sign in</string>
     <string name="button_next">button next</string>
+    <string name="onboarding_image">onboarding image</string>
+    <string name="onboarding_text_1">onboarding text 1</string>
+    <string name="onboarding_text_2">onboarding text 2</string>
+    <string name="onboarding_text_3">onboarding text 3</string>
 </resources>

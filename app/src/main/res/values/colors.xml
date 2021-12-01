@@ -16,5 +16,5 @@
     <color name="custom_color_secondary_dark">#c05d00</color>
     <color name="custom_color_text_primary">#fafafa</color>
     <color name="custom_color_text_secondary">#f9f9f9</color>
-    <color name="custom_color_background">#fafafa</color>
+    <color name="custom_color_background">#ffffff</color>
 </resources>
