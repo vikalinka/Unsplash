@@ -8,16 +8,18 @@ import lt.vitalikas.unsplash.databinding.ItemOnboardingBinding
 import lt.vitalikas.unsplash.domain.models.OnboardingItem
 
 class OnboardingAdapter(
-    private val items: List<OnboardingItem>
+    private val items: List<OnboardingItem>,
+    private val onBtnClick: (id: Long) -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder =
         Holder(
-            ItemOnboardingBinding.inflate(
+            binding = ItemOnboardingBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onBtnClick = onBtnClick
         )
 
     override fun onBindViewHolder(holder: Holder, position: Int) =
@@ -26,14 +28,20 @@ class OnboardingAdapter(
     override fun getItemCount(): Int = items.size
 
     inner class Holder(
-        private val binding: ItemOnboardingBinding
+        private val binding: ItemOnboardingBinding,
+        private val onBtnClick: (id: Long) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OnboardingItem) {
             Glide.with(itemView)
                 .load(item.image)
                 .into(binding.ivOnboardingImage)
 
+            binding.tvOnboardingTitle.text = itemView.resources.getText(item.title)
             binding.tvOnboardingText.text = itemView.resources.getText(item.text)
+            with(binding.mbAction) {
+                text = itemView.resources.getText(item.buttonText)
+                setOnClickListener { onBtnClick(item.id) }
+            }
         }
     }
 }

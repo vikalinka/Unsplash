@@ -3,61 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/custom_color_background">
+    android:background="@color/custom_color_background"
+    android:padding="8dp">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/ivNext"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
         android:id="@+id/dotsIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        app:dotsColor="@color/custom_color_secondary_light"
+        app:dotsColor="@color/custom_color_secondary_dark"
         app:dotsCornerRadius="8dp"
         app:dotsSize="8dp"
         app:dotsSpacing="4dp"
-        app:dotsWidthFactor="2.5"
+        app:dotsStrokeColor="@color/custom_color_secondary_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:progressMode="true"
-        app:selectedDotColor="@color/custom_color_secondary_dark" />
+        app:progressMode="true" />
 
-    <ImageView
-        android:id="@+id/ivNext"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/icon_background"
-        android:contentDescription="@string/button_next"
-        android:src="@drawable/ic_next"
-        app:layout_constraintBottom_toTopOf="@id/mbSignIn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/custom_color_background" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/custom_color_secondary"
-        android:paddingStart="40dp"
-        android:paddingEnd="40dp"
-        android:text="@string/sign_in"
-        android:textAllCaps="false"
-        android:textSize="14sp"
-        app:cornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+    <!--    <ImageView-->
+    <!--        android:id="@+id/ivNext"-->
+    <!--        android:layout_width="32dp"-->
+    <!--        android:layout_height="32dp"-->
+    <!--        android:layout_marginBottom="48dp"-->
+    <!--        android:background="@drawable/icon_background"-->
+    <!--        android:contentDescription="@string/button_next"-->
+    <!--        android:src="@drawable/ic_next"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:tint="@color/custom_color_background" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

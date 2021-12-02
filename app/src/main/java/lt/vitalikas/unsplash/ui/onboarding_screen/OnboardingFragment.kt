@@ -8,7 +8,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentOnboardingBinding
-import lt.vitalikas.unsplash.utils.autoCleaned
 
 @AndroidEntryPoint
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
@@ -16,13 +15,14 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private val binding by viewBinding(FragmentOnboardingBinding::bind)
     private val viewPager get() = binding.viewPager
     private val dotsIndicator get() = binding.dotsIndicator
-    private val signInBtn get() = binding.mbSignIn
 
     private val onboardingViewModel by viewModels<OnboardingViewModel>()
 
-    private val adapter by autoCleaned {
-        OnboardingAdapter(onboardingViewModel.screens)
-    }
+//    private val adapter by autoCleaned {
+//        OnboardingAdapter(onboardingViewModel.screens) {
+//
+//        }
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +31,19 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private fun initOnboardingScreens() {
         with(viewPager) {
-            adapter = this@OnboardingFragment.adapter
+            adapter = OnboardingAdapter(onboardingViewModel.screens) { screenId ->
+                when (screenId) {
+                    0L -> {
+                        this.currentItem = screenId.toInt() + 1
+                    }
+                    1L -> {
+                        this.currentItem = screenId.toInt() + 2
+                    }
+                    2L -> {
+
+                    }
+                }
+            }
             offscreenPageLimit = 1
             setPageTransformer { page, position ->
                 when {
@@ -46,7 +58,6 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                     }
                 }
             }
-
         }
 
         dotsIndicator.setViewPager2(viewPager)

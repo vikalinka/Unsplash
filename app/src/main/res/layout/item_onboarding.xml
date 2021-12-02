@@ -17,15 +17,45 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/tvOnboardingTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivOnboardingImage"
+        tools:text="Welcome" />
+
+    <TextView
         android:id="@+id/tvOnboardingText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivOnboardingImage"
+        app:layout_constraintTop_toBottomOf="@id/tvOnboardingTitle"
         tools:text="Welcome" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mbAction"
+        android:layout_width="256dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="@color/custom_color_secondary"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="8dp"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Get started" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
