@@ -9,5 +9,16 @@
         android:id="@+id/onboardingFragment"
         android:name="lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingFragment"
         android:label="OnboardingFragment"
-        tools:layout="@layout/fragment_onboarding" />
+        tools:layout="@layout/fragment_onboarding" >
+        <action
+            android:id="@+id/action_onboardingFragment_to_authFragment"
+            app:destination="@id/authFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="lt.vitalikas.unsplash.ui.auth_screen.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/fragment_auth" />
 </navigation>
