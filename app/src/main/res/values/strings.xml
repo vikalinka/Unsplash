@@ -7,9 +7,7 @@
     <string name="onboarding_text_1">onboarding text 1</string>
     <string name="onboarding_text_2">onboarding text 2</string>
     <string name="onboarding_text_3">onboarding text 3</string>
-
     <string name="onboarding_get_started_button_text">Get started</string>
     <string name="action_next">Next </string>
     <string name="action_skip">Skip</string>
-    <string name="button_next">button next</string>
 </resources>

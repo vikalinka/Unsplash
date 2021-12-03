@@ -47,6 +47,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                     }
                 }
             )
+
             offscreenPageLimit = 1
             setPageTransformer { page, position ->
                 when {
