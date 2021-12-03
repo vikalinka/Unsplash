@@ -13,22 +13,19 @@ class OnboardingRepositoryImpl @Inject constructor() : OnboardingRepository {
                 0L,
                 R.drawable.onboarding1,
                 R.string.onboarding_title_1,
-                R.string.onboarding_text_1,
-                R.string.onboarding_next_button_text
+                R.string.onboarding_text_1
             ),
             OnboardingItem(
                 1L,
                 R.drawable.onboarding2,
                 R.string.onboarding_title_2,
-                R.string.onboarding_text_2,
-                R.string.onboarding_next_button_text
+                R.string.onboarding_text_2
             ),
             OnboardingItem(
                 2L,
                 R.drawable.onboarding3,
                 R.string.onboarding_title_3,
-                R.string.onboarding_text_3,
-                R.string.onboarding_get_started_button_text
+                R.string.onboarding_text_3
             )
         )
 }

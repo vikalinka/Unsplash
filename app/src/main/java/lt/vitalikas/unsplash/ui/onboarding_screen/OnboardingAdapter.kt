@@ -2,6 +2,7 @@ package lt.vitalikas.unsplash.ui.onboarding_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.databinding.ItemOnboardingBinding
@@ -9,7 +10,9 @@ import lt.vitalikas.unsplash.domain.models.OnboardingItem
 
 class OnboardingAdapter(
     private val items: List<OnboardingItem>,
-    private val onBtnClick: (id: Long) -> Unit
+    private val onBtnClick: () -> Unit,
+    private val onActionSkipClick: () -> Unit,
+    private val onActionNextClick: () -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder =
@@ -19,7 +22,9 @@ class OnboardingAdapter(
                 parent,
                 false
             ),
-            onBtnClick = onBtnClick
+            onBtnClick = onBtnClick,
+            onActionSkipClick = onActionSkipClick,
+            onActionNextClick = onActionNextClick
         )
 
     override fun onBindViewHolder(holder: Holder, position: Int) =
@@ -29,7 +34,9 @@ class OnboardingAdapter(
 
     inner class Holder(
         private val binding: ItemOnboardingBinding,
-        private val onBtnClick: (id: Long) -> Unit
+        private val onBtnClick: () -> Unit,
+        private val onActionSkipClick: () -> Unit,
+        private val onActionNextClick: () -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OnboardingItem) {
             Glide.with(itemView)
@@ -38,9 +45,20 @@ class OnboardingAdapter(
 
             binding.tvOnboardingTitle.text = itemView.resources.getText(item.title)
             binding.tvOnboardingText.text = itemView.resources.getText(item.text)
+
             with(binding.mbAction) {
-                text = itemView.resources.getText(item.buttonText)
-                setOnClickListener { onBtnClick(item.id) }
+                setOnClickListener { onBtnClick() }
+                isVisible = item.id == 2L
+            }
+
+            with(binding.tvActionSkip) {
+                setOnClickListener { onActionSkipClick() }
+                isVisible = item.id == 0L || item.id == 1L
+            }
+
+            with(binding.tvActionNext) {
+                setOnClickListener { onActionNextClick() }
+                isVisible = item.id == 0L || item.id == 1L
             }
         }
     }

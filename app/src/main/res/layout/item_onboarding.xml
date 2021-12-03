@@ -42,20 +42,58 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mbAction"
-        android:layout_width="256dp"
+        android:layout_width="208dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="96dp"
         android:backgroundTint="@color/custom_color_secondary"
         android:paddingStart="24dp"
         android:paddingTop="8dp"
         android:paddingEnd="24dp"
         android:paddingBottom="8dp"
+        android:text="@string/onboarding_get_started_button_text"
         android:textAllCaps="false"
         android:textSize="14sp"
+
         app:cornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Get started" />
+
+    <TextView
+        android:id="@+id/tvActionNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="48dp"
+        android:text="@string/action_next"
+        android:textColor="@color/custom_color_secondary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvActionSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="48dp"
+        android:text="@string/action_skip"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--    <ImageView-->
+    <!--        android:id="@+id/ivActionNext"-->
+    <!--        android:layout_width="32dp"-->
+    <!--        android:layout_height="32dp"-->
+    <!--        android:layout_marginBottom="48dp"-->
+    <!--        android:background="@drawable/icon_background"-->
+    <!--        android:contentDescription="@string/button_next"-->
+    <!--        android:src="@drawable/ic_next"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:tint="@color/custom_color_background" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

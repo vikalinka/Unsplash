@@ -31,19 +31,22 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private fun initOnboardingScreens() {
         with(viewPager) {
-            adapter = OnboardingAdapter(onboardingViewModel.screens) { screenId ->
-                when (screenId) {
-                    0L -> {
-                        this.currentItem = screenId.toInt() + 1
-                    }
-                    1L -> {
-                        this.currentItem = screenId.toInt() + 2
-                    }
-                    2L -> {
+            adapter = OnboardingAdapter(
+                onboardingViewModel.screens,
+                onBtnClick = {
 
+                },
+                onActionSkipClick = {
+
+                },
+                onActionNextClick = {
+                    when (this.currentItem) {
+                        0, 1 -> {
+                            this.currentItem += 1
+                        }
                     }
                 }
-            }
+            )
             offscreenPageLimit = 1
             setPageTransformer { page, position ->
                 when {
