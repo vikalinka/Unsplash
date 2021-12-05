@@ -48,17 +48,17 @@ class OnboardingAdapter(
 
             with(binding.mbAction) {
                 setOnClickListener { onBtnClick() }
-                isVisible = item.id == 2L
+                isVisible = item == items.last()
             }
 
             with(binding.tvActionSkip) {
                 setOnClickListener { onActionSkipClick() }
-                isVisible = item.id == 0L || item.id == 1L
+                isVisible = item != items.last()
             }
 
             with(binding.tvActionNext) {
                 setOnClickListener { onActionNextClick() }
-                isVisible = item.id == 0L || item.id == 1L
+                isVisible = item != items.last()
             }
         }
     }

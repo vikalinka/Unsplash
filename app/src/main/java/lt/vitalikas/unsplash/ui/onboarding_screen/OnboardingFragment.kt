@@ -41,10 +41,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                     )
                 },
                 onActionNextClick = {
-                    when (this.currentItem) {
-                        0, 1 -> {
-                            this.currentItem += 1
-                        }
+                    val screens = onboardingViewModel.screens
+                    if (this.currentItem != screens.indexOf(screens.last())) {
+                        this.currentItem += 1
                     }
                 }
             )
@@ -74,9 +73,11 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    when (viewPager.currentItem) {
-                        1, 2 -> viewPager.currentItem -= 1
-                        else -> requireActivity().finish()
+                    val screens = onboardingViewModel.screens
+                    if (viewPager.currentItem == screens.indexOf(screens.first())) {
+                        requireActivity().finish()
+                    } else {
+                        viewPager.currentItem -= 1
                     }
                 }
             })

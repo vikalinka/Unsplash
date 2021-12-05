@@ -10,19 +10,16 @@ class OnboardingRepositoryImpl @Inject constructor() : OnboardingRepository {
     override fun createOnboardingItems(): List<OnboardingItem> =
         listOf(
             OnboardingItem(
-                0L,
                 R.drawable.onboarding1,
                 R.string.onboarding_title_1,
                 R.string.onboarding_text_1
             ),
             OnboardingItem(
-                1L,
                 R.drawable.onboarding2,
                 R.string.onboarding_title_2,
                 R.string.onboarding_text_2
             ),
             OnboardingItem(
-                2L,
                 R.drawable.onboarding3,
                 R.string.onboarding_title_3,
                 R.string.onboarding_text_3
