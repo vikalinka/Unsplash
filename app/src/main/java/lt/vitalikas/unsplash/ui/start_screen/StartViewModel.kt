@@ -1,31 +1,28 @@
 package lt.vitalikas.unsplash.ui.start_screen
 
-import android.content.SharedPreferences
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import lt.vitalikas.unsplash.domain.repositories.AppBootSharedPrefsRepository
+import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    private val repository: AppBootSharedPrefsRepository
+    repository: OnboardingRepository
 ) : ViewModel() {
 
     var timer: CountDownTimer? = null
 
-    var sharedPrefs: SharedPreferences = repository.createSharedPrefs()
-
     private val _step = MutableLiveData<Long>()
     val step: LiveData<Long> get() = _step
 
-    private val _sharedPrefsStatus = MutableLiveData<Boolean>()
-    val sharedPrefsStatus: LiveData<Boolean> get() = _sharedPrefsStatus
+    private val _onboardingNotFinishedStatus = MutableLiveData<Boolean>()
+    val onboardingNotFinishedStatus: LiveData<Boolean> get() = _onboardingNotFinishedStatus
 
     init {
-        val isFirstBoot = repository.createValue(sharedPrefs, "isFirstBoot", true)
+        val onboardingNotFinished = repository.getOnboardingSharedPrefsValue("onboarding", true)
 
         timer = object : CountDownTimer(3000L, 1000L) {
             override fun onTick(p0: Long) {
@@ -33,13 +30,9 @@ class StartViewModel @Inject constructor(
             }
 
             override fun onFinish() {
-                _sharedPrefsStatus.postValue(isFirstBoot)
+                _onboardingNotFinishedStatus.postValue(onboardingNotFinished)
             }
         }
-    }
-
-    fun updateSharedPrefsStatus(status: Boolean) {
-        repository.updateValue(sharedPrefs, "isFirstBoot", status)
     }
 
     override fun onCleared() {

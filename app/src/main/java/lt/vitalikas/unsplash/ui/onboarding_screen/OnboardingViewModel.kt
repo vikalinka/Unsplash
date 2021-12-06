@@ -12,4 +12,7 @@ class OnboardingViewModel @Inject constructor(
 
     private val _screens = repository.createOnboardingItems()
     val screens get() = _screens
+
+    fun updateValue(key: String, value: Boolean) =
+        repository.updateOnboardingSharedPrefsValue(key, value)
 }

@@ -41,8 +41,8 @@ class StartFragment : Fragment(R.layout.fragment_start) {
             loadingText.text = (millisLeft / 1000 + 1).toString()
         }
 
-        startViewModel.sharedPrefsStatus.observe(viewLifecycleOwner) { isFirstBoot ->
-            navigateToNextScreen(isFirstBoot)
+        startViewModel.onboardingNotFinishedStatus.observe(viewLifecycleOwner) { onboardingNotFinished ->
+            navigateToNextScreen(onboardingNotFinished)
         }
     }
 
@@ -50,9 +50,8 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         startViewModel.timer?.start()
     }
 
-    private fun navigateToNextScreen(isFirstBoot: Boolean) {
-        if (isFirstBoot) {
-            startViewModel.updateSharedPrefsStatus(false)
+    private fun navigateToNextScreen(onboardingNotFinished: Boolean) {
+        if (onboardingNotFinished) {
             findNavController().navigate(
                 StartFragmentDirections.actionStartFragmentToOnboardingFragment()
             )

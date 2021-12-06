@@ -31,11 +31,13 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
             adapter = OnboardingAdapter(
                 onboardingViewModel.screens,
                 onBtnClick = {
+                    onboardingViewModel.updateValue("onboarding", false)
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )
                 },
                 onActionSkipClick = {
+                    onboardingViewModel.updateValue("onboarding", false)
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )
