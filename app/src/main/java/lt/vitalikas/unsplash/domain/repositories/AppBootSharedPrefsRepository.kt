@@ -3,6 +3,8 @@ package lt.vitalikas.unsplash.domain.repositories
 import android.content.SharedPreferences
 
 interface AppBootSharedPrefsRepository {
-    fun get(): SharedPreferences
-    fun save(key: String, value: Boolean)
+
+    fun createSharedPrefs(): SharedPreferences
+    fun createValue(sharedPrefs: SharedPreferences, key: String, value: Boolean): Boolean
+    fun updateValue(sharedPrefs: SharedPreferences, key: String, value: Boolean)
 }

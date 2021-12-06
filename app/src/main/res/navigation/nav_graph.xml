@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/onboardingFragment">
+    app:startDestination="@id/startFragment">
 
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingFragment"
         android:label="OnboardingFragment"
-        tools:layout="@layout/fragment_onboarding" >
+        tools:layout="@layout/fragment_onboarding">
         <action
             android:id="@+id/action_onboardingFragment_to_authFragment"
             app:destination="@id/authFragment"
@@ -21,4 +21,20 @@
         android:name="lt.vitalikas.unsplash.ui.auth_screen.AuthFragment"
         android:label="AuthFragment"
         tools:layout="@layout/fragment_auth" />
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="lt.vitalikas.unsplash.ui.start_screen.StartFragment"
+        android:label="StartFragment"
+        tools:layout="@layout/fragment_start">
+        <action
+            android:id="@+id/action_startFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/startFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_startFragment_to_authFragment"
+            app:destination="@id/authFragment"
+            app:popUpTo="@id/startFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>
