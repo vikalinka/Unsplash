@@ -1,22 +1,14 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import android.content.Context
 import android.content.SharedPreferences
-import dagger.hilt.android.qualifiers.ApplicationContext
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.models.OnboardingItem
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    private val sharedPrefs: SharedPreferences
 ) : OnboardingRepository {
-
-    var sharedPrefs: SharedPreferences =
-        context.getSharedPreferences(
-            context.getString(R.string.onboarding_prefs),
-            Context.MODE_PRIVATE
-        )
 
     override fun getOnboardingSharedPrefsValue(key: String, value: Boolean): Boolean =
         sharedPrefs.getBoolean(key, value)
