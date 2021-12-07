@@ -2,9 +2,9 @@ package lt.vitalikas.unsplash.ui.onboarding_screen
 
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
-import kotlin.math.abs
 
 class OnboardingTransformer : ViewPager2.PageTransformer {
+
     override fun transformPage(page: View, position: Float) {
         when {
             position < -1 || position > 1 -> {
