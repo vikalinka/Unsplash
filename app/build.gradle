@@ -91,6 +91,8 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     // Logs
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    // AppAuth
+    implementation 'net.openid:appauth:0.10.0'
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
