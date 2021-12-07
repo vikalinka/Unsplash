@@ -52,19 +52,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
             offscreenPageLimit = 1
 
-            setPageTransformer { page, position ->
-                when {
-                    position < -1 || position > 1 -> {
-                        page.alpha = 0f
-                    }
-                    position <= 0 -> {
-                        page.alpha = 1 + position
-                    }
-                    position <= 1 -> {
-                        page.alpha = 1 - position
-                    }
-                }
-            }
+            setPageTransformer(OnboardingTransformer())
         }
 
         dotsIndicator.setViewPager2(viewPager)

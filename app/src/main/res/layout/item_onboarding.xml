@@ -53,7 +53,6 @@
         android:text="@string/onboarding_get_started_button_text"
         android:textAllCaps="false"
         android:textSize="14sp"
-
         app:cornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +67,7 @@
         android:layout_marginBottom="48dp"
         android:text="@string/action_next"
         android:textColor="@color/custom_color_secondary"
-        android:visibility="gone"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -79,7 +78,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginBottom="48dp"
         android:text="@string/action_skip"
-        android:visibility="gone"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
