@@ -2,9 +2,9 @@ package lt.vitalikas.unsplash.data.repositories
 
 import android.net.Uri
 import lt.vitalikas.unsplash.data.networking.AuthConfig
+import lt.vitalikas.unsplash.data.networking.AuthToken
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
-import net.openid.appauth.AuthorizationRequest
-import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.*
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
@@ -28,4 +28,29 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
             .setScope(AuthConfig.SCOPE)
             .build()
     }
+
+    override fun performTokenRequest(
+        authService: AuthorizationService,
+        tokenExchangeRequest: TokenRequest,
+        onComplete: () -> Unit,
+        onError: () -> Unit
+    ) {
+        val clientAuth = getClientAuthentication()
+
+        authService.performTokenRequest(
+            tokenExchangeRequest,
+            clientAuth
+        ) { response, _ ->
+            when {
+                response != null -> {
+                    AuthToken.authToken = response.accessToken.orEmpty()
+                    onComplete()
+                }
+                else -> onError()
+            }
+        }
+    }
+
+    private fun getClientAuthentication(): ClientAuthentication =
+        ClientSecretPost(AuthConfig.CLIENT_SECRET)
 }

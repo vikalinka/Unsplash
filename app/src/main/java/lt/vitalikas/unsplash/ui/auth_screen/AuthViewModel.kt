@@ -13,6 +13,7 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
 import lt.vitalikas.unsplash.utils.SingleLiveEvent
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.TokenRequest
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,8 +24,14 @@ class AuthViewModel @Inject constructor(
 
     private val authService: AuthorizationService = AuthorizationService(context)
 
-    private val _openAuthPage = SingleLiveEvent<Intent>()
-    val openAuthPage: LiveData<Intent> get() = _openAuthPage
+    private val _authPageIntent = SingleLiveEvent<Intent>()
+    val authPageIntent: LiveData<Intent> get() = _authPageIntent
+
+    private val _authFailed = SingleLiveEvent<Int>()
+    val authFailed: LiveData<Int> get() = _authFailed
+
+    private val _authSuccess = SingleLiveEvent<Unit>()
+    val authSuccess: LiveData<Unit> get() = _authSuccess
 
     fun openLoginPage() {
         val params = CustomTabColorSchemeParams.Builder()
@@ -40,6 +47,23 @@ class AuthViewModel @Inject constructor(
             customTabsIntent
         )
 
-        _openAuthPage.postValue(authPageIntent)
+        _authPageIntent.postValue(authPageIntent)
+    }
+
+    fun onAuthFailed() {
+        _authFailed.postValue(R.string.auth_failed)
+    }
+
+    fun performTokenRequest(tokenExchangeRequest: TokenRequest) {
+        authRepository.performTokenRequest(
+            authService = authService,
+            tokenExchangeRequest = tokenExchangeRequest,
+            onComplete = {
+                _authSuccess.postValue(Unit)
+            },
+            onError = {
+                onAuthFailed()
+            }
+        )
     }
 }

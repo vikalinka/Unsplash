@@ -19,7 +19,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [
-                appAuthRedirectScheme: "vitalikas"
+                appAuthRedirectScheme: "unsplash"
         ]
     }
 
