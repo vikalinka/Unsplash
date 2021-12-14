@@ -3,11 +3,13 @@ package lt.vitalikas.unsplash.ui.auth_screen
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentAuthBinding
@@ -19,6 +21,7 @@ import timber.log.Timber
 class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private val binding by viewBinding(FragmentAuthBinding::bind)
+    private val loading get() = binding.pbLoading
 
     private val authViewModel by viewModels<AuthViewModel>()
 
@@ -53,12 +56,29 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             launcher.launch(authIntent)
         }
 
-        authViewModel.authFailed.observe(viewLifecycleOwner) {
-            Timber.d("$it")
+        authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            loading.isVisible = isLoading
+        }
+
+        authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->
+            showSnackbar(textRes)
         }
 
         authViewModel.authSuccess.observe(viewLifecycleOwner) {
             Timber.d("AUTH SUCCESS")
         }
+    }
+
+    private fun showSnackbar(@StringRes textRes: Int) {
+        Snackbar
+            .make(
+                requireView(),
+                getString(textRes),
+                Snackbar.LENGTH_LONG
+            )
+            .setAction(getString(R.string.retry)) {
+                openLoginPage()
+            }
+            .show()
     }
 }

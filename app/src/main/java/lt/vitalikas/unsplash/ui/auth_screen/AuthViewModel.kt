@@ -6,6 +6,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,6 +27,9 @@ class AuthViewModel @Inject constructor(
 
     private val _authPageIntent = SingleLiveEvent<Intent>()
     val authPageIntent: LiveData<Intent> get() = _authPageIntent
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     private val _authFailed = SingleLiveEvent<Int>()
     val authFailed: LiveData<Int> get() = _authFailed
@@ -55,13 +59,16 @@ class AuthViewModel @Inject constructor(
     }
 
     fun performTokenRequest(tokenExchangeRequest: TokenRequest) {
+        _isLoading.postValue(true)
         authRepository.performTokenRequest(
             authService = authService,
             tokenExchangeRequest = tokenExchangeRequest,
             onComplete = {
+                _isLoading.postValue(false)
                 _authSuccess.postValue(Unit)
             },
             onError = {
+                _isLoading.postValue(false)
                 onAuthFailed()
             }
         )

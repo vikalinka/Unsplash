@@ -12,5 +12,6 @@
     <string name="action_skip">Skip</string>
     <string name="onboarding_prefs">onboarding prefs</string>
     <string name="start_text">start text</string>
-    <string name="auth_failed">Authentication failed</string>
+    <string name="auth_failed">Authorization failed. Please try again.</string>
+    <string name="retry">Retry</string>
 </resources>
