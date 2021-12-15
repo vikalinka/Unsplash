@@ -49,7 +49,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun openLoginPage() {
-        login.isVisible = false
         authViewModel.openLoginPage()
     }
 
@@ -60,7 +59,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             loading.isVisible = isLoading
-            login.isVisible = !isLoading
         }
 
         authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->
@@ -69,7 +67,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         authViewModel.authSuccess.observe(viewLifecycleOwner) {
             Timber.d("AUTH SUCCESS")
-
+            login.isVisible = false
         }
     }
 

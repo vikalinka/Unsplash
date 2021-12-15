@@ -27,6 +27,7 @@
         android:text="@string/login"
         android:textAllCaps="false"
         android:textSize="14sp"
+        android:visibility="gone"
         app:cornerRadius="16dp"
         tools:text="Log in" />
 
