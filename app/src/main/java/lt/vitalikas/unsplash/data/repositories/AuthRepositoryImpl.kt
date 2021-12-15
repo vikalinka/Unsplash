@@ -5,6 +5,7 @@ import lt.vitalikas.unsplash.data.networking.AuthConfig
 import lt.vitalikas.unsplash.data.networking.AuthToken
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
 import net.openid.appauth.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
@@ -44,6 +45,7 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
             when {
                 response != null -> {
                     AuthToken.authToken = response.accessToken.orEmpty()
+                    Timber.d(AuthToken.authToken)
                     onComplete()
                 }
                 else -> onError()

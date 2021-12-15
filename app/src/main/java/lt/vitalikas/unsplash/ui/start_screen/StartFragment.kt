@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentStartBinding
 
@@ -25,20 +28,20 @@ class StartFragment : Fragment(R.layout.fragment_start) {
         super.onViewCreated(view, savedInstanceState)
         bindData()
         bindViewModel()
-        start()
+        lifecycleScope.launch {
+            delay(1000)
+            start()
+        }
     }
 
     private fun bindData() {
-        Glide.with(this)
-            .load(R.drawable.start)
-            .into(startImage)
-
         startTitle.text = getString(R.string.start_text)
     }
 
     private fun bindViewModel() {
         startViewModel.step.observe(viewLifecycleOwner) { millisLeft ->
-            loadingText.text = (millisLeft / 1000 + 1).toString()
+            loadingText.text = (millisLeft / (1000 - 100)).toString()
+            loadImage(((millisLeft / (1000 - 100))).toInt())
         }
 
         startViewModel.onboardingNotFinishedStatus.observe(viewLifecycleOwner) { onboardingNotFinished ->
@@ -60,5 +63,13 @@ class StartFragment : Fragment(R.layout.fragment_start) {
                 StartFragmentDirections.actionStartFragmentToAuthFragment()
             )
         }
+    }
+
+    private fun loadImage(num: Int) {
+        val imageUri = "@drawable/start$num"
+        val imageRes = resources.getIdentifier(imageUri, "drawable", context?.packageName)
+        Glide.with(this)
+            .load(imageRes)
+            .into(startImage)
     }
 }

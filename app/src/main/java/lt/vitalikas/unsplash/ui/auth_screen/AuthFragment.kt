@@ -66,6 +66,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         authViewModel.authSuccess.observe(viewLifecycleOwner) {
             Timber.d("AUTH SUCCESS")
+
         }
     }
 

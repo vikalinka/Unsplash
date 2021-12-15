@@ -46,8 +46,10 @@ class AuthViewModel @Inject constructor(
             .setDefaultColorSchemeParams(params)
             .build()
 
+        val authRequest = authRepository.getAuthRequest()
+
         val authPageIntent = authService.getAuthorizationRequestIntent(
-            authRepository.getAuthRequest(),
+            authRequest,
             customTabsIntent
         )
 
