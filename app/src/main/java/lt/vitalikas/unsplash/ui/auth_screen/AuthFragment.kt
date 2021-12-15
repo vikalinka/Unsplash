@@ -22,6 +22,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private val binding by viewBinding(FragmentAuthBinding::bind)
     private val loading get() = binding.pbLoading
+    private val login get() = binding.mbLogin
 
     private val authViewModel by viewModels<AuthViewModel>()
 
@@ -48,6 +49,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun openLoginPage() {
+        login.isVisible = false
         authViewModel.openLoginPage()
     }
 
@@ -58,6 +60,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             loading.isVisible = isLoading
+            login.isVisible = !isLoading
         }
 
         authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->

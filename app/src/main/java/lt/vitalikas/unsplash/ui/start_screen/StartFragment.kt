@@ -26,10 +26,11 @@ class StartFragment : Fragment(R.layout.fragment_start) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindData()
-        bindViewModel()
+
         lifecycleScope.launch {
-            delay(1000)
+            delay(200)
+            bindViewModel()
+            bindData()
             start()
         }
     }
