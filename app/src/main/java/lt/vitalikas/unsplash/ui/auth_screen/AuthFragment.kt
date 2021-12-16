@@ -8,7 +8,9 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
@@ -22,7 +24,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private val binding by viewBinding(FragmentAuthBinding::bind)
     private val loading get() = binding.pbLoading
-    private val login get() = binding.mbLogin
+    private val signin get() = binding.mbSignin
+    private val image get() = binding.ivAuthImage
+    private val text get() = binding.tvAuthTitle
 
     private val authViewModel by viewModels<AuthViewModel>()
 
@@ -44,30 +48,40 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        openLoginPage()
         bindAuthViewModel()
-    }
-
-    private fun openLoginPage() {
-        authViewModel.openLoginPage()
+        bindData()
     }
 
     private fun bindAuthViewModel() {
+        signin.setOnClickListener {
+            authViewModel.openLoginPage()
+        }
+
         authViewModel.authPageIntent.observe(viewLifecycleOwner) { authIntent ->
             launcher.launch(authIntent)
         }
 
         authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             loading.isVisible = isLoading
+            listOf(image, text, signin).forEach { view ->
+                view.isVisible = !isLoading
+            }
         }
 
         authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->
+            Timber.d("Auth failed")
             showSnackbar(textRes)
+            listOf(image, text, signin).forEach { view ->
+                view.isVisible = true
+            }
         }
 
         authViewModel.authSuccess.observe(viewLifecycleOwner) {
-            Timber.d("AUTH SUCCESS")
-            login.isVisible = false
+            Timber.d("Auth succeed")
+            listOf(image, text, signin).forEach { view ->
+                view.isVisible = false
+            }
+            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
         }
     }
 
@@ -79,8 +93,15 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 Snackbar.LENGTH_LONG
             )
             .setAction(getString(R.string.retry)) {
-                openLoginPage()
+                authViewModel.openLoginPage()
             }
             .show()
+    }
+
+    private fun bindData() {
+        text.text = getString(R.string.sign_in_text)
+        Glide.with(this)
+            .load(R.drawable.signin)
+            .into(image)
     }
 }

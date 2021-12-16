@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:padding="8dp">
 
     <ProgressBar
         android:id="@+id/pbLoading"
@@ -13,22 +12,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTint="@color/custom_color_primary"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivAuthImage"
+        android:layout_width="270dp"
+        android:layout_height="360dp"
+        android:contentDescription="@string/authorization_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvAuthTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivAuthImage"
+        tools:text="Sign in to your Unsplash account to continue" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbLogin"
+        android:id="@+id/mbSignin"
         android:layout_width="208dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
         android:backgroundTint="@color/custom_color_secondary"
         android:paddingStart="24dp"
         android:paddingTop="8dp"
         android:paddingEnd="24dp"
         android:paddingBottom="8dp"
-        android:text="@string/login"
+        android:text="@string/sign_in_button"
         android:textAllCaps="false"
         android:textSize="14sp"
-        android:visibility="gone"
         app:cornerRadius="16dp"
-        tools:text="Log in" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAuthTitle" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

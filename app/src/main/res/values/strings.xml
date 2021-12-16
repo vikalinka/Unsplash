@@ -14,5 +14,10 @@
     <string name="start_text">start text</string>
     <string name="auth_failed">Authorization failed. Please try again.</string>
     <string name="retry">Retry</string>
-    <string name="login">Log in</string>
+    <string name="authorization_image">authorization image</string>
+    <string name="sign_in_button">Sign in</string>
+    <string name="sign_in_text">Sign in to your Unsplash account to continue</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="profile">Profile</string>
 </resources>
