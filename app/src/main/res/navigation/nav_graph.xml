@@ -13,6 +13,8 @@
         <action
             android:id="@+id/action_onboardingFragment_to_authFragment"
             app:destination="@id/authFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
             app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -24,6 +26,8 @@
         <action
             android:id="@+id/action_authFragment_to_hostFragment"
             app:destination="@id/hostFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
             app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -42,6 +46,8 @@
         <action
             android:id="@+id/action_startFragment_to_authFragment"
             app:destination="@id/authFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
             app:popUpTo="@id/startFragment"
             app:popUpToInclusive="true" />
     </fragment>
