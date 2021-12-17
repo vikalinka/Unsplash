@@ -12,6 +12,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 
 @Module
@@ -39,9 +40,16 @@ class NetworkModule {
         .build()
 
     @Provides
-    fun provideApi(okhttpClient: OkHttpClient): UnsplashApi {
+    fun provideConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
+
+    @Provides
+    fun provideApi(
+        okhttpClient: OkHttpClient,
+        moshiConverterFactory: MoshiConverterFactory
+    ): UnsplashApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://google.com")
+            .baseUrl("https://api.unsplash.com/")
+            .addConverterFactory(moshiConverterFactory)
             .client(okhttpClient)
             .build()
 

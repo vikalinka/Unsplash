@@ -1,6 +1,10 @@
 package lt.vitalikas.unsplash.data.apis
 
+import lt.vitalikas.unsplash.domain.models.User
+import retrofit2.http.GET
+
 interface UnsplashApi {
 
-    fun getProfileInfo()
+    @GET("/me")
+    suspend fun getUser(): User
 }
