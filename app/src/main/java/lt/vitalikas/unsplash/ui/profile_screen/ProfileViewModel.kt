@@ -16,7 +16,7 @@ class ProfileViewModel @Inject constructor(
     fun getUser() {
         viewModelScope.launch {
             try {
-                val user = repository.getUser()
+                val user = repository.getCurrentProfile()
                 Timber.d("$user")
             } catch (t: Throwable) {
                 Timber.d("${t}")

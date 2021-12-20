@@ -1,8 +1,8 @@
 package lt.vitalikas.unsplash.domain.repositories
 
-import lt.vitalikas.unsplash.domain.models.User
+import lt.vitalikas.unsplash.domain.models.Profile
 
 interface ProfileRepository {
 
-    suspend fun getUser(): User
+    suspend fun getCurrentProfile(): Profile
 }

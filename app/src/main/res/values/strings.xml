@@ -20,4 +20,9 @@
     <string name="home">Home</string>
     <string name="favorites">Favorites</string>
     <string name="profile">Profile</string>
+    <string name="location_icon">location icon</string>
+    <string name="email_icon">email icon</string>
+    <string name="mailto_icon">mailto icon</string>
+    <string name="downloads_icon">downloads icon</string>
+    <string name="nav_profile">PROFILE</string>
 </resources>
