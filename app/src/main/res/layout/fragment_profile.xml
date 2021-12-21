@@ -7,7 +7,7 @@
     android:padding="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/llTop"
+        android:id="@+id/clTop"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/custom_color_secondary"
@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:backgroundTint="@color/black"
+            android:contentDescription="@string/logout_icon"
             android:src="@drawable/ic_signout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +47,7 @@
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llTop"
+        app:layout_constraintTop_toBottomOf="@id/clTop"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Circle"
         tools:src="@tools:sample/avatars" />
 
@@ -66,6 +67,7 @@
         android:id="@+id/ivUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:backgroundTint="@color/black"
         android:contentDescription="@string/mailto_icon"
@@ -81,7 +83,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivUsername"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
+        app:layout_constraintTop_toTopOf="@id/ivUsername"
         tools:text="vi_kalinka" />
 
     <ImageView
@@ -94,7 +96,7 @@
         android:src="@drawable/ic_location"
         app:layout_constraintEnd_toStartOf="@id/tvLocation"
         app:layout_constraintStart_toStartOf="@id/tvName"
-        app:layout_constraintTop_toBottomOf="@id/tvUsername" />
+        app:layout_constraintTop_toBottomOf="@id/ivUsername" />
 
     <TextView
         android:id="@+id/tvLocation"
@@ -103,7 +105,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivLocation"
-        app:layout_constraintTop_toBottomOf="@id/tvUsername"
+        app:layout_constraintTop_toTopOf="@id/ivLocation"
         tools:text="Klaipeda, Lithuania" />
 
     <ImageView
@@ -116,7 +118,7 @@
         android:src="@drawable/ic_email"
         app:layout_constraintEnd_toStartOf="@id/tvEmail"
         app:layout_constraintStart_toStartOf="@id/tvName"
-        app:layout_constraintTop_toBottomOf="@id/tvLocation" />
+        app:layout_constraintTop_toBottomOf="@id/ivLocation" />
 
     <TextView
         android:id="@+id/tvEmail"
@@ -125,7 +127,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivEmail"
-        app:layout_constraintTop_toBottomOf="@id/tvLocation"
+        app:layout_constraintTop_toTopOf="@id/ivEmail"
         tools:text="mail@gmail.com" />
 
     <ImageView
@@ -138,7 +140,7 @@
         android:src="@drawable/ic_download"
         app:layout_constraintEnd_toStartOf="@id/tvDownloads"
         app:layout_constraintStart_toStartOf="@id/tvName"
-        app:layout_constraintTop_toBottomOf="@id/tvEmail" />
+        app:layout_constraintTop_toBottomOf="@id/ivEmail" />
 
     <TextView
         android:id="@+id/tvDownloads"
@@ -147,7 +149,60 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivDownloads"
-        app:layout_constraintTop_toBottomOf="@id/tvEmail"
+        app:layout_constraintTop_toTopOf="@id/ivDownloads"
         tools:text="47" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clMiddle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivDownloads">
+
+        <TextView
+            android:id="@+id/tvPhotoCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/photos"
+            app:layout_constraintEnd_toStartOf="@id/tvLikeCount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvLikeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/likes"
+            app:layout_constraintEnd_toStartOf="@id/tvCollectionCount"
+            app:layout_constraintStart_toEndOf="@id/tvPhotoCount"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvCollectionCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collections"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvLikeCount"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvData"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clMiddle"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_photo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

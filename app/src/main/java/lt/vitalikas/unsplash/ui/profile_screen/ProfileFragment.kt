@@ -5,7 +5,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentProfileBinding
@@ -19,10 +18,16 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        profileViewModel.getUser()
+        getProfile()
+    }
+
+    private fun getProfile() {
+        profileViewModel.getProfile()
     }
 
     private fun bindViewModel() {
+        profileViewModel.profile.observe(viewLifecycleOwner) { profile ->
 
+        }
     }
 }

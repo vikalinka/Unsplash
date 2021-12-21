@@ -25,4 +25,12 @@
     <string name="mailto_icon">mailto icon</string>
     <string name="downloads_icon">downloads icon</string>
     <string name="nav_profile">PROFILE</string>
+    <string name="logout_icon">logout icon</string>
+    <string name="photos">Photos:</string>
+    <string name="likes">Likes:</string>
+    <string name="collections">Collections:</string>
+    <string name="photo">photo</string>
+    <string name="love_icon">love icon</string>
+    <string name="download_count_icon">download count icon</string>
+    <string name="download_photo_icon">download photo icon</string>
 </resources>
