@@ -21,7 +21,7 @@ class ProfileViewModel @Inject constructor(
         get() = _profile
 
     fun getProfile() {
-        viewModelScope.launch {
+        val job = viewModelScope.launch {
             try {
                 val profile = repository.getCurrentProfile()
                 Timber.d("$profile")

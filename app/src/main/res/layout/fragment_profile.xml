@@ -138,12 +138,12 @@
         android:backgroundTint="@color/black"
         android:contentDescription="@string/downloads_icon"
         android:src="@drawable/ic_download"
-        app:layout_constraintEnd_toStartOf="@id/tvDownloads"
+        app:layout_constraintEnd_toStartOf="@id/tvDownloadCount"
         app:layout_constraintStart_toStartOf="@id/tvName"
         app:layout_constraintTop_toBottomOf="@id/ivEmail" />
 
     <TextView
-        android:id="@+id/tvDownloads"
+        android:id="@+id/tvDownloadCount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
@@ -194,7 +194,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvData"
+        android:id="@+id/rvPhotos"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
