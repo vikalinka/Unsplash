@@ -29,6 +29,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private val profileViewModel by viewModels<ProfileViewModel>()
 
+    private val photoAdapter
+        get() = requireNotNull(photosPager.adapter as ProfileAdapter) {
+            error("Photo adapter not initialized")
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getProfile()
@@ -70,6 +75,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun bindViewModel() {
         profileViewModel.profile.observe(viewLifecycleOwner) { profile ->
             bindProfileData(profile)
+            photoAdapter.items = profile.photos
         }
     }
 }
