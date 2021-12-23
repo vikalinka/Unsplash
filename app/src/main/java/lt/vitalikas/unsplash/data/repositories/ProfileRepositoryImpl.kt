@@ -8,6 +8,5 @@ import javax.inject.Inject
 class ProfileRepositoryImpl @Inject constructor(
     private val api: UnsplashApi
 ) : ProfileRepository {
-
     override suspend fun getCurrentProfile(): Profile = api.getCurrentProfile()
 }

@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentProfileBinding
 import lt.vitalikas.unsplash.domain.models.Profile
+import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingTransformer
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
@@ -24,7 +25,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val photoCount get() = binding.tvPhotoCount
     private val likeCount get() = binding.tvLikeCount
     private val collectionCount get() = binding.tvCollectionCount
-    private val photos get() = binding.rvPhotos
+    private val photosPager get() = binding.vpPhotos
 
     private val profileViewModel by viewModels<ProfileViewModel>()
 
@@ -32,6 +33,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onViewCreated(view, savedInstanceState)
         getProfile()
         bindViewModel()
+        initPhotoPager()
     }
 
     private fun getProfile() {
@@ -53,6 +55,16 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         photoCount.text = getString(R.string.photos, profile.totalPhotos)
         likeCount.text = getString(R.string.likes, profile.totalLikes)
         collectionCount.text = getString(R.string.collections, profile.totalCollections)
+    }
+
+    private fun initPhotoPager() {
+        with(photosPager) {
+            adapter = ProfileAdapter()
+
+            offscreenPageLimit = 1
+
+            setPageTransformer(OnboardingTransformer())
+        }
     }
 
     private fun bindViewModel() {

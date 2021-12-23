@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.domain.models.Profile
 import lt.vitalikas.unsplash.domain.repositories.ProfileRepository
@@ -16,19 +17,23 @@ class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository
 ) : ViewModel() {
 
+    private var job: Job? = null
+
     private val _profile = MutableLiveData<Profile>()
     val profile: LiveData<Profile>
         get() = _profile
 
     fun getProfile() {
-        val job = viewModelScope.launch {
-            try {
-                val profile = repository.getCurrentProfile()
-                Timber.d("$profile")
-                _profile.postValue(profile)
-            } catch (t: Throwable) {
-                Timber.d("${t}")
-            }
+        if (profile.value == null) {
+            viewModelScope.launch {
+                try {
+                    val profile = repository.getCurrentProfile()
+                    Timber.d("$profile")
+                    _profile.postValue(profile)
+                } catch (t: Throwable) {
+                    Timber.d("$t")
+                }
+            }.also { job = it }
         }
     }
 }
