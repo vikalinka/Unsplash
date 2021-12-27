@@ -2,10 +2,12 @@ package lt.vitalikas.unsplash.ui.profile_screen
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentProfileBinding
@@ -39,6 +41,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         getProfileData()
         bindViewModel()
         initPhotoPager()
+        initBackButtonNav()
     }
 
     private fun getProfileData() {
@@ -88,5 +91,18 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
             }
         }
+    }
+
+    private fun initBackButtonNav() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
+                        ?.let { nav ->
+                            nav.selectedItemId = R.id.home
+                        } ?: error("")
+                }
+            })
     }
 }
