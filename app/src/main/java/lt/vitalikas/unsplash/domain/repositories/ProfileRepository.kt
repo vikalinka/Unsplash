@@ -4,5 +4,5 @@ import lt.vitalikas.unsplash.domain.models.Profile
 
 interface ProfileRepository {
 
-    suspend fun getCurrentProfile(): Profile
+    suspend fun getCurrentProfileData(): Profile
 }

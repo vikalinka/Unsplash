@@ -36,13 +36,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getProfile()
+        getProfileData()
         bindViewModel()
         initPhotoPager()
     }
 
-    private fun getProfile() {
-        profileViewModel.getProfile()
+    private fun getProfileData() {
+        profileViewModel.getProfileData()
     }
 
     private fun bindProfileData(profile: Profile) {
@@ -60,6 +60,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         photoCount.text = getString(R.string.photos, profile.totalPhotos)
         likeCount.text = getString(R.string.likes, profile.totalLikes)
         collectionCount.text = getString(R.string.collections, profile.totalCollections)
+
+        photoAdapter.items = profile.photos
     }
 
     private fun initPhotoPager() {
@@ -73,9 +75,18 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun bindViewModel() {
-        profileViewModel.profile.observe(viewLifecycleOwner) { profile ->
-            bindProfileData(profile)
-            photoAdapter.items = profile.photos
+        profileViewModel.dataState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ProfileDataState.Loading -> {
+
+                }
+                is ProfileDataState.Success -> {
+                    bindProfileData(state.profile)
+                }
+                is ProfileDataState.Error -> {
+
+                }
+            }
         }
     }
 }
