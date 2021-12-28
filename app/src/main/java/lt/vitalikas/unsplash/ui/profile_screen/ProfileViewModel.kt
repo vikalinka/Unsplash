@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.domain.use_cases.GetProfileDataUseCase
@@ -24,30 +23,42 @@ class ProfileViewModel @Inject constructor(
         get() = _dataState
 
     fun getProfileData() {
-        if (dataState.value == null) {
-            _dataState.postValue(ProfileDataState.Loading(true))
-            viewModelScope.launch(Dispatchers.IO) {
+        when (dataState.value) {
+            is ProfileDataState.Error, null -> {
+                Timber.d("dataState value = ${dataState.value}")
+                _dataState.postValue(ProfileDataState.Loading(true))
+                // Retrofit launches coroutine on it`s background thread pool
+                viewModelScope.launch {
+                    try {
+                        val profile = getProfileDataUseCase.invoke()
+                        Timber.d("Profile data fetched from API = $profile")
+                        _dataState.value = ProfileDataState.Loading(false)
+                        _dataState.value = ProfileDataState.Success(profile)
+                    } catch (t: Throwable) {
+                        Timber.d("$t")
+                        _dataState.value = ProfileDataState.Loading(false)
+                        _dataState.value = ProfileDataState.Error(t)
+                    }
+                }.also { job = it }
+            }
+            else -> {
                 try {
-                    val profile = getProfileDataUseCase.invoke()
-                    Timber.d("Profile fetched from API = $profile")
-                    _dataState.postValue(ProfileDataState.Success(profile))
+                    Timber.d("dataState value = ${dataState.value}")
+                    val profile = getProfileDataUseCase.profileData
+                    Timber.d("Profile data fetched from memory = $profile")
+                    _dataState.postValue(
+                        profile?.let { ProfileDataState.Success(it) }
+                            ?: error("Error retrieving Profile data")
+                    )
                 } catch (t: Throwable) {
                     Timber.d("$t")
                     _dataState.postValue(ProfileDataState.Error(t))
                 }
-            }.also { job = it }
-        } else {
-            try {
-                val profile = getProfileDataUseCase.profileData
-                Timber.d("Profile fetched from memory = $profile")
-                _dataState.postValue(
-                    profile?.let { ProfileDataState.Success(it) }
-                        ?: error("Error retrieving Profile data")
-                )
-            } catch (t: Throwable) {
-                Timber.d("$t")
-                _dataState.postValue(ProfileDataState.Error(t))
             }
         }
+    }
+
+    fun cancelJob() {
+        job?.cancel()
     }
 }
