@@ -19,6 +19,8 @@ class ProfileViewModel @Inject constructor(
 
     private var job: Job? = null
 
+    var position: Int? = null
+
     private val _dataState = MutableLiveData<ProfileDataState>()
     val dataState: LiveData<ProfileDataState>
         get() = _dataState
@@ -41,12 +43,10 @@ class ProfileViewModel @Inject constructor(
             }
             else -> {
                 try {
-                    val profile = getProfileDataUseCase.profileData
+                    val profile =
+                        getProfileDataUseCase.profileData ?: error("Error retrieving profile data")
                     Timber.d("Profile data fetched from memory = $profile")
-                    _dataState.postValue(
-                        profile?.let { ProfileDataState.Success(it) }
-                            ?: error("Error retrieving profile data")
-                    )
+                    _dataState.value = ProfileDataState.Success(profile)
                 } catch (t: Throwable) {
                     Timber.d("$t")
                     _dataState.postValue(ProfileDataState.Error(t))

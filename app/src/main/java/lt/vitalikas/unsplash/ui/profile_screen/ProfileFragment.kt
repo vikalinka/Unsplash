@@ -3,17 +3,23 @@ package lt.vitalikas.unsplash.ui.profile_screen
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentProfileBinding
 import lt.vitalikas.unsplash.domain.models.Profile
 import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingTransformer
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
@@ -44,9 +50,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initPhotoPager()
+        initPagerPositionListener()
         getProfileData()
         bindViewModel()
-        initPhotoPager()
         initBackButtonNav()
     }
 
@@ -71,6 +78,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         collectionCount.text = getString(R.string.collections, profile.totalCollections)
 
         photoAdapter.items = profile.photos
+        Timber.d("page pos viewmodel = ${profileViewModel.position}")
+
+        photosPager.currentItem = profileViewModel.position ?: 2
     }
 
     private fun toggleViewsVisibility(isVisible: Boolean) {
@@ -103,6 +113,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
             setPageTransformer(OnboardingTransformer())
         }
+    }
+
+    private fun initPagerPositionListener() {
+        photosPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                Timber.d("page listener pos = $position")
+                profileViewModel.position = position
+                Timber.d("page listener pos = ${profileViewModel.position}")
+            }
+        })
     }
 
     private fun bindViewModel() {
