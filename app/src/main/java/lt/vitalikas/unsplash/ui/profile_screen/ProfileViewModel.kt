@@ -25,7 +25,6 @@ class ProfileViewModel @Inject constructor(
     fun getProfileData() {
         when (dataState.value) {
             is ProfileDataState.Error, null -> {
-                Timber.d("dataState value = ${dataState.value}")
                 _dataState.postValue(ProfileDataState.Loading(true))
                 // Retrofit launches coroutine on it`s background thread pool
                 viewModelScope.launch {
@@ -43,12 +42,11 @@ class ProfileViewModel @Inject constructor(
             }
             else -> {
                 try {
-                    Timber.d("dataState value = ${dataState.value}")
                     val profile = getProfileDataUseCase.profileData
                     Timber.d("Profile data fetched from memory = $profile")
                     _dataState.postValue(
                         profile?.let { ProfileDataState.Success(it) }
-                            ?: error("Error retrieving Profile data")
+                            ?: error("Error retrieving profile data")
                     )
                 } catch (t: Throwable) {
                     Timber.d("$t")
