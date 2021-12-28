@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.domain.use_cases.GetProfileDataUseCase
@@ -27,17 +28,15 @@ class ProfileViewModel @Inject constructor(
             is ProfileDataState.Error, null -> {
                 _dataState.postValue(ProfileDataState.Loading(true))
                 // Retrofit launches coroutine on it`s background thread pool
-                viewModelScope.launch {
-                    try {
-                        val profile = getProfileDataUseCase.invoke()
-                        Timber.d("Profile data fetched from API = $profile")
-                        _dataState.value = ProfileDataState.Loading(false)
-                        _dataState.value = ProfileDataState.Success(profile)
-                    } catch (t: Throwable) {
-                        Timber.d("$t")
-                        _dataState.value = ProfileDataState.Loading(false)
-                        _dataState.value = ProfileDataState.Error(t)
-                    }
+                viewModelScope.launch(CoroutineExceptionHandler { _, t ->
+                    Timber.d("$t")
+                    _dataState.value = ProfileDataState.Loading(false)
+                    _dataState.value = ProfileDataState.Error(t)
+                }) {
+                    val profile = getProfileDataUseCase.invoke()
+                    Timber.d("Profile data fetched from API = $profile")
+                    _dataState.value = ProfileDataState.Loading(false)
+                    _dataState.value = ProfileDataState.Success(profile)
                 }.also { job = it }
             }
             else -> {
