@@ -25,7 +25,9 @@
     <string name="mailto_icon">mailto icon</string>
     <string name="downloads_icon">downloads icon</string>
     <string name="nav_profile">PROFILE</string>
+    <string name="nav_feed">FEED</string>
     <string name="logout_icon">logout icon</string>
+    <string name="search_icon">search icon</string>
     <string name="photos">Photos\n%1$d</string>
     <string name="likes">Likes \n%1$d</string>
     <string name="collections">Collections \n%1$d</string>
@@ -33,4 +35,5 @@
     <string name="love_icon">love icon</string>
     <string name="download_count_icon">download count icon</string>
     <string name="download_photo_icon">download photo icon</string>
+    <string name="top">Today\'s top</string>
 </resources>

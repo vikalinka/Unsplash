@@ -74,9 +74,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         collectionCount.text = getString(R.string.collections, profile.totalCollections)
 
         photoAdapter.items = profile.photos
-        Timber.d("page pos viewmodel = ${profileViewModel.position}")
 
+        Timber.d("position | view model = ${profileViewModel.position}")
         photosPager.currentItem = profileViewModel.position ?: 2
+        Timber.d("position | pager = ${photosPager.currentItem}")
     }
 
     private fun toggleViewsVisibility(isVisible: Boolean) {
@@ -115,9 +116,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         photosPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                Timber.d("page listener pos = $position")
+                Timber.d("scrolled to position = $position")
                 profileViewModel.position = position
-                Timber.d("page listener pos = ${profileViewModel.position}")
+                Timber.d("position saved to view model = $position")
             }
         })
     }
