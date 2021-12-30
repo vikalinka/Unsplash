@@ -17,8 +17,6 @@ class ProfileViewModel @Inject constructor(
 
     private val scope = viewModelScope
 
-    var position: Int? = null
-
     private val _dataState = MutableLiveData<ProfileDataState>()
     val dataState: LiveData<ProfileDataState>
         get() = _dataState

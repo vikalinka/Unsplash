@@ -207,7 +207,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vpPhotos"
         android:layout_width="0dp"
         android:layout_height="0dp"

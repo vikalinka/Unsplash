@@ -6,7 +6,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,8 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentProfileBinding
 import lt.vitalikas.unsplash.domain.models.Profile
-import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingTransformer
-import timber.log.Timber
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
@@ -39,15 +36,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private val profileViewModel by viewModels<ProfileViewModel>()
 
-    private val photoAdapter
-        get() = requireNotNull(photosPager.adapter as ProfileAdapter) {
-            error("Photo adapter not initialized")
-        }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initPhotoPager()
-        initPagerPositionListener()
         getProfileData()
         bindViewModel()
         initBackButtonNav()
@@ -72,12 +62,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         photoCount.text = getString(R.string.photos, profile.totalPhotos)
         likeCount.text = getString(R.string.likes, profile.totalLikes)
         collectionCount.text = getString(R.string.collections, profile.totalCollections)
-
-        photoAdapter.items = profile.photos
-
-        Timber.d("position | view model = ${profileViewModel.position}")
-        photosPager.currentItem = profileViewModel.position ?: 2
-        Timber.d("position | pager = ${photosPager.currentItem}")
     }
 
     private fun toggleViewsVisibility(isVisible: Boolean) {
@@ -102,25 +86,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         loadingProgressBar.isVisible = isVisible
     }
 
-    private fun initPhotoPager() {
+    private fun initPhotoPager(photos: List<Profile.Photo>) {
         with(photosPager) {
-            adapter = ProfileAdapter()
+            adapter = ProfilePhotoAdapter(photos)
 
             offscreenPageLimit = 1
 
-            setPageTransformer(OnboardingTransformer())
+//            setPageTransformer(false, OnboardingTransformer())
         }
-    }
-
-    private fun initPagerPositionListener() {
-        photosPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                Timber.d("scrolled to position = $position")
-                profileViewModel.position = position
-                Timber.d("position saved to view model = $position")
-            }
-        })
     }
 
     private fun bindViewModel() {
@@ -130,6 +103,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     toggleViewsVisibility(state.isLoading)
                 }
                 is ProfileDataState.Success -> {
+                    initPhotoPager(state.profile.photos)
                     bindProfileData(state.profile)
                 }
                 is ProfileDataState.Error -> {
