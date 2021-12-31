@@ -7,9 +7,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
+import timber.log.Timber
 
 @AndroidEntryPoint
 class FeedFragment : Fragment(R.layout.fragment_feed) {
@@ -50,6 +52,20 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
+    private fun showSnackbar() {
+        Snackbar
+            .make(
+                requireView(),
+                "There is no connection to the server, saved objects are shown",
+                Snackbar.LENGTH_LONG
+            )
+            .setAnchorView(R.id.bottom_navigation)
+            .setAction("Retry") {
+                //
+            }
+            .show()
+    }
+
     private fun bindViewModel() {
         feedViewModel.feedState.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -60,6 +76,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     feedPhotosAdapter.items = state.photos
                 }
                 is FeedPhotosState.Error -> {
+                    Timber.d("${state.error}")
+                    showSnackbar()
+                }
+                is FeedPhotosState.Cancellation -> {
 
                 }
             }

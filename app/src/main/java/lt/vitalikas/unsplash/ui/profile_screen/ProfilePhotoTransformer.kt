@@ -1,10 +1,10 @@
 package lt.vitalikas.unsplash.ui.profile_screen
 
 import android.view.View
-import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager.widget.ViewPager
 import kotlin.math.abs
 
-class ProfilePhotosTransformer : ViewPager2.PageTransformer {
+class ProfilePhotoTransformer : ViewPager.PageTransformer {
 
     override fun transformPage(page: View, position: Float) {
         when {

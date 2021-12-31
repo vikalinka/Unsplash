@@ -69,7 +69,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         }
 
         authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->
-            Timber.d("Auth failed")
+            Timber.d("Authorization failed")
             showSnackbar(textRes)
             listOf(image, text, signin).forEach { view ->
                 view.isVisible = true
@@ -77,7 +77,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         }
 
         authViewModel.authSuccess.observe(viewLifecycleOwner) {
-            Timber.d("Auth succeed")
+            Timber.d("Authorization succeed")
             listOf(image, text, signin).forEach { view ->
                 view.isVisible = false
             }

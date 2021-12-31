@@ -92,7 +92,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
             offscreenPageLimit = 1
 
-//            setPageTransformer(false, OnboardingTransformer())
+            setPageTransformer(false, ProfilePhotoTransformer())
         }
     }
 
@@ -107,6 +107,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     bindProfileData(state.profile)
                 }
                 is ProfileDataState.Error -> {
+
+                }
+                is ProfileDataState.Cancellation -> {
 
                 }
             }
