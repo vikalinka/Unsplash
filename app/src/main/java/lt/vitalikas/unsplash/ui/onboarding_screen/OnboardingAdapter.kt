@@ -10,7 +10,7 @@ import lt.vitalikas.unsplash.domain.models.OnboardingItem
 
 class OnboardingAdapter(
     private val items: List<OnboardingItem>,
-    private val onBtnClick: () -> Unit,
+    private val onActionGetStartedClick: () -> Unit,
     private val onActionSkipClick: () -> Unit,
     private val onActionNextClick: () -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.Holder>() {
@@ -22,7 +22,7 @@ class OnboardingAdapter(
                 parent,
                 false
             ),
-            onBtnClick = onBtnClick,
+            onActionGetStartedClick = onActionGetStartedClick,
             onActionSkipClick = onActionSkipClick,
             onActionNextClick = onActionNextClick
         )
@@ -34,10 +34,11 @@ class OnboardingAdapter(
 
     inner class Holder(
         private val binding: ItemOnboardingBinding,
-        private val onBtnClick: () -> Unit,
+        private val onActionGetStartedClick: () -> Unit,
         private val onActionSkipClick: () -> Unit,
         private val onActionNextClick: () -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(item: OnboardingItem) {
             Glide.with(itemView)
                 .load(item.image)
@@ -47,7 +48,7 @@ class OnboardingAdapter(
             binding.tvOnboardingText.text = itemView.resources.getText(item.text)
 
             with(binding.mbAction) {
-                setOnClickListener { onBtnClick() }
+                setOnClickListener { onActionGetStartedClick() }
                 isVisible = item == items.last()
             }
 

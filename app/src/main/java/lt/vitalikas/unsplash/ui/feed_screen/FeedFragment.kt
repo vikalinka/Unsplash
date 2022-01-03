@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +38,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun initFeedPhotosRv() {
         with(feed) {
             adapter = FeedAdapter()
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = GridLayoutManager(context, 2)
             setHasFixedSize(true)
         }
     }

@@ -1,6 +1,8 @@
 package lt.vitalikas.unsplash.data.repositories
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.models.OnboardingItem
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
@@ -10,14 +12,18 @@ class OnboardingRepositoryImpl @Inject constructor(
     private val sharedPrefs: SharedPreferences
 ) : OnboardingRepository {
 
-    override fun getOnboardingSharedPrefsValue(key: String, value: Boolean): Boolean =
-        sharedPrefs.getBoolean(key, value)
+    override suspend fun getOnboardingSharedPrefsValue(key: String, value: Boolean): Boolean =
+        withContext(Dispatchers.IO) {
+            sharedPrefs.getBoolean(key, value)
+        }
 
-    override fun updateOnboardingSharedPrefsValue(key: String, value: Boolean) =
-        sharedPrefs
-            .edit()
-            .putBoolean(key, value)
-            .apply()
+    override suspend fun updateOnboardingSharedPrefsValue(key: String, value: Boolean) =
+        withContext(Dispatchers.IO) {
+            sharedPrefs
+                .edit()
+                .putBoolean(key, value)
+                .apply()
+        }
 
     override fun createOnboardingItems(): List<OnboardingItem> =
         listOf(

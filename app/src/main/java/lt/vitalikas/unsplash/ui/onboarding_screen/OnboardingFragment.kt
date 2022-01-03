@@ -5,9 +5,11 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentOnboardingBinding
 
@@ -20,6 +22,8 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private val onboardingViewModel by viewModels<OnboardingViewModel>()
 
+    private val scope = lifecycleScope
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initOnboardingScreens()
@@ -30,14 +34,26 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         with(viewPager) {
             adapter = OnboardingAdapter(
                 onboardingViewModel.screens,
-                onBtnClick = {
-                    onboardingViewModel.updateValue("onboarding", false)
+                onActionGetStartedClick = {
+                    scope.launch {
+                        onboardingViewModel.updateValue(
+                            getString(R.string.onboarding_not_finished),
+                            false
+                        )
+                    }
+
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )
                 },
                 onActionSkipClick = {
-                    onboardingViewModel.updateValue("onboarding", false)
+                    scope.launch {
+                        onboardingViewModel.updateValue(
+                            getString(R.string.onboarding_not_finished),
+                            false
+                        )
+                    }
+
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )
