@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    private val getFeedPhotosUseCase: GetFeedPhotosUseCase
+    private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
+    private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -34,6 +36,9 @@ class FeedViewModel @Inject constructor(
                         _feedState.value = FeedPhotosState.Error(t)
                     }) {
                         val photos = getFeedPhotosUseCase.invoke()
+//                        photos.forEach { feedPhoto ->
+//                            getFeedPhotoDetailsUseCase.invoke(feedPhoto.id)
+//                        }
                         Timber.d("Photos fetched from API = $photos")
                         _feedState.value = FeedPhotosState.Loading(false)
                         _feedState.value = FeedPhotosState.Success(photos)

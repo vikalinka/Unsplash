@@ -2,7 +2,9 @@ package lt.vitalikas.unsplash.ui.feed_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import lt.vitalikas.unsplash.R
@@ -21,6 +23,26 @@ class FeedAdapterDelegate :
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivPhoto)
+
+            Glide.with(itemView)
+                .load(item.user.image.medium)
+                .placeholder(R.drawable.picture)
+                .error(R.drawable.picture)
+                .into(binding.ivAvatar)
+
+            binding.tvName.text = item.user.name
+            binding.tvUsername.text =
+                itemView.resources.getString(R.string.username, item.user.username)
+
+            binding.ivLove.run {
+                setImageResource(R.drawable.ic_love_filled)
+                setColorFilter(ContextCompat.getColor(context, R.color.red))
+            }.takeIf { item.likedByUser } ?: binding.ivLove.run {
+                setImageResource(R.drawable.ic_love)
+                setColorFilter(ContextCompat.getColor(context, R.color.red))
+            }
+
+            binding.tvLove.text = item.likes.toString()
         }
     }
 
@@ -44,4 +66,13 @@ class FeedAdapterDelegate :
         holder: FeedPhotoViewHolder,
         payloads: MutableList<Any>
     ) = holder.bind(item)
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        if (holder.layoutPosition == 0) {
+            val p =
+                holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+            p.isFullSpan = true
+        }
+    }
 }

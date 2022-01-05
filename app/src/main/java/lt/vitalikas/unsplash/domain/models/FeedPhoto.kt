@@ -25,7 +25,6 @@ data class FeedPhoto(
     val urls: FeedUrl,
     val links: FeedLink
 ) {
-
     @JsonClass(generateAdapter = true)
     data class User(
         val id: String,
@@ -49,7 +48,6 @@ data class FeedPhoto(
         val image: ProfileImage,
         val links: Link
     ) {
-
         @JsonClass(generateAdapter = true)
         data class ProfileImage(
             val small: String,

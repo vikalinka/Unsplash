@@ -5,8 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,8 +37,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun initFeedPhotosRv() {
         with(feed) {
             adapter = FeedAdapter()
-            layoutManager = GridLayoutManager(context, 2)
+
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
+
+            addItemDecoration(FeedOffsetDecoration(requireContext()))
+
+//            val verticalDividerItemDecor =
+//                DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+//            addItemDecoration(verticalDividerItemDecor)
+//            val horizontalDividerItemDecor =
+//                DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
+//            addItemDecoration(horizontalDividerItemDecor)
         }
     }
 
