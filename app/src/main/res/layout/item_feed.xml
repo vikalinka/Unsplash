@@ -20,7 +20,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clPhotoStats"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintBottom_toBottomOf="@id/ivPhoto"
@@ -44,6 +44,7 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/white"
             android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/tvUsername"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
             app:layout_constraintTop_toTopOf="@id/ivAvatar"
             tools:text="Vitalikas Kolinko " />
@@ -54,6 +55,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
             app:layout_constraintStart_toStartOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvName"
             tools:text="\@vi_kalinka" />
