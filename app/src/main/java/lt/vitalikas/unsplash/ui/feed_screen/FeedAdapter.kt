@@ -62,14 +62,14 @@ class FeedAdapter :
     }
 
 
-    override fun onViewAttachedToWindow(holder: FeedPhotoViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        if (holder.layoutPosition == 0) {
-            val p =
-                holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
-            p.isFullSpan = true
-        }
-    }
+//    override fun onViewAttachedToWindow(holder: FeedPhotoViewHolder) {
+//        super.onViewAttachedToWindow(holder)
+//        if (holder.layoutPosition == 0) {
+//            val p =
+//                holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+//            p.isFullSpan = true
+//        }
+//    }
 
     class FeedPhotoDiffUtilCallback : DiffUtil.ItemCallback<FeedPhoto>() {
         override fun areItemsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =
