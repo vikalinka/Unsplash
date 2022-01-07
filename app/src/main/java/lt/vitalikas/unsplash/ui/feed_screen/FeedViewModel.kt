@@ -4,9 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
+import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
@@ -35,21 +41,21 @@ class FeedViewModel @Inject constructor(
                         _feedState.value = FeedPhotosState.Loading(false)
                         _feedState.value = FeedPhotosState.Error(t)
                     }) {
-                        val photos = getFeedPhotosUseCase.invoke()
-//                        photos.forEach { feedPhoto ->
-//                            getFeedPhotoDetailsUseCase.invoke(feedPhoto.id)
-//                        }
-                        Timber.d("Photos fetched from API = $photos")
-                        _feedState.value = FeedPhotosState.Loading(false)
-                        _feedState.value = FeedPhotosState.Success(photos)
+                        getFeedPhotosUseCase.invoke().apply {
+                            collect { pagingData ->
+                                _feedState.value = FeedPhotosState.Loading(false)
+                                _feedState.value = FeedPhotosState.Success(pagingData)
+                            }
+                        }
                     }
                 }
                 else -> {
                     try {
-                        val photos =
-                            getFeedPhotosUseCase.feedPhotos ?: error("Error retrieving photos")
-                        Timber.d("Photos fetched from memory = $photos")
-                        _feedState.value = FeedPhotosState.Success(photos)
+                        getFeedPhotosUseCase.feedPhotos?.collectLatest { pagingData ->
+                            Timber.d("Photos fetched from memory")
+                            _feedState.value = FeedPhotosState.Success(pagingData)
+                        } ?: error("Error retrieving photos")
+
                     } catch (t: Throwable) {
                         Timber.d("$t")
                         _feedState.postValue(FeedPhotosState.Error(t))

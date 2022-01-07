@@ -100,6 +100,10 @@ dependencies {
     implementation 'net.openid:appauth:0.10.0'
     // ViewPager with view state functionality
     implementation 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.1.0'
+    // Pagination 3
+    def paging_version = '3.1.0'
+    implementation "androidx.paging:paging-runtime:$paging_version"
+
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
