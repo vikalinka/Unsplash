@@ -27,14 +27,14 @@ class FeedPhotosPagingSource @Inject constructor(
                 pageIndex,
                 ORDER_BY
             )
-            Timber.d("Photos = $photos")
-            Timber.d("Photos size = ${photos.size}")
+
             val nextKey =
                 if (photos.isEmpty()) {
                     null
                 } else {
                     pageIndex + (params.loadSize / DEFAULT_ITEM_NUMBER_PER_PAGE)
                 }
+
             LoadResult.Page(
                 data = photos,
                 prevKey = if (pageIndex == STARTING_PAGE_INDEX) null else pageIndex,
@@ -50,6 +50,6 @@ class FeedPhotosPagingSource @Inject constructor(
     companion object {
         private const val DEFAULT_ITEM_NUMBER_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
-        private const val ORDER_BY = "latest"
+        private const val ORDER_BY = "popular"
     }
 }

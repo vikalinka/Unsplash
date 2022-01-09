@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
@@ -39,9 +40,29 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun initFeedPhotosRv() {
         with(feed) {
-            adapter = FeedAdapter()
+            adapter = FeedAdapter().apply {
+                addLoadStateListener { loadStates ->
+                    if (loadStates.refresh is LoadState.Loading) {
+                        loading.isVisible = true
+                    } else {
+                        loading.isVisible = false
+
+                        val errorState = when {
+                            loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
+                            loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
+                            loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
+                            else -> null
+                        }
+
+                        errorState?.let { state ->
+                            state.error.message?.let { text -> showSnackbar(text) }
+                        }
+                    }
+                }
+            }
 
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
             setHasFixedSize(true)
 
             addItemDecoration(FeedOffsetDecoration(requireContext()))
@@ -59,18 +80,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         feedViewModel.getFeedPhotos()
     }
 
-    private fun toggleViewsVisibility(isVisible: Boolean) {
-        listOf(title, feed).forEach { view ->
-            view.isVisible = !isVisible
-        }
-        loading.isVisible = isVisible
-    }
-
-    private fun showSnackbar() {
+    private fun showSnackbar(message: String) {
         Snackbar
             .make(
                 requireView(),
-                "There is no connection to the server, saved objects are shown",
+                message,
                 Snackbar.LENGTH_LONG
             )
             .setAnchorView(R.id.bottom_navigation)
@@ -84,7 +98,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         feedViewModel.feedState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is FeedPhotosState.Loading -> {
-                    toggleViewsVisibility(state.isLoading)
+
                 }
                 is FeedPhotosState.Success -> {
                     lifecycleScope.launch {
@@ -93,12 +107,17 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 }
                 is FeedPhotosState.Error -> {
                     Timber.d("${state.error}")
-                    showSnackbar()
+
                 }
                 is FeedPhotosState.Cancellation -> {
 
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        feedViewModel.cancelScopeChildrenJobs()
     }
 }

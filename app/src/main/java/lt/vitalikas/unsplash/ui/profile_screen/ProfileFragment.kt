@@ -129,8 +129,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         profileViewModel.cancelScopeChildrenJobs()
     }
 }
