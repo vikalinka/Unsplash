@@ -46,7 +46,7 @@ android {
 
 dependencies {
     // ViewBindingPropertyDelegate by kirich1409
-    implementation 'com.github.kirich1409:viewbindingpropertydelegate:1.5.2'
+    implementation 'com.github.kirich1409:viewbindingpropertydelegate:1.5.3'
     // Fragment KTX
     implementation 'androidx.fragment:fragment-ktx:1.4.0'
     // Lifecycle
@@ -100,10 +100,8 @@ dependencies {
     implementation 'net.openid:appauth:0.10.0'
     // ViewPager with view state functionality
     implementation 'com.nightlynexus.viewstatepageradapter:viewstatepageradapter:1.1.0'
-    // Pagination 3
-    def paging_version = '3.1.0'
-    implementation "androidx.paging:paging-runtime:$paging_version"
-
+    // Paging 3
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.0'
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'

@@ -6,7 +6,6 @@ import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding

@@ -14,22 +14,40 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
+import lt.vitalikas.unsplash.utils.autoCleaned
 import timber.log.Timber
 
 @AndroidEntryPoint
 class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val binding by viewBinding(FragmentFeedBinding::bind)
-    private val title get() = binding.tvTitle
     private val feed get() = binding.rvFeed
     private val loading get() = binding.pbLoading
 
-    private val feedPhotosAdapter
-        get() = requireNotNull(feed.adapter as FeedAdapter) {
-            error("Feed adapter not initialized")
-        }
-
     private val feedViewModel by viewModels<FeedViewModel>()
+
+    private val feedAdapter by autoCleaned {
+        FeedAdapter().apply {
+            addLoadStateListener { loadStates ->
+                if (loadStates.refresh is LoadState.Loading) {
+                    loading.isVisible = true
+                } else {
+                    loading.isVisible = false
+
+                    val errorState = when {
+                        loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
+                        loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
+                        loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
+                        else -> null
+                    }
+
+                    errorState?.let { state ->
+                        state.error.message?.let { text -> showSnackbar(text) }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,26 +58,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun initFeedPhotosRv() {
         with(feed) {
-            adapter = FeedAdapter().apply {
-                addLoadStateListener { loadStates ->
-                    if (loadStates.refresh is LoadState.Loading) {
-                        loading.isVisible = true
-                    } else {
-                        loading.isVisible = false
+            val concatAdapter = feedAdapter.withLoadStateFooter(
+                footer = FeedLoadStateAdapter()
+            )
 
-                        val errorState = when {
-                            loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
-                            loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
-                            loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
-                            else -> null
-                        }
-
-                        errorState?.let { state ->
-                            state.error.message?.let { text -> showSnackbar(text) }
-                        }
-                    }
-                }
-            }
+            adapter = concatAdapter
 
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
@@ -102,7 +105,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 }
                 is FeedPhotosState.Success -> {
                     lifecycleScope.launch {
-                        feedPhotosAdapter.submitData(state.data)
+                        feedAdapter.submitData(state.data)
                     }
                 }
                 is FeedPhotosState.Error -> {
