@@ -5,12 +5,15 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
@@ -98,22 +101,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun bindViewModel() {
-        feedViewModel.feedState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is FeedPhotosState.Loading -> {
-
-                }
-                is FeedPhotosState.Success -> {
-                    lifecycleScope.launch {
-                        feedAdapter.submitData(state.data)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                feedViewModel.fState.collectLatest { state ->
+                    when (state) {
+                        is FeedPhotosState.Success -> feedAdapter.submitData(state.data)
+                        is FeedPhotosState.Error -> Timber.d("${state.error}")
                     }
-                }
-                is FeedPhotosState.Error -> {
-                    Timber.d("${state.error}")
-
-                }
-                is FeedPhotosState.Cancellation -> {
-
                 }
             }
         }
