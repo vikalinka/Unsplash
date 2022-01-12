@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
@@ -101,12 +101,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     }
 
     private fun bindViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                feedViewModel.fState.collectLatest { state ->
-                    when (state) {
-                        is FeedPhotosState.Success -> feedAdapter.submitData(state.data)
-                        is FeedPhotosState.Error -> Timber.d("${state.error}")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    feedViewModel.feedState.collect { state ->
+                        when (state) {
+                            is FeedState.Success -> feedAdapter.submitData(state.data)
+                            is FeedState.Error -> Timber.d("${state.error}")
+                        }
                     }
                 }
             }

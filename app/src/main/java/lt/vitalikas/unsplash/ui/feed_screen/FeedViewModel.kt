@@ -22,25 +22,20 @@ class FeedViewModel @Inject constructor(
 
     private val scope = viewModelScope
 
-    private val _fState =
-        MutableStateFlow<FeedPhotosState>(FeedPhotosState.Success(PagingData.empty()))
-    val fState = _fState.asStateFlow()
+    private val _feedState =
+        MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
+    val feedState = _feedState.asStateFlow()
 
     fun getFeedPhotos() {
         scope.launch(
             CoroutineExceptionHandler { _, t ->
                 Timber.d("$t")
-                _fState.value = FeedPhotosState.Error(t)
+                _feedState.value = FeedState.Error(t)
             }
         ) {
-            getFeedPhotosUseCase.feedPhotos?.collectLatest { pagingData ->
-                Timber.d("Photos fetched from memory")
-                _fState.value = FeedPhotosState.Success(pagingData)
-            } ?: run {
-                // Retrofit launches coroutines on it`s background thread pool
-                val data = getFeedPhotosUseCase.invoke()
-                data.collectLatest { pagingData ->
-                    _fState.value = FeedPhotosState.Success(pagingData)
+            getFeedPhotosUseCase.invoke().apply {
+                collectLatest { pagingData ->
+                    _feedState.value = FeedState.Success(pagingData)
                 }
             }
         }

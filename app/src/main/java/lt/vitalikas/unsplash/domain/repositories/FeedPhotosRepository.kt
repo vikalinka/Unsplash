@@ -7,7 +7,6 @@ import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 
 interface FeedPhotosRepository {
 
-    // suspend fun getFeedPhotos(): List<FeedPhoto>
     suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
     suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails
 }

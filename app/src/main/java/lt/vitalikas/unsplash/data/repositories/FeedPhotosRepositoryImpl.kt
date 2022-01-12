@@ -3,7 +3,6 @@ package lt.vitalikas.unsplash.data.repositories
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import lt.vitalikas.unsplash.data.apis.UnsplashApi
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
@@ -14,8 +13,6 @@ import javax.inject.Inject
 class FeedPhotosRepositoryImpl @Inject constructor(
     private val api: UnsplashApi
 ) : FeedPhotosRepository {
-
-//    override suspend fun getFeedPhotos(): List<FeedPhoto> = api.getFeedPhotos()
 
     override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
         return Pager(
