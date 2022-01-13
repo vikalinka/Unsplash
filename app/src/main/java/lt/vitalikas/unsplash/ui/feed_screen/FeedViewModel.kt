@@ -3,12 +3,11 @@ package lt.vitalikas.unsplash.ui.feed_screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
+import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
@@ -22,22 +21,29 @@ class FeedViewModel @Inject constructor(
 
     private val scope = viewModelScope
 
+    private var pagingData: PagingData<FeedPhoto>? = null
+
     private val _feedState =
         MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
     val feedState = _feedState.asStateFlow()
 
-    fun getFeedPhotos() {
-        scope.launch(
-            CoroutineExceptionHandler { _, t ->
-                Timber.d("$t")
-                _feedState.value = FeedState.Error(t)
-            }
-        ) {
-            getFeedPhotosUseCase.invoke().apply {
-                collectLatest { pagingData ->
+    suspend fun getFeedPhotos() {
+        pagingData?.let {
+            // loading data from memory
+            _feedState.value = FeedState.Success(it)
+        } ?: run {
+            // loading data from network
+            val flow = getFeedPhotosUseCase.invoke().cachedIn(scope)
+            flow
+                .onEach { pagingData ->
                     _feedState.value = FeedState.Success(pagingData)
+                    this@FeedViewModel.pagingData = pagingData
                 }
-            }
+                .catch { t ->
+                    Timber.d("$t")
+                    _feedState.value = FeedState.Error(t)
+                }
+                .launchIn(scope)
         }
     }
 
