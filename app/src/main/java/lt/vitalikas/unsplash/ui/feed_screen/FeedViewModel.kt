@@ -29,10 +29,10 @@ class FeedViewModel @Inject constructor(
 
     suspend fun getFeedPhotos() {
         pagingData?.let {
-            // loading data from memory
+            // data from memory
             _feedState.value = FeedState.Success(it)
         } ?: run {
-            // loading data from network
+            // data from network
             val flow = getFeedPhotosUseCase.invoke().cachedIn(scope)
             flow
                 .onEach { pagingData ->
