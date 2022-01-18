@@ -15,6 +15,7 @@ interface UnsplashApi {
     @GET("/photos")
     suspend fun getFeedPhotos(
         @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
     ): List<FeedPhoto>
 

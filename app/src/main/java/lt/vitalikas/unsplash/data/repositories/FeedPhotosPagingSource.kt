@@ -6,7 +6,6 @@ import lt.vitalikas.unsplash.data.apis.UnsplashApi
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import okio.IOException
 import retrofit2.HttpException
-import timber.log.Timber
 import javax.inject.Inject
 
 class FeedPhotosPagingSource @Inject constructor(
@@ -25,19 +24,15 @@ class FeedPhotosPagingSource @Inject constructor(
         return try {
             val photos = api.getFeedPhotos(
                 pageIndex,
+                ITEMS_PER_PAGE,
                 ORDER_BY
             )
-
+            val prevKey = if (pageIndex == STARTING_PAGE_INDEX) null else pageIndex - 1
             val nextKey =
-                if (photos.isEmpty()) {
-                    null
-                } else {
-                    pageIndex + (params.loadSize / DEFAULT_ITEM_NUMBER_PER_PAGE)
-                }
-
+                if (photos.isEmpty()) null else pageIndex + 1
             LoadResult.Page(
                 data = photos,
-                prevKey = if (pageIndex == STARTING_PAGE_INDEX) null else pageIndex,
+                prevKey = prevKey,
                 nextKey = nextKey
             )
         } catch (e: IOException) {
@@ -48,7 +43,7 @@ class FeedPhotosPagingSource @Inject constructor(
     }
 
     companion object {
-        private const val DEFAULT_ITEM_NUMBER_PER_PAGE = 10
+        private const val ITEMS_PER_PAGE = 12
         private const val STARTING_PAGE_INDEX = 1
         private const val ORDER_BY = "popular"
     }

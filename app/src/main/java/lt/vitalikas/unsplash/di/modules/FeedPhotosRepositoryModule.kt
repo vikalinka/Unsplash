@@ -18,5 +18,5 @@ abstract class FeedPhotosRepositoryModule {
     abstract fun provideRepository(impl: FeedPhotosRepositoryImpl): FeedPhotosRepository
 
     @Provides
-    fun provideDao(): FeedPhotosDao = Database.instance.feedPhotoDao()
+    fun provideDao(): FeedPhotosDao = Database.instance.feedPhotosDao()
 }

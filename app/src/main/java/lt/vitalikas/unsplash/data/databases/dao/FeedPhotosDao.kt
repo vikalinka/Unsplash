@@ -17,8 +17,8 @@ interface FeedPhotosDao {
     )
     suspend fun insertAllFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
 
-    @Query("SELECT * FROM ${FeedPhotosContract.TABLE_NAME}")
-    fun getPagingSource(): PagingSource<Int, FeedPhotoEntity>
+    @Query("SELECT * FROM ${FeedPhotosContract.TABLE_NAME} WHERE ${FeedPhotosContract.Columns.ID} = :id")
+    fun getPagingSource(id: String): PagingSource<Int, FeedPhotoEntity>
 
     @Query("DELETE FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun deleteAllFeedPhotos()

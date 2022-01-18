@@ -15,7 +15,7 @@ import lt.vitalikas.unsplash.data.databases.entities.FeedUserEntity
 
 abstract class DatabaseDao : RoomDatabase() {
 
-    abstract fun feedPhotoDao(): FeedPhotosDao
+    abstract fun feedPhotosDao(): FeedPhotosDao
     abstract fun feedUserDao(): FeedUserDao
 
     companion object {
