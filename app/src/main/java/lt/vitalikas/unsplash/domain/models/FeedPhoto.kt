@@ -45,18 +45,18 @@ data class FeedPhoto(
         @Json(name = "twitter_username")
         val twitter: String?,
         @Json(name = "profile_image")
-        val image: ProfileImage,
-        val links: Link
+        val imageUser: UserProfileImage,
+        val links: UserLink
     ) {
         @JsonClass(generateAdapter = true)
-        data class ProfileImage(
+        data class UserProfileImage(
             val small: String,
             val medium: String,
             val large: String
         )
 
         @JsonClass(generateAdapter = true)
-        data class Link(
+        data class UserLink(
             val self: String,
             val html: String,
             val photos: String,

@@ -25,7 +25,7 @@ class FeedAdapter :
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.user.image.medium)
+                .load(item.user.imageUser.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)
