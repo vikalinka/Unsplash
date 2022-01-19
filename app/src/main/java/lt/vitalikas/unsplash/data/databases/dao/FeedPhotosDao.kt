@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.databases.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
+import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 @Dao
 interface FeedPhotosDao {
@@ -17,8 +18,8 @@ interface FeedPhotosDao {
     )
     suspend fun insertAllFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
 
-    @Query("SELECT * FROM ${FeedPhotosContract.TABLE_NAME} WHERE ${FeedPhotosContract.Columns.ID} = :id")
-    fun getPagingSource(id: String): PagingSource<Int, FeedPhotoEntity>
+    @Query("SELECT * FROM ${FeedPhotosContract.TABLE_NAME}")
+    fun getPagingSource(): PagingSource<Int, FeedPhotoEntity>
 
     @Query("DELETE FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun deleteAllFeedPhotos()

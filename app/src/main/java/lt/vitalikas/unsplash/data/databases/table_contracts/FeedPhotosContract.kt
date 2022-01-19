@@ -5,6 +5,8 @@ object FeedPhotosContract {
     const val TABLE_NAME = "feed_photos"
 
     object Columns {
+        const val USER_ID = "user_id"
+
         const val ID = "id"
         const val CREATED_AT = "created_at"
         const val UPDATED_AT = "updated_at"
@@ -16,7 +18,6 @@ object FeedPhotosContract {
         const val LIKED_BY_USER = "liked_by_user"
         const val DESCRIPTION = "description"
 
-        const val USER = "user"
         const val CURRENT_USER_FEED_COLLECTIONS = "current_user_collections"
         const val URLS = "urls"
         const val LINKS = "links"

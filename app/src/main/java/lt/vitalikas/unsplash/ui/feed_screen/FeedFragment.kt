@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R

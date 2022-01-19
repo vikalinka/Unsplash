@@ -3,14 +3,14 @@ package lt.vitalikas.unsplash.data.databases.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import lt.vitalikas.unsplash.data.databases.entities.FeedUserEntity
+import lt.vitalikas.unsplash.data.databases.entities.UserEntity
 
 @Dao
 interface FeedUserDao {
 
     @Insert(
-        entity = FeedUserEntity::class,
+        entity = UserEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
-    suspend fun insertFeedUser(feedUser: FeedUserEntity)
+    suspend fun insertFeedUser(feedUser: UserEntity)
 }

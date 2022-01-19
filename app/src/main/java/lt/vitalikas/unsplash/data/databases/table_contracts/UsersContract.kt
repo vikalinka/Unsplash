@@ -1,12 +1,10 @@
 package lt.vitalikas.unsplash.data.databases.table_contracts
 
-object FeedUsersContract {
+object UsersContract {
 
     const val TABLE_NAME = "feed_users"
 
     object Columns {
-        const val FEED_PHOTO_ID = "feed_photo_id"
-
         const val ID = "id"
         const val USERNAME = "username"
         const val NAME = "name"

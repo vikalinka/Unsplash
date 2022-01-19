@@ -1,5 +1,6 @@
 package lt.vitalikas.unsplash.data.repositories
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -17,15 +18,18 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     private val dao: FeedPhotosDao
 ) : FeedPhotosRepository {
 
-    override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
+    @ExperimentalPagingApi
+    override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhotoEntity>> {
+        val pagingSourceFactory = {
+            dao.getPagingSource()
+        }
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = {
-                FeedPhotosPagingSource(api)
-            }
+            remoteMediator = FeedPhotosRemoteMediator(api),
+            pagingSourceFactory = pagingSourceFactory
         ).flow
     }
 
