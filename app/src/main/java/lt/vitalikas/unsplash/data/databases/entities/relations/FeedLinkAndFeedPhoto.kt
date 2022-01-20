@@ -2,17 +2,17 @@ package lt.vitalikas.unsplash.data.databases.entities.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import lt.vitalikas.unsplash.data.databases.entities.FeedLinkEntity
 import lt.vitalikas.unsplash.data.databases.entities.FeedPhotoEntity
-import lt.vitalikas.unsplash.data.databases.entities.UserEntity
+import lt.vitalikas.unsplash.data.databases.table_contracts.FeedLinksContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
-import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
 
-data class UserAndFeedPhoto(
+data class FeedLinkAndFeedPhoto(
     @Embedded
-    val user: UserEntity,
+    val user: FeedLinkEntity,
     @Relation(
-        parentColumn = UsersContract.Columns.ID,
-        entityColumn = FeedPhotosContract.Columns.USER_ID
+        parentColumn = FeedLinksContract.Columns.ID,
+        entityColumn = FeedPhotosContract.Columns.FEED_LINK_ID
     )
     val feedPhoto: FeedPhotoEntity
 )

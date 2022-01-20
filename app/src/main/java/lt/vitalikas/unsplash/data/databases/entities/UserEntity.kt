@@ -2,16 +2,49 @@ package lt.vitalikas.unsplash.data.databases.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import lt.vitalikas.unsplash.data.databases.table_contracts.UserLinksContract
+import lt.vitalikas.unsplash.data.databases.table_contracts.UserProfileImagesContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
-import lt.vitalikas.unsplash.domain.models.UserLink
-import lt.vitalikas.unsplash.domain.models.UserProfileImage
 
-@Entity(tableName = UsersContract.TABLE_NAME)
+@Entity(
+    tableName = UsersContract.TABLE_NAME,
+    foreignKeys = [
+        ForeignKey(
+            entity = UserProfileImageEntity::class,
+            parentColumns = [
+                UserProfileImagesContract.Columns.ID
+            ],
+            childColumns = [
+                UsersContract.Columns.USER_PROFILE_IMAGE_ID
+            ],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = UserLinkEntity::class,
+            parentColumns = [
+                UserLinksContract.Columns.ID
+            ],
+            childColumns = [
+                UsersContract.Columns.USER_LINK_ID
+            ],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class UserEntity(
     @PrimaryKey
     @ColumnInfo(name = UsersContract.Columns.ID)
     val id: String,
+
+    // fk
+    @ColumnInfo(name = UsersContract.Columns.USER_PROFILE_IMAGE_ID)
+    val userProfileImageId: Long,
+    // fk
+    @ColumnInfo(name = UsersContract.Columns.USER_LINK_ID)
+    val userLinkId: Long,
+
     @ColumnInfo(name = UsersContract.Columns.USERNAME)
     val username: String,
     @ColumnInfo(name = UsersContract.Columns.NAME)
@@ -31,9 +64,5 @@ data class UserEntity(
     @ColumnInfo(name = UsersContract.Columns.INSTAGRAM_USERNAME)
     val instagram: String?,
     @ColumnInfo(name = UsersContract.Columns.TWITTER_USERNAME)
-    val twitter: String?,
-//    @ColumnInfo(name = UsersContract.Columns.PROFILE_IMAGE)
-//    val imageUser: UserProfileImage,
-//    @ColumnInfo(name = UsersContract.Columns.LINKS)
-//    val links: UserLink
+    val twitter: String?
 )

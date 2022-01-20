@@ -1,15 +1,14 @@
 package lt.vitalikas.unsplash.data.databases.table_contracts
 
-object UserLinksContract {
+object FeedLinksContract {
 
-    const val TABLE_NAME = "user_links"
+    const val TABLE_NAME = "feed_links"
 
     object Columns {
         const val ID = "id"
         const val SELF = "self"
         const val HTML = "html"
-        const val PHOTOS = "photos"
-        const val LIKES = "likes"
-        const val PORTFOLIO = "portfolio"
+        const val DOWNLOAD = "download"
+        const val DOWNLOAD_LOCATION = "download_location"
     }
 }

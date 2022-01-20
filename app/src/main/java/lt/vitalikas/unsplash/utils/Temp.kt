@@ -42,7 +42,7 @@ object Converter {
 
                 fun readInput(): Double {
                     print("Enter $currencyCode exchange rate: ")
-                    return readLine()?.toDoubleOrNull() ?: kotlin.run {
+                    return readLine()?.toDoubleOrNull() ?: run {
                         println("Incorrect input")
                         readInput()
                     }

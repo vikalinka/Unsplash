@@ -5,6 +5,9 @@ object UsersContract {
     const val TABLE_NAME = "feed_users"
 
     object Columns {
+        const val USER_PROFILE_IMAGE_ID = "user_profile_image_id"
+        const val USER_LINK_ID = "user_link_id"
+
         const val ID = "id"
         const val USERNAME = "username"
         const val NAME = "name"
@@ -17,7 +20,6 @@ object UsersContract {
         const val INSTAGRAM_USERNAME = "instagram_username"
         const val TWITTER_USERNAME = "twitter_username"
 
-        const val PROFILE_IMAGE = "profile_image"
         const val LINKS = "links"
     }
 }
