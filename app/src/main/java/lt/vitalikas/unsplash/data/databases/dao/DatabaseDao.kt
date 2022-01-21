@@ -3,8 +3,6 @@ package lt.vitalikas.unsplash.data.databases.dao
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import lt.vitalikas.unsplash.data.databases.entities.*
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
-import lt.vitalikas.unsplash.domain.models.User
 
 @Database(
     entities = [
@@ -12,6 +10,9 @@ import lt.vitalikas.unsplash.domain.models.User
         UserEntity::class,
         UserProfileImageEntity::class,
         UserLinkEntity::class,
+        FeedUrlEntity::class,
+        FeedLinkEntity::class,
+        FeedCollectionEntity::class,
         RemoteKey::class
     ],
     version = DatabaseDao.DB_VERSION
@@ -23,6 +24,9 @@ abstract class DatabaseDao : RoomDatabase() {
     abstract fun feedUserDao(): FeedUserDao
     abstract fun feedUserProfileImageDao(): FeedUserProfileImageDao
     abstract fun feedUserLinkDao(): FeedUserLinkDao
+    abstract fun feedUrlDao(): FeedUrlDao
+    abstract fun feedLinkDao(): FeedLinkDao
+    abstract fun feedCollectionDao(): FeedCollectionDao
     abstract fun remoteKeysDao(): RemoteKeysDao
 
     companion object {

@@ -4,5 +4,5 @@ import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 interface InsertFeedPhotosUseCase {
 
-    suspend fun invoke(feedPhotos: List<FeedPhoto>)
+    suspend fun invoke(feedPhotoEntities: List<FeedPhoto>)
 }

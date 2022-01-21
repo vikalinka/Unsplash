@@ -15,5 +15,5 @@ data class FeedCollection(
     val updatedAt: String,
     @Json(name = "cover_photo")
     val coverPhoto: String?,
-    val user: String?
+    val user: User
 )

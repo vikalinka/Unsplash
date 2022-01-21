@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.databases.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 @Dao
 interface FeedPhotosDao {

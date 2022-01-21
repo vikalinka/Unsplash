@@ -9,7 +9,7 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.FeedUrlsContract
 
 data class FeedUrlAndFeedPhoto(
     @Embedded
-    val user: FeedUrlEntity,
+    val url: FeedUrlEntity,
     @Relation(
         parentColumn = FeedUrlsContract.Columns.ID,
         entityColumn = FeedPhotosContract.Columns.FEED_URL_ID

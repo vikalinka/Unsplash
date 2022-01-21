@@ -12,10 +12,6 @@ class GetFeedPhotosUseCaseImpl @Inject constructor(
     private val photosRepository: FeedPhotosRepository
 ) : GetFeedPhotosUseCase {
 
-    override var feedPhotos: Flow<PagingData<FeedPhotoEntity>>? = null
-
-    override suspend fun invoke(): Flow<PagingData<FeedPhotoEntity>> =
-        photosRepository.getFeedPhotos().also {
-            feedPhotos = it
-        }
+    override suspend fun invoke(): Flow<PagingData<FeedPhoto>> =
+        photosRepository.getFeedPhotos()
 }

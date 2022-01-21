@@ -21,7 +21,14 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val feedUserDao = Database.instance.feedUserDao()
     private val feedUserProfileImageDao = Database.instance.feedUserProfileImageDao()
     private val feedUserLinkDao = Database.instance.feedUserLinkDao()
+    private val feedUrlDao = Database.instance.feedUrlDao()
+    private val feedLinkDao = Database.instance.feedLinkDao()
+    private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
+
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
+    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -72,7 +79,10 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         nextKey = nextKey
                     )
                 }
+                remoteKeysDao.insertAllKeys(keys)
+
                 val feedPhotos = mutableListOf<FeedPhotoEntity>()
+                var feedCollections: List<FeedCollectionEntity> = listOf()
                 photos.map { feed ->
                     val userProfileImage = UserProfileImageEntity(
                         id = 0L,
@@ -117,6 +127,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         small = feed.urls.small,
                         thumb = feed.urls.thumb
                     )
+                    feedUrlDao.insertFeedUrl(feedUrl)
 
                     val feedLink = FeedLinkEntity(
                         id = 0L,
@@ -125,6 +136,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         download = feed.links.download,
                         downloadLocation = feed.links.downloadLocation
                     )
+                    feedLinkDao.insertFeedLink(feedLink)
 
                     val feedPhoto = FeedPhotoEntity(
                         id = feed.id,
@@ -141,11 +153,23 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         likedByUser = feed.likedByUser,
                         description = feed.description
                     )
-                    feedPhotosDao.insertAllFeedPhotos(listOf(feedPhoto))
+                    feedPhotos.add(feedPhoto)
+
+                    feedCollections = feed.currentUserFeedCollections.map { collection ->
+                        FeedCollectionEntity(
+                            id = collection.id,
+                            feedPhotoId = feedPhoto.id,
+                            title = collection.title,
+                            publishedAt = collection.publishedAt,
+                            lastCollectedAt = collection.lastCollectedAt,
+                            updatedAt = collection.updatedAt,
+                            userId = user.id,
+                            coverPhoto = collection.coverPhoto
+                        )
+                    }
                 }
-
-                remoteKeysDao.insertAllKeys(keys)
-
+                feedPhotosDao.insertAllFeedPhotos(feedPhotos)
+                feedCollectionDao.insertAllFeedCollections(feedCollections)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPagination)
         } catch (e: IOException) {

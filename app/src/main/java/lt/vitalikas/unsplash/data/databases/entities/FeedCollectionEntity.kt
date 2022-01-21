@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedCollectionsContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
+import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
 
 @Entity(
     tableName = FeedCollectionsContract.TABLE_NAME,
@@ -19,6 +20,16 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
                 FeedCollectionsContract.Columns.FEED_PHOTO_ID
             ],
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = [
+                UsersContract.Columns.ID
+            ],
+            childColumns = [
+                FeedCollectionsContract.Columns.USER_ID
+            ],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
@@ -27,9 +38,12 @@ data class FeedCollectionEntity(
     @ColumnInfo(name = FeedCollectionsContract.Columns.ID)
     val id: Int,
 
-    //fk
-    @ColumnInfo(name = FeedCollectionsContract.Columns.ID)
+    // fk
+    @ColumnInfo(name = FeedCollectionsContract.Columns.FEED_PHOTO_ID)
     val feedPhotoId: String,
+    // fk
+    @ColumnInfo(name = FeedCollectionsContract.Columns.USER_ID)
+    val userId: String,
 
     @ColumnInfo(name = FeedCollectionsContract.Columns.TITLE)
     val title: String,
@@ -40,7 +54,5 @@ data class FeedCollectionEntity(
     @ColumnInfo(name = FeedCollectionsContract.Columns.UPDATED_AT)
     val updatedAt: String,
     @ColumnInfo(name = FeedCollectionsContract.Columns.COVER_PHOTO)
-    val coverPhoto: String?,
-    @ColumnInfo(name = FeedCollectionsContract.Columns.USER)
-    val user: String?
+    val coverPhoto: String?
 )

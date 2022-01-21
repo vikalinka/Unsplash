@@ -1,27 +1,23 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import lt.vitalikas.unsplash.data.apis.UnsplashApi
-import lt.vitalikas.unsplash.data.databases.dao.FeedPhotosDao
+import lt.vitalikas.unsplash.data.databases.Database
 import lt.vitalikas.unsplash.data.databases.entities.FeedPhotoEntity
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
-import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
 import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
-    private val api: UnsplashApi,
-    private val dao: FeedPhotosDao
+    private val api: UnsplashApi
 ) : FeedPhotosRepository {
 
     @ExperimentalPagingApi
-    override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhotoEntity>> {
+    override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
         val pagingSourceFactory = {
-            dao.getPagingSource()
+            Database.instance.feedPhotosDao().getPagingSource()
         }
         return Pager(
             config = PagingConfig(
@@ -30,7 +26,105 @@ class FeedPhotosRepositoryImpl @Inject constructor(
             ),
             remoteMediator = FeedPhotosRemoteMediator(api),
             pagingSourceFactory = pagingSourceFactory
-        ).flow
+        ).flow.map { pagingData ->
+            pagingData.map { entity ->
+
+                val feedUser =
+                    Database.instance.feedUserDao().getUserAndFeedPhotoWithUserId(entity.userId)
+                        ?: error("user with id = ${entity.userId} not found")
+                val userProfileImageId = feedUser.user.userProfileImageId
+                val userLinkId = feedUser.user.userLinkId
+
+                val feedUserProfileImage = Database.instance.feedUserProfileImageDao()
+                    .getFeedUserProfileImageAndUserWithFeedUserProfileImageId(
+                        userProfileImageId
+                    ) ?: error("profile image with id = $userProfileImageId not found")
+                val userProfileImage = UserProfileImage(
+                    feedUserProfileImage.userProfileImage.small,
+                    feedUserProfileImage.userProfileImage.medium,
+                    feedUserProfileImage.userProfileImage.large
+                )
+
+                val feedUserLink = Database.instance.feedUserLinkDao()
+                    .getFeedUserLinkAndUserWithFeedUserLinkId(userLinkId)
+                    ?: error("user link with id = $userLinkId not found")
+                val userLink = UserLink(
+                    feedUserLink.userLink.self,
+                    feedUserLink.userLink.html,
+                    feedUserLink.userLink.photos,
+                    feedUserLink.userLink.likes,
+                    feedUserLink.userLink.portfolio
+                )
+
+                val user = User(
+                    id = feedUser.user.id,
+                    username = feedUser.user.username,
+                    name = feedUser.user.name,
+                    portfolioUrl = feedUser.user.portfolioUrl,
+                    bio = feedUser.user.bio,
+                    location = feedUser.user.location,
+                    totalLikes = feedUser.user.totalLikes,
+                    totalPhotos = feedUser.user.totalPhotos,
+                    totalCollections = feedUser.user.totalCollections,
+                    instagram = feedUser.user.instagram,
+                    twitter = feedUser.user.twitter,
+                    imageUser = userProfileImage,
+                    links = userLink
+                )
+
+                val feedCollections = Database.instance.feedCollectionDao().getAllFeedCollections()
+                    ?: error("collections not found")
+
+                val feedUrl = Database.instance.feedUrlDao()
+                    .getFeedUrlAndFeedPhotoWithFeedUrlId(entity.feedUrlId)
+                    ?: error("url with id = ${entity.feedUrlId} not found")
+                val url = FeedUrl(
+                    raw = feedUrl.url.raw,
+                    full = feedUrl.url.full,
+                    regular = feedUrl.url.regular,
+                    small = feedUrl.url.small,
+                    thumb = feedUrl.url.thumb
+                )
+
+                val feedLink = Database.instance.feedLinkDao()
+                    .getFeedLinkAndFeedPhotoWithFeedLinkId(entity.feedLinkId)
+                    ?: error("link with id = ${entity.feedLinkId} not found")
+                val link = FeedLink(
+                    self = feedLink.link.self,
+                    html = feedLink.link.html,
+                    download = feedLink.link.download,
+                    downloadLocation = feedLink.link.downloadLocation
+                )
+
+                FeedPhoto(
+                    id = entity.id,
+                    createdAt = entity.createdAt,
+                    updatedAt = entity.updatedAt,
+                    width = entity.width,
+                    height = entity.height,
+                    color = entity.color,
+                    blurHash = entity.blurHash,
+                    likes = entity.likes,
+                    likedByUser = entity.likedByUser,
+                    description = entity.description,
+                    user = user,
+                    currentUserFeedCollections = feedCollections.map { collection ->
+                        FeedCollection(
+                            id = collection.id,
+                            title = collection.title,
+                            publishedAt = collection.publishedAt,
+                            lastCollectedAt = collection.lastCollectedAt,
+                            updatedAt = collection.updatedAt,
+                            coverPhoto = collection.coverPhoto,
+                            user = user
+                        )
+                    },
+                    urls = url,
+                    links = link
+                )
+            }
+
+        }
     }
 
 
@@ -38,7 +132,7 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         api.getFeedPhotoDetails(id)
 
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
-        dao.insertAllFeedPhotos(feedPhotos)
+        Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
 
     companion object {
         private const val PAGE_SIZE = 10
