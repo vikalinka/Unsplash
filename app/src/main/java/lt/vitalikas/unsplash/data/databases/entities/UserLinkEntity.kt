@@ -7,9 +7,9 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.UserLinksContract
 
 @Entity(tableName = UserLinksContract.TABLE_NAME)
 data class UserLinkEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = UserLinksContract.Columns.ID)
-    val id: Long,
+    val id: String,
     @ColumnInfo(name = UserLinksContract.Columns.SELF)
     val self: String,
     @ColumnInfo(name = UserLinksContract.Columns.HTML)

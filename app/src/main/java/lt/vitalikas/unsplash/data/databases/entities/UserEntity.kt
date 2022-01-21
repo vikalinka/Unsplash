@@ -9,29 +9,29 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.UserProfileImagesCon
 import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
 
 @Entity(
-    tableName = UsersContract.TABLE_NAME,
-    foreignKeys = [
-        ForeignKey(
-            entity = UserProfileImageEntity::class,
-            parentColumns = [
-                UserProfileImagesContract.Columns.ID
-            ],
-            childColumns = [
-                UsersContract.Columns.USER_PROFILE_IMAGE_ID
-            ],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = UserLinkEntity::class,
-            parentColumns = [
-                UserLinksContract.Columns.ID
-            ],
-            childColumns = [
-                UsersContract.Columns.USER_LINK_ID
-            ],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+    tableName = UsersContract.TABLE_NAME
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = UserProfileImageEntity::class,
+//            parentColumns = [
+//                UserProfileImagesContract.Columns.ID
+//            ],
+//            childColumns = [
+//                UsersContract.Columns.USER_PROFILE_IMAGE_ID
+//            ],
+//            onDelete = ForeignKey.CASCADE
+//        ),
+//        ForeignKey(
+//            entity = UserLinkEntity::class,
+//            parentColumns = [
+//                UserLinksContract.Columns.ID
+//            ],
+//            childColumns = [
+//                UsersContract.Columns.USER_LINK_ID
+//            ],
+//            onDelete = ForeignKey.CASCADE
+//        )
+//    ]
 )
 data class UserEntity(
     @PrimaryKey
@@ -40,10 +40,10 @@ data class UserEntity(
 
     // fk
     @ColumnInfo(name = UsersContract.Columns.USER_PROFILE_IMAGE_ID)
-    val userProfileImageId: Long,
+    val userProfileImageId: String,
     // fk
     @ColumnInfo(name = UsersContract.Columns.USER_LINK_ID)
-    val userLinkId: Long,
+    val userLinkId: String,
 
     @ColumnInfo(name = UsersContract.Columns.USERNAME)
     val username: String,

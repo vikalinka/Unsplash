@@ -18,5 +18,5 @@ interface FeedUserProfileImageDao {
     suspend fun insertFeedUserProfileImage(image: UserProfileImageEntity)
 
     @Query("SELECT * FROM ${UserProfileImagesContract.TABLE_NAME} WHERE ${UserProfileImagesContract.Columns.ID} = :id")
-    suspend fun getFeedUserProfileImageAndUserWithFeedUserProfileImageId(id: Long): UserProfileImageAndUser?
+    suspend fun getFeedUserProfileImageAndUserWithFeedUserProfileImageId(id: String): UserProfileImageAndUser?
 }

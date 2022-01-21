@@ -20,5 +20,5 @@ interface FeedUrlDao {
     suspend fun insertFeedUrl(url: FeedUrlEntity)
 
     @Query("SELECT * FROM ${FeedUrlsContract.TABLE_NAME} WHERE ${FeedUrlsContract.Columns.ID} = :id")
-    suspend fun getFeedUrlAndFeedPhotoWithFeedUrlId(id: Long): FeedUrlAndFeedPhoto?
+    suspend fun getFeedUrlAndFeedPhotoWithFeedUrlId(id: String): FeedUrlAndFeedPhoto?
 }

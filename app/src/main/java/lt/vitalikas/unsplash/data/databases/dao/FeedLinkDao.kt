@@ -19,5 +19,5 @@ interface FeedLinkDao {
     suspend fun insertFeedLink(feedLink: FeedLinkEntity)
 
     @Query("SELECT * FROM ${FeedLinksContract.TABLE_NAME} WHERE ${FeedLinksContract.Columns.ID} = :id")
-    suspend fun getFeedLinkAndFeedPhotoWithFeedLinkId(id: Long): FeedLinkAndFeedPhoto?
+    suspend fun getFeedLinkAndFeedPhotoWithFeedLinkId(id: String): FeedLinkAndFeedPhoto?
 }

@@ -10,39 +10,39 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.FeedUrlsContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
 
 @Entity(
-    tableName = FeedPhotosContract.TABLE_NAME,
-    foreignKeys = [
-        ForeignKey(
-            entity = UserEntity::class,
-            parentColumns = [
-                UsersContract.Columns.ID
-            ],
-            childColumns = [
-                FeedPhotosContract.Columns.USER_ID
-            ],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = FeedUrlEntity::class,
-            parentColumns = [
-                FeedUrlsContract.Columns.ID
-            ],
-            childColumns = [
-                FeedPhotosContract.Columns.FEED_URL_ID
-            ],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = FeedLinkEntity::class,
-            parentColumns = [
-                FeedLinksContract.Columns.ID
-            ],
-            childColumns = [
-                FeedPhotosContract.Columns.FEED_LINK_ID
-            ],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
+    tableName = FeedPhotosContract.TABLE_NAME
+//    foreignKeys = [
+//        ForeignKey(
+//            entity = UserEntity::class,
+//            parentColumns = [
+//                UsersContract.Columns.ID
+//            ],
+//            childColumns = [
+//                FeedPhotosContract.Columns.USER_ID
+//            ],
+//            onDelete = ForeignKey.CASCADE
+//        ),
+//        ForeignKey(
+//            entity = FeedUrlEntity::class,
+//            parentColumns = [
+//                FeedUrlsContract.Columns.ID
+//            ],
+//            childColumns = [
+//                FeedPhotosContract.Columns.FEED_URL_ID
+//            ],
+//            onDelete = ForeignKey.CASCADE
+//        ),
+//        ForeignKey(
+//            entity = FeedLinkEntity::class,
+//            parentColumns = [
+//                FeedLinksContract.Columns.ID
+//            ],
+//            childColumns = [
+//                FeedPhotosContract.Columns.FEED_LINK_ID
+//            ],
+//            onDelete = ForeignKey.CASCADE
+//        )
+//    ]
 )
 data class FeedPhotoEntity(
     @PrimaryKey
@@ -54,10 +54,10 @@ data class FeedPhotoEntity(
     val userId: String,
     // fk
     @ColumnInfo(name = FeedPhotosContract.Columns.FEED_URL_ID)
-    val feedUrlId: Long,
+    val feedUrlId: String,
     // fk
     @ColumnInfo(name = FeedPhotosContract.Columns.FEED_LINK_ID)
-    val feedLinkId: Long,
+    val feedLinkId: String,
 
     @ColumnInfo(name = FeedPhotosContract.Columns.CREATED_AT)
     val createdAt: String,

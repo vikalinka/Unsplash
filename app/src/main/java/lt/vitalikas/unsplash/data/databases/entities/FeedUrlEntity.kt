@@ -7,8 +7,8 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.FeedUrlsContract
 
 @Entity(tableName = FeedUrlsContract.TABLE_NAME)
 data class FeedUrlEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    @PrimaryKey
+    val id: String,
     @ColumnInfo(name = FeedUrlsContract.Columns.RAW)
     val raw: String,
     @ColumnInfo(name = FeedUrlsContract.Columns.FULL)

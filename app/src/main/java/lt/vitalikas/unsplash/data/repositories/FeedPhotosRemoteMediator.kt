@@ -10,6 +10,7 @@ import lt.vitalikas.unsplash.data.databases.Database
 import lt.vitalikas.unsplash.data.databases.entities.*
 import okio.IOException
 import retrofit2.HttpException
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -25,10 +26,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val feedLinkDao = Database.instance.feedLinkDao()
     private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
-
-    override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH
-    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -84,28 +81,31 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 val feedPhotos = mutableListOf<FeedPhotoEntity>()
                 var feedCollections: List<FeedCollectionEntity> = listOf()
                 photos.map { feed ->
+
                     val userProfileImage = UserProfileImageEntity(
-                        id = 0L,
+                        id = feed.user.id,
                         small = feed.user.imageUser.small,
                         medium = feed.user.imageUser.medium,
                         large = feed.user.imageUser.large
                     )
+                    Timber.d("user profile image = $userProfileImage")
                     feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
 
                     val userLink = UserLinkEntity(
-                        id = 0L,
+                        id = feed.user.id,
                         self = feed.user.links.self,
                         html = feed.user.links.html,
                         photos = feed.user.links.photos,
                         likes = feed.user.links.likes,
                         portfolio = feed.user.links.portfolio,
                     )
+                    Timber.d("user link = $userLink")
                     feedUserLinkDao.insertFeedUserLink(userLink)
 
                     val user = UserEntity(
                         id = feed.user.id,
-                        userProfileImageId = userProfileImage.id,
-                        userLinkId = userLink.id,
+                        userProfileImageId = feed.user.id,
+                        userLinkId = feed.user.id,
                         username = feed.user.username,
                         name = feed.user.name,
                         portfolioUrl = feed.user.portfolioUrl,
@@ -117,10 +117,11 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         instagram = feed.user.instagram,
                         twitter = feed.user.twitter
                     )
+                    Timber.d("user = $user")
                     feedUserDao.insertFeedUser(user)
 
                     val feedUrl = FeedUrlEntity(
-                        id = 0L,
+                        id = feed.user.id,
                         raw = feed.urls.raw,
                         full = feed.urls.full,
                         regular = feed.urls.regular,
@@ -130,7 +131,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                     feedUrlDao.insertFeedUrl(feedUrl)
 
                     val feedLink = FeedLinkEntity(
-                        id = 0L,
+                        id = feed.user.id,
                         self = feed.links.self,
                         html = feed.links.html,
                         download = feed.links.download,
@@ -141,8 +142,8 @@ class FeedPhotosRemoteMediator @Inject constructor(
                     val feedPhoto = FeedPhotoEntity(
                         id = feed.id,
                         userId = user.id,
-                        feedUrlId = feedUrl.id,
-                        feedLinkId = feedLink.id,
+                        feedUrlId = feed.user.id,
+                        feedLinkId = feed.user.id,
                         createdAt = feed.createdAt,
                         updatedAt = feed.updatedAt,
                         width = feed.width,

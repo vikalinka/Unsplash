@@ -7,9 +7,9 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.UserProfileImagesCon
 
 @Entity(tableName = UserProfileImagesContract.TABLE_NAME)
 data class UserProfileImageEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = UserProfileImagesContract.Columns.ID)
-    val id: Long,
+    val id: String,
     @ColumnInfo(name = UserProfileImagesContract.Columns.SMALL)
     val small: String,
     @ColumnInfo(name = UserProfileImagesContract.Columns.MEDIUM)
