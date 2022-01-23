@@ -27,6 +27,10 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
 
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
+    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, FeedPhotoEntity>
@@ -38,16 +42,14 @@ class FeedPhotosRemoteMediator @Inject constructor(
             }
             LoadType.PREPEND -> {
                 val remoteKey = getRemoteKeyForFirstItem(state)
-                val prevKey = remoteKey?.prevKey ?: return MediatorResult.Success(
-                    endOfPaginationReached = true
-                )
+                val prevKey = remoteKey?.prevKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKey != null)
                 prevKey
             }
             LoadType.APPEND -> {
                 val remoteKey = getRemoteKeyForLastItem(state)
-                val nextKey = remoteKey?.nextKey ?: return MediatorResult.Success(
-                    endOfPaginationReached = true
-                )
+                val nextKey = remoteKey?.nextKey
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKey != null)
                 nextKey
             }
         }
@@ -58,7 +60,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 ITEMS_PER_PAGE,
                 ORDER_BY
             )
-            val endOfPagination = photos.isEmpty()
+            val endOfPaginationReached = photos.isEmpty()
 
             Database.instance.withTransaction {
                 // clear all tables in the database
@@ -68,7 +70,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 }
 
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
-                val nextKey = if (endOfPagination) null else page + 1
+                val nextKey = if (endOfPaginationReached) null else page + 1
                 val keys = photos.map { feedPhoto ->
                     RemoteKey(
                         feedPhotoId = feedPhoto.id,
@@ -172,7 +174,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 feedPhotosDao.insertAllFeedPhotos(feedPhotos)
                 feedCollectionDao.insertAllFeedCollections(feedCollections)
             }
-            return MediatorResult.Success(endOfPaginationReached = endOfPagination)
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
             return MediatorResult.Error(e)
         } catch (e: HttpException) {
@@ -180,6 +182,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
         }
     }
 
+    // LoadType.PREPEND
     private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
         state.pages.firstOrNull { page ->
             page.data.isNotEmpty()
@@ -187,6 +190,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
             remoteKeysDao.getRemoteKeyByFeedPhotoId(feedPhoto.id)
         }
 
+    // LoadType.APPEND
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
         state.pages.lastOrNull { page ->
             page.data.isNotEmpty()
@@ -194,6 +198,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
             remoteKeysDao.getRemoteKeyByFeedPhotoId(feedPhoto.id)
         }
 
+    // LoadType.REFRESH
     private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
         state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { id ->
@@ -202,7 +207,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
         }
 
     companion object {
-        private const val ITEMS_PER_PAGE = 12
+        private const val ITEMS_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
         private const val ORDER_BY = "popular"
     }

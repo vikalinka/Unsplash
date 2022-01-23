@@ -14,7 +14,7 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     private val api: UnsplashApi
 ) : FeedPhotosRepository {
 
-    @ExperimentalPagingApi
+    @OptIn(ExperimentalPagingApi::class)
     override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
         val pagingSourceFactory = {
             Database.instance.feedPhotosDao().getPagingSource()
@@ -123,10 +123,8 @@ class FeedPhotosRepositoryImpl @Inject constructor(
                     links = link
                 )
             }
-
         }
     }
-
 
     override suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails =
         api.getFeedPhotoDetails(id)
