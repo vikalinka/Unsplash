@@ -23,7 +23,8 @@ class FeedViewModel @Inject constructor(
     val feedState = _feedState.asStateFlow()
 
     suspend fun getFeedPhotos() {
-        val flow = getFeedPhotosUseCase.invoke().cachedIn(scope)
+        val flow = getFeedPhotosUseCase.invoke()
+            .cachedIn(scope)
         flow
             .onEach { pagingData ->
                 _feedState.value = FeedState.Success(pagingData)

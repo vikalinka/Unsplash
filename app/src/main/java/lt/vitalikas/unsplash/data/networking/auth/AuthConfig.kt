@@ -1,8 +1,9 @@
-package lt.vitalikas.unsplash.data.networking
+package lt.vitalikas.unsplash.data.networking.auth
 
 import net.openid.appauth.ResponseTypeValues
 
 object AuthConfig {
+
     const val AUTH_ENDPOINT = "https://unsplash.com/oauth/authorize"
     const val TOKEN_ENDPOINT = "https://unsplash.com/oauth/token"
     const val CALLBACK_ENDPOINT = "unsplash://lt.vitalikas.unsplash/callback"

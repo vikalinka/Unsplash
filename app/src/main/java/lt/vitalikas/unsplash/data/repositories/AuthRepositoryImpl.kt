@@ -1,8 +1,8 @@
 package lt.vitalikas.unsplash.data.repositories
 
 import android.net.Uri
-import lt.vitalikas.unsplash.data.networking.AuthConfig
-import lt.vitalikas.unsplash.data.networking.AuthToken
+import lt.vitalikas.unsplash.data.networking.auth.AuthConfig
+import lt.vitalikas.unsplash.data.networking.auth.AuthToken
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
 import net.openid.appauth.*
 import timber.log.Timber

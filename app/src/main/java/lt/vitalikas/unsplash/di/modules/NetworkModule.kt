@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.data.apis.UnsplashApi
-import lt.vitalikas.unsplash.data.networking.AuthTokenInterceptor
+import lt.vitalikas.unsplash.data.networking.auth.AuthTokenInterceptor
 import lt.vitalikas.unsplash.di.qualifiers.AuthTokenInterceptorQualifier
 import lt.vitalikas.unsplash.di.qualifiers.LoggingInterceptorQualifier
 import okhttp3.Interceptor

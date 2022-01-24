@@ -11,7 +11,7 @@ import lt.vitalikas.unsplash.R
 
 @Module
 @InstallIn(SingletonComponent::class)
-class OnboardingSharedPrefsModule {
+class SharedPrefsModule {
 
     @Provides
     fun provideContext(application: Application): Context = application

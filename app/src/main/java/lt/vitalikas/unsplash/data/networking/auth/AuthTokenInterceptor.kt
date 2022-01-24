@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.data.networking
+package lt.vitalikas.unsplash.data.networking.auth
 
 import okhttp3.Interceptor
 import okhttp3.Response
