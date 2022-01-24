@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.databases.entities.UserLinkEntity
-import lt.vitalikas.unsplash.data.databases.entities.relations.UserLinkAndUser
+import lt.vitalikas.unsplash.data.databases.relations.UserLinkAndUser
 import lt.vitalikas.unsplash.data.databases.table_contracts.UserLinksContract
 
 @Dao

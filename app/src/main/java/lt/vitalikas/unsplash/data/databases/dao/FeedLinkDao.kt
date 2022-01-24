@@ -5,9 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.databases.entities.FeedLinkEntity
-import lt.vitalikas.unsplash.data.databases.entities.relations.FeedLinkAndFeedPhoto
+import lt.vitalikas.unsplash.data.databases.relations.FeedLinkAndFeedPhoto
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedLinksContract
-import lt.vitalikas.unsplash.domain.models.FeedLink
 
 @Dao
 interface FeedLinkDao {

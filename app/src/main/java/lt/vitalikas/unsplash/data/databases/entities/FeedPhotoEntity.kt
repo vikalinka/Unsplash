@@ -1,13 +1,12 @@
 package lt.vitalikas.unsplash.data.databases.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import android.icu.util.Calendar
+import androidx.room.*
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedLinksContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedPhotosContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.FeedUrlsContract
 import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
+import lt.vitalikas.unsplash.data.databases.type_converters.CalendarConverter
 
 @Entity(
     tableName = FeedPhotosContract.TABLE_NAME
@@ -44,6 +43,7 @@ import lt.vitalikas.unsplash.data.databases.table_contracts.UsersContract
 //        )
 //    ]
 )
+@TypeConverters(CalendarConverter::class)
 data class FeedPhotoEntity(
     @PrimaryKey
     @ColumnInfo(name = FeedPhotosContract.Columns.ID)
@@ -76,5 +76,7 @@ data class FeedPhotoEntity(
     @ColumnInfo(name = FeedPhotosContract.Columns.LIKED_BY_USER)
     val likedByUser: Boolean,
     @ColumnInfo(name = FeedPhotosContract.Columns.DESCRIPTION)
-    val description: String?
+    val description: String?,
+    @ColumnInfo(name = FeedPhotosContract.Columns.LAST_UPDATED_AT)
+    val lastUpdatedAt: Calendar
 )

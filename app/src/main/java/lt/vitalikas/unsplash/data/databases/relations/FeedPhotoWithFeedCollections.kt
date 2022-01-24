@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.data.databases.entities.relations
+package lt.vitalikas.unsplash.data.databases.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation

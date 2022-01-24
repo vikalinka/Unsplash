@@ -19,5 +19,6 @@ object FeedPhotosContract {
         const val LIKES = "likes"
         const val LIKED_BY_USER = "liked_by_user"
         const val DESCRIPTION = "description"
+        const val LAST_UPDATED_AT = "last_updated_at"
     }
 }

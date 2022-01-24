@@ -1,5 +1,6 @@
 package lt.vitalikas.unsplash.data.repositories
 
+import android.icu.util.Calendar
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -10,7 +11,7 @@ import lt.vitalikas.unsplash.data.databases.Database
 import lt.vitalikas.unsplash.data.databases.entities.*
 import okio.IOException
 import retrofit2.HttpException
-import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -27,9 +28,16 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
 
-    override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH
-    }
+    override suspend fun initialize(): InitializeAction =
+        if (feedPhotosDao.getFeedPhotoCount() > 0) {
+            val timestamp = Calendar.getInstance().time.time
+            val outdated = feedPhotosDao.outdated(timestamp, CACHE_TIMEOUT)
+            if (outdated) {
+                InitializeAction.LAUNCH_INITIAL_REFRESH
+            } else {
+                InitializeAction.SKIP_INITIAL_REFRESH
+            }
+        } else InitializeAction.LAUNCH_INITIAL_REFRESH
 
     override suspend fun load(
         loadType: LoadType,
@@ -90,7 +98,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         medium = feed.user.imageUser.medium,
                         large = feed.user.imageUser.large
                     )
-                    Timber.d("user profile image = $userProfileImage")
                     feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
 
                     val userLink = UserLinkEntity(
@@ -101,7 +108,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         likes = feed.user.links.likes,
                         portfolio = feed.user.links.portfolio,
                     )
-                    Timber.d("user link = $userLink")
                     feedUserLinkDao.insertFeedUserLink(userLink)
 
                     val user = UserEntity(
@@ -119,7 +125,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         instagram = feed.user.instagram,
                         twitter = feed.user.twitter
                     )
-                    Timber.d("user = $user")
                     feedUserDao.insertFeedUser(user)
 
                     val feedUrl = FeedUrlEntity(
@@ -154,7 +159,8 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         blurHash = feed.blurHash,
                         likes = feed.likes,
                         likedByUser = feed.likedByUser,
-                        description = feed.description
+                        description = feed.description,
+                        lastUpdatedAt = Calendar.getInstance()
                     )
                     feedPhotos.add(feedPhoto)
 
@@ -210,5 +216,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
         private const val ITEMS_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
         private const val ORDER_BY = "popular"
+        private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(15, TimeUnit.MINUTES)
     }
 }
