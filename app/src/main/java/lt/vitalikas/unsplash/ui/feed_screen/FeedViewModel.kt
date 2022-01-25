@@ -7,13 +7,16 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
+import lt.vitalikas.unsplash.data.networking.status_tracker.map
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    private val getFeedPhotosUseCase: GetFeedPhotosUseCase
+    private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
+    private val networkStatusTracker: NetworkStatusTracker
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -21,6 +24,12 @@ class FeedViewModel @Inject constructor(
     private val _feedState =
         MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
     val feedState = _feedState.asStateFlow()
+
+    @ExperimentalCoroutinesApi
+    private val networkStatus = networkStatusTracker.networkStatus.map(
+        onUnavailable = {  },
+        onAvailable = { getFeedPhotos() }
+    )
 
     suspend fun getFeedPhotos() {
         val flow = getFeedPhotosUseCase.invoke()

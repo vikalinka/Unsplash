@@ -1,11 +1,14 @@
 package lt.vitalikas.unsplash.di.modules
 
+import android.app.Application
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.data.apis.UnsplashApi
 import lt.vitalikas.unsplash.data.networking.auth.AuthTokenInterceptor
+import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.di.qualifiers.AuthTokenInterceptorQualifier
 import lt.vitalikas.unsplash.di.qualifiers.LoggingInterceptorQualifier
 import okhttp3.Interceptor
@@ -18,6 +21,13 @@ import retrofit2.create
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
+    @Provides
+    fun provideContext(app: Application): Context = app
+
+    @Provides
+    fun provideNetworkStatusTracker(context: Context): NetworkStatusTracker =
+        NetworkStatusTracker(context)
 
     @Provides
     @LoggingInterceptorQualifier

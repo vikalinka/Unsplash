@@ -46,7 +46,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
                     errorState?.let { state ->
                         state.error.message?.let { text -> showSnackbar(text) }
-                        getFeed()
                     }
                 }
             }
