@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
+import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import timber.log.Timber
@@ -56,7 +57,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         super.onViewCreated(view, savedInstanceState)
         initFeedPhotosRv()
         bindViewModel()
-        getFeed()
     }
 
     private fun initFeedPhotosRv() {
@@ -82,12 +82,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    private fun getFeed() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            feedViewModel.getFeedPhotos()
-        }
-    }
-
     private fun showSnackbar(message: String) {
         Snackbar
             .make(
@@ -105,11 +99,26 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
                 launch {
                     feedViewModel.feedState.collect { state ->
                         when (state) {
                             is FeedState.Success -> feedAdapter.submitData(state.data)
                             is FeedState.Error -> Timber.d("${state.error}")
+                        }
+                    }
+                }
+
+                launch {
+                    feedViewModel.networkStatus.collect { status ->
+                        when (status) {
+                            NetworkStatus.Available -> {
+                                feedViewModel.getFeedPhotos()
+                                Timber.d("NETWORK SOURCE")
+                            }
+                            NetworkStatus.Unavailable -> {
+                                Timber.d("DATABASE SOURCE")
+                            }
                         }
                     }
                 }

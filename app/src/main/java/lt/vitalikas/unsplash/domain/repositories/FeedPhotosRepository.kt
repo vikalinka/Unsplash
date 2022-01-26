@@ -10,6 +10,5 @@ interface FeedPhotosRepository {
 
     suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
     suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails
-
     suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
 }

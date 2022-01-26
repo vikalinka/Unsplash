@@ -13,8 +13,8 @@ import lt.vitalikas.unsplash.R
 @InstallIn(SingletonComponent::class)
 class SharedPrefsModule {
 
-    @Provides
-    fun provideContext(application: Application): Context = application
+//    @Provides
+//    fun provideContext(application: Application): Context = application
 
     @Provides
     fun provideSharedPrefs(context: Context): SharedPreferences =

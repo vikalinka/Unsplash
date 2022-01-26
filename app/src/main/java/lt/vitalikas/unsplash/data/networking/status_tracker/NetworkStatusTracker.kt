@@ -1,12 +1,10 @@
 package lt.vitalikas.unsplash.data.networking.status_tracker
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -15,8 +13,6 @@ class NetworkStatusTracker(context: Context) {
     private val cm =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    @ExperimentalCoroutinesApi
-    @SuppressLint("MissingPermission")
     val networkStatus = callbackFlow<NetworkStatus> {
         val networkStatusCallback = object : ConnectivityManager.NetworkCallback() {
 
