@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
-import lt.vitalikas.unsplash.data.databases.Database
+import lt.vitalikas.unsplash.data.db.Database
 import timber.log.Timber
 
 @HiltAndroidApp

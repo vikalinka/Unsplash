@@ -11,13 +11,25 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
-class FeedAdapter :
+class FeedAdapter(private val onItemClick: (id: String) -> Unit) :
     PagingDataAdapter<FeedPhoto, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoDiffUtilCallback()) {
 
     class FeedPhotoViewHolder(
-        private val binding: ItemFeedBinding
+        private val binding: ItemFeedBinding,
+        onItemClick: (id: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        private lateinit var id: String
+
+        init {
+            binding.root.setOnClickListener {
+                onItemClick(id)
+            }
+        }
+
         fun bind(item: FeedPhoto) {
+            id = item.id
+
             Glide.with(itemView)
                 .load(item.urls.regular)
                 .placeholder(R.drawable.picture)
@@ -48,11 +60,12 @@ class FeedAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedPhotoViewHolder =
         FeedPhotoViewHolder(
-            ItemFeedBinding.inflate(
+            binding = ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ),
+            onItemClick = onItemClick
         )
 
     override fun onBindViewHolder(holder: FeedPhotoViewHolder, position: Int) {

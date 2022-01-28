@@ -1,7 +1,7 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import lt.vitalikas.unsplash.data.databases.dao.FeedUserLinkDao
-import lt.vitalikas.unsplash.data.databases.entities.UserLinkEntity
+import lt.vitalikas.unsplash.data.db.dao.FeedUserLinkDao
+import lt.vitalikas.unsplash.data.db.entities.UserLinkEntity
 import lt.vitalikas.unsplash.domain.repositories.FeedUserLinkRepository
 import javax.inject.Inject
 

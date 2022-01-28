@@ -6,9 +6,9 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import lt.vitalikas.unsplash.data.apis.UnsplashApi
-import lt.vitalikas.unsplash.data.databases.Database
-import lt.vitalikas.unsplash.data.databases.entities.*
+import lt.vitalikas.unsplash.data.api.UnsplashApi
+import lt.vitalikas.unsplash.data.db.Database
+import lt.vitalikas.unsplash.data.db.entities.*
 import okio.IOException
 import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
@@ -216,6 +216,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
         private const val ITEMS_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
         private const val ORDER_BY = "popular"
-        private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
+        private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS)
     }
 }

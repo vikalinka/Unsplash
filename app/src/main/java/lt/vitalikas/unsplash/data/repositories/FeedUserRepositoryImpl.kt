@@ -1,8 +1,7 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import lt.vitalikas.unsplash.data.apis.UnsplashApi
-import lt.vitalikas.unsplash.data.databases.dao.FeedUserDao
-import lt.vitalikas.unsplash.data.databases.entities.UserEntity
+import lt.vitalikas.unsplash.data.db.dao.FeedUserDao
+import lt.vitalikas.unsplash.data.db.entities.UserEntity
 import lt.vitalikas.unsplash.domain.repositories.FeedUserRepository
 import javax.inject.Inject
 

@@ -49,13 +49,13 @@
         android:layout_marginBottom="12dp"
         android:text="@string/top"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/rvFeed"
+        app:layout_constraintBottom_toTopOf="@id/srl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clToolbar" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFeed"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="6dp"
@@ -63,9 +63,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        tools:itemCount="5"
-        tools:listitem="@layout/item_feed" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFeed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_feed" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/tvNoConnection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/no_connection"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/srl"
+        app:layout_constraintStart_toStartOf="@id/srl"
+        app:layout_constraintTop_toTopOf="@id/srl" />
 
     <ProgressBar
         android:id="@+id/pbLoading"

@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.domain.repositories
 
-import lt.vitalikas.unsplash.data.databases.entities.UserProfileImageEntity
+import lt.vitalikas.unsplash.data.db.entities.UserProfileImageEntity
 
 interface FeedUserProfileImageRepository {
 

@@ -26,12 +26,15 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val binding by viewBinding(FragmentFeedBinding::bind)
     private val feed get() = binding.rvFeed
+    private val noConnection get() = binding.tvNoConnection
     private val loading get() = binding.pbLoading
-
+    private val refresh get() = binding.srl
     private val feedViewModel by viewModels<FeedViewModel>()
 
     private val feedAdapter by autoCleaned {
-        FeedAdapter().apply {
+        FeedAdapter { id ->
+
+        }.apply {
             addLoadStateListener { loadStates ->
                 if (loadStates.refresh is LoadState.Loading) {
                     loading.isVisible = true
@@ -57,6 +60,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         super.onViewCreated(view, savedInstanceState)
         initFeedPhotosRv()
         bindViewModel()
+        getData()
+        setListeners()
     }
 
     private fun initFeedPhotosRv() {
@@ -82,6 +87,12 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
+    private fun getData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedViewModel.getFeedPhotos()
+        }
+    }
+
     private fun showSnackbar(message: String) {
         Snackbar
             .make(
@@ -90,9 +101,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 Snackbar.LENGTH_LONG
             )
             .setAnchorView(R.id.bottom_navigation)
-            .setAction("Retry") {
-                //
-            }
             .show()
     }
 
@@ -103,8 +111,15 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 launch {
                     feedViewModel.feedState.collect { state ->
                         when (state) {
-                            is FeedState.Success -> feedAdapter.submitData(state.data)
-                            is FeedState.Error -> Timber.d("${state.error}")
+                            is FeedState.Success ->{
+                                feedAdapter.submitData(state.data)
+                                refresh.isRefreshing = false
+                            }
+                            is FeedState.Error -> {
+                                refresh.isRefreshing = false
+                                state.error.message?.let { showSnackbar(it) }
+                                Timber.d("${state.error}")
+                            }
                         }
                     }
                 }
@@ -113,16 +128,24 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     feedViewModel.networkStatus.collect { status ->
                         when (status) {
                             NetworkStatus.Available -> {
-                                feedViewModel.getFeedPhotos()
-                                Timber.d("NETWORK SOURCE")
+                                noConnection.isVisible = false
+                                // retry after connection re-established
+                                feedAdapter.retry()
                             }
                             NetworkStatus.Unavailable -> {
-                                Timber.d("DATABASE SOURCE")
+                                noConnection.isVisible = true
+                                showSnackbar("No internet connection. Cached data is shown.")
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun setListeners() {
+        refresh.setOnRefreshListener {
+            feedAdapter.refresh()
         }
     }
 

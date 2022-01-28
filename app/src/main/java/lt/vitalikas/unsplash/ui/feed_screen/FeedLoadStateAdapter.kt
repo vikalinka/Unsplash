@@ -13,14 +13,11 @@ class FeedLoadStateAdapter : LoadStateAdapter<FeedLoadStateAdapter.LoadStateView
     class LoadStateViewHolder(
         private val binding: LoadStateFeedBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(loadState: LoadState) {
             when (loadState) {
-                is LoadState.Loading -> {
-                    binding.pbLoading.isVisible = true
-                }
-                else -> {
-                    binding.pbLoading.isVisible = false
-                }
+                is LoadState.Loading -> binding.pbLoading.isVisible = true
+                else -> binding.pbLoading.isVisible = false
             }
         }
     }

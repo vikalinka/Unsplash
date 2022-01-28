@@ -38,4 +38,5 @@
     <string name="download_photo_icon">download photo icon</string>
     <string name="top">TODAY\'S TOP</string>
     <string name="username">\@%1$s</string>
+    <string name="no_connection">No internet connection</string>
 </resources>

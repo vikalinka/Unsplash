@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.domain.repositories
 
-import lt.vitalikas.unsplash.data.databases.entities.UserLinkEntity
+import lt.vitalikas.unsplash.data.db.entities.UserLinkEntity
 
 interface FeedUserLinkRepository {
 

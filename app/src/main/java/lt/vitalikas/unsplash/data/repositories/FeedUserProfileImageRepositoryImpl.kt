@@ -1,7 +1,7 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import lt.vitalikas.unsplash.data.databases.dao.FeedUserProfileImageDao
-import lt.vitalikas.unsplash.data.databases.entities.UserProfileImageEntity
+import lt.vitalikas.unsplash.data.db.dao.FeedUserProfileImageDao
+import lt.vitalikas.unsplash.data.db.entities.UserProfileImageEntity
 import lt.vitalikas.unsplash.domain.repositories.FeedUserProfileImageRepository
 import javax.inject.Inject
 
