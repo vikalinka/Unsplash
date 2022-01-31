@@ -39,4 +39,8 @@
     <string name="top">TODAY\'S TOP</string>
     <string name="username">\@%1$s</string>
     <string name="no_connection">No internet connection</string>
+    <string name="feed_photo">PHOTO</string>
+    <string name="feed_photo_content">Feed photo</string>
+    <string name="photo_details_title">PHOTO DETAILS</string>
+    <string name="made_with">Made with:</string>
 </resources>
