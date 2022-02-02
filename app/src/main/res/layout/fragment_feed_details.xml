@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.6" />
+            app:layout_constraintGuide_percent="0.55" />
 
         <ImageView
             android:id="@+id/ivPhoto"
@@ -141,7 +141,7 @@
                 app:tint="@color/red" />
 
             <TextView
-                android:id="@+id/tvLove"
+                android:id="@+id/tvLikeCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="2dp"
@@ -169,6 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:contentDescription="@string/location_icon"
                 android:src="@drawable/ic_round_location_on_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -182,16 +183,24 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Lithuania, Vilnius" />
 
-            <TextView
-                android:id="@+id/tvTag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsvLeft"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                app:layout_constraintBottom_toTopOf="@id/clPhotoDetailsLeft"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivLocation"
-                tools:text="#movie" />
+                app:layout_constraintTop_toBottomOf="@id/ivLocation">
+
+                <TextView
+                    android:id="@+id/tvTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    tools:text="Tags: #movie" />
+            </androidx.core.widget.NestedScrollView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clPhotoDetailsLeft"
@@ -200,58 +209,59 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toTopOf="@id/tvDownload"
                 app:layout_constraintEnd_toStartOf="@id/clPhotoDetailsRight"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTag">
+                app:layout_constraintTop_toBottomOf="@id/nsvLeft">
 
                 <TextView
                     android:id="@+id/tvMadeWith"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/made_with"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/made_with" />
 
                 <TextView
                     android:id="@+id/tvModel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/model"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvMadeWith" />
+                    app:layout_constraintTop_toBottomOf="@id/tvMadeWith"
+                    tools:text="@string/model" />
 
                 <TextView
                     android:id="@+id/tvExposure"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/exposure"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvModel" />
+                    app:layout_constraintTop_toBottomOf="@id/tvModel"
+                    tools:text="@string/exposure" />
 
                 <TextView
                     android:id="@+id/tvAperture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/aperture"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvExposure" />
+                    app:layout_constraintTop_toBottomOf="@id/tvExposure"
+                    tools:text="@string/aperture" />
 
                 <TextView
                     android:id="@+id/tvFocalLength"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/focal_length"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvAperture" />
+                    app:layout_constraintTop_toBottomOf="@id/tvAperture"
+                    tools:text="@string/focal_length" />
 
                 <TextView
                     android:id="@+id/tvIso"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/iso"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvFocalLength" />
+                    app:layout_constraintTop_toBottomOf="@id/tvFocalLength"
+                    tools:text="@string/iso" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -259,20 +269,24 @@
                 android:id="@+id/clPhotoDetailsRight"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/clPhotoDetailsLeft"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/clPhotoDetailsLeft"
                 app:layout_constraintTop_toTopOf="@id/clPhotoDetailsLeft">
 
-                <TextView
-                    android:id="@+id/tvAbout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvAbout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="@string/about" />
+                </androidx.core.widget.NestedScrollView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -280,14 +294,48 @@
                 android:id="@+id/tvDownload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/download"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/clPhotoDetailsRight" />
+                app:layout_constraintEnd_toStartOf="@id/ivDownloadCount" />
+
+            <ImageView
+                android:id="@+id/ivDownloadCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/download_count_icon"
+                android:src="@drawable/ic_download"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvDownloadCount" />
+
+            <TextView
+                android:id="@+id/tvDownloadCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="23" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvNoConnection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/no_connection"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/pbLoading"

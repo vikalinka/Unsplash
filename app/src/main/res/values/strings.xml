@@ -42,12 +42,14 @@
     <string name="feed_photo">PHOTO</string>
     <string name="feed_photo_content">Feed photo</string>
     <string name="photo_details_title">PHOTO DETAILS</string>
-    <string name="made_with">Made with:</string>
-    <string name="model">Model:</string>
-    <string name="exposure">Exposure:</string>
-    <string name="aperture">Aperture:</string>
-    <string name="focal_length">Focal length:</string>
-    <string name="iso">ISO:</string>
-    <string name="about">About</string>
+    <string name="made_with">Made with: %1$s</string>
+    <string name="model">Model: %1$s</string>
+    <string name="exposure">Exposure: %1$s</string>
+    <string name="aperture">Aperture: %1$s</string>
+    <string name="focal_length">Focal length: %1$s</string>
+    <string name="iso">ISO: %1$s</string>
+    <string name="about">About \@%1$s:\n%2$s</string>
     <string name="download">Download</string>
+    <string name="location">Country: %1$s, City: %2$s</string>
+    <string name="tag">Tags: #%1$s</string>
 </resources>

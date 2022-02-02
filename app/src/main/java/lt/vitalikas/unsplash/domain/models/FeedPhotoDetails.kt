@@ -40,7 +40,7 @@ data class FeedPhotoDetails(
         val exposureTime: String?,
         val aperture: String?,
         @Json(name = "focal_length")
-        val focalLength: Int?,
+        val focalLength: String?,
         val iso: Int?
     )
 
@@ -112,7 +112,9 @@ data class FeedPhotoDetails(
         val totalPhotos: Long,
         @Json(name = "total_collections")
         val totalCollections: Long,
-        val links: Link
+        val links: Link,
+        @Json(name = "profile_image")
+        val profileImage: Image
     ) {
         @JsonClass(generateAdapter = true)
         data class Link(
@@ -121,6 +123,13 @@ data class FeedPhotoDetails(
             val photos: String,
             val likes: String,
             val portfolio: String
+        )
+
+        @JsonClass(generateAdapter = true)
+        data class Image(
+            val small: String,
+            val medium: String,
+            val large: String
         )
     }
 }

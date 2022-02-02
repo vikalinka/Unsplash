@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -33,7 +34,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val feedAdapter by autoCleaned {
         FeedAdapter { id ->
-
+            val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
+            findNavController().navigate(directions)
         }.apply {
             addLoadStateListener { loadStates ->
                 if (loadStates.refresh is LoadState.Loading) {
@@ -111,7 +113,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 launch {
                     feedViewModel.feedState.collect { state ->
                         when (state) {
-                            is FeedState.Success ->{
+                            is FeedState.Success -> {
                                 feedAdapter.submitData(state.data)
                                 refresh.isRefreshing = false
                             }

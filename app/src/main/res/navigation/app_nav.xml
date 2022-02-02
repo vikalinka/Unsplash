@@ -13,6 +13,11 @@
         <action
             android:id="@+id/action_homeFragment_to_favoritesFragment"
             app:destination="@id/favorites" />
+        <action
+            android:id="@+id/action_home_to_feedDetailsFragment"
+            app:destination="@id/feedDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/favorites"
@@ -28,4 +33,13 @@
         android:name="lt.vitalikas.unsplash.ui.profile_screen.ProfileFragment"
         android:label="ProfileFragment"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/feedDetailsFragment"
+        android:name="lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment"
+        android:label="FeedDetailsFragment"
+        tools:layout="@layout/fragment_feed_details" >
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
 </navigation>

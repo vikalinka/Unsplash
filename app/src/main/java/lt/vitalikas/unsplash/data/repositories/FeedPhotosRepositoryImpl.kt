@@ -2,6 +2,7 @@ package lt.vitalikas.unsplash.data.repositories
 
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
@@ -126,8 +127,9 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails =
-        api.getFeedPhotoDetails(id)
+    override suspend fun getFeedPhotoDetailsById(id: String) =
+        flowOf(api.getFeedPhotoDetails(id))
+
 
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
         Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
