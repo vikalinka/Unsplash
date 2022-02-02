@@ -135,9 +135,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                 details.location.country ?: "N/A", details.location.city ?: "N/A"
             )
 
-        tag.text = getString(R.string.tag, details.tags.map { tag ->
-            tag.title
-        }.joinToString())
+        tag.text = getString(R.string.tag, details.tags.joinToString { tag ->
+            "#${tag.title}"
+        })
 
 //        tag.text = details.tags.joinToString { tag ->
 //            getString(R.string.tag, tag.title)
