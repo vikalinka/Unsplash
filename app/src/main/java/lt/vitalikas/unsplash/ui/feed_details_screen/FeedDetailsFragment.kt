@@ -1,5 +1,7 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -10,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
@@ -32,16 +35,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
     private val userUsername get() = binding.tvUsername
     private val userTotalLikes get() = binding.tvLikeCount
     private val likedByUser get() = binding.ivLove
-    private val location get() = binding.tvLocation
-    private val tag get() = binding.tvTag
-    private val made get() = binding.tvMadeWith
-    private val model get() = binding.tvModel
-    private val exposure get() = binding.tvExposure
-    private val aperture get() = binding.tvAperture
-    private val focalLength get() = binding.tvFocalLength
-    private val iso get() = binding.tvIso
-    private val about get() = binding.tvAbout
-    private val downloadCount get() = binding.tvDownloadCount
+    private val details get() = binding.rvDetails
     private val progress get() = binding.pbLoading
     private val noConnection get() = binding.tvNoConnection
 
@@ -49,8 +43,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
 
     private val args by navArgs<FeedDetailsFragmentArgs>()
 
+    private val feedPhotoDetailsAdapter
+        get() = requireNotNull(details.adapter as FeedDetailsAdapter) {
+            error("Adapter not initialized")
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initFeedPhotoDetailsRv()
         getFeedPhotoDetails(args.id)
         bindViewModel()
     }
@@ -73,6 +73,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                             }
                             is FeedDetailsState.Success -> {
                                 progress.isVisible = false
+                                feedPhotoDetailsAdapter.items = listOf(state.data)
                                 bind(state.data)
                             }
                             is FeedDetailsState.Error -> {
@@ -128,29 +129,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
             setImageResource(R.drawable.ic_love)
             setColorFilter(ContextCompat.getColor(context, R.color.red))
         }
-
-        location.text =
-            getString(
-                R.string.location,
-                details.location.country ?: "N/A", details.location.city ?: "N/A"
-            )
-
-        tag.text = getString(R.string.tag, details.tags.joinToString { tag ->
-            "#${tag.title}"
-        })
-
-//        tag.text = details.tags.joinToString { tag ->
-//            getString(R.string.tag, tag.title)
-//        }
-
-        made.text = getString(R.string.made_with, details.exif.make)
-        model.text = getString(R.string.model, details.exif.model)
-        exposure.text = getString(R.string.exposure, details.exif.exposureTime)
-        aperture.text = getString(R.string.aperture, details.exif.aperture)
-        focalLength.text = getString(R.string.focal_length, details.exif.focalLength.toString())
-        iso.text = getString(R.string.iso, details.exif.iso.toString())
-        about.text = getString(R.string.about, details.user.username, details.user.bio ?: "N/A")
-        downloadCount.text = details.downloads.toString()
     }
 
     private fun showSnackbar(message: String) {
@@ -161,5 +139,25 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                 Snackbar.LENGTH_LONG
             )
             .show()
+    }
+
+    private fun initFeedPhotoDetailsRv() {
+        with(details) {
+            adapter = FeedDetailsAdapter { lat, lng ->
+                val locationUri = Uri.parse("geo: $lat,$lng")
+                showLocationOnMap(locationUri)
+            }
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun showLocationOnMap(location: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = location
+        }
+        if (activity?.packageManager != null) {
+            startActivity(intent)
+        }
     }
 }
