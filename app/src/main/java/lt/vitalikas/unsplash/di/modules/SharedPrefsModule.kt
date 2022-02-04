@@ -1,6 +1,5 @@
 package lt.vitalikas.unsplash.di.modules
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import dagger.Module
@@ -12,9 +11,6 @@ import lt.vitalikas.unsplash.R
 @Module
 @InstallIn(SingletonComponent::class)
 class SharedPrefsModule {
-
-//    @Provides
-//    fun provideContext(application: Application): Context = application
 
     @Provides
     fun provideSharedPrefs(context: Context): SharedPreferences =
