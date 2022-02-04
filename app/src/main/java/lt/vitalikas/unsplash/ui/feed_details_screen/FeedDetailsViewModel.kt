@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import timber.log.Timber
@@ -26,16 +27,14 @@ class FeedDetailsViewModel @Inject constructor(
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
     suspend fun getFeedPhotoDetails(id: String) {
-        val dataFlow = getFeedPhotoDetailsUseCase.invoke(id)
-        dataFlow
-            .onEach { data ->
-                _feedDetailsState.value = FeedDetailsState.Success(data)
+        try {
+            scope.launch {
+                val details = getFeedPhotoDetailsUseCase(id)
+                _feedDetailsState.value = FeedDetailsState.Success(details)
             }
-            .catch { t ->
-                Timber.d("$t")
-                _feedDetailsState.value = FeedDetailsState.Error(t)
-            }
-            .launchIn(scope)
+        } catch (t: Throwable) {
+            _feedDetailsState.value = FeedDetailsState.Error(t)
+        }
     }
 
     fun cancelScopeChildrenJobs() {

@@ -145,14 +145,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         with(details) {
             adapter = FeedDetailsAdapter { lat, lng ->
                 val locationUri = Uri.parse("geo: $lat,$lng")
-                showLocationOnMap(locationUri)
+                showLocationInMap(locationUri)
             }
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
         }
     }
 
-    private fun showLocationOnMap(location: Uri) {
+    private fun showLocationInMap(location: Uri) {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = location
         }
