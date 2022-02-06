@@ -26,6 +26,9 @@ interface FeedPhotosDao {
     @Query("SELECT COUNT(*) FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun getFeedPhotoCount(): Int
 
-    @Query("SELECT EXISTS (SELECT 1 FROM ${FeedPhotosContract.TABLE_NAME} WHERE ${FeedPhotosContract.Columns.LAST_UPDATED_AT} <= :timestamp - :cacheTimeout)")
+    @Query(
+        "SELECT EXISTS (SELECT 1 FROM ${FeedPhotosContract.TABLE_NAME} " +
+                "WHERE ${FeedPhotosContract.Columns.LAST_UPDATED_AT} <= :timestamp - :cacheTimeout)"
+    )
     suspend fun outdated(timestamp: Long, cacheTimeout: Long): Boolean
 }

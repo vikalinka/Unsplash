@@ -52,4 +52,6 @@
     <string name="download">Download</string>
     <string name="location">Country: %1$s, City: %2$s</string>
     <string name="tag">Tags: %1$s</string>
+    <string name="search">Search</string>
+    <string name="share">Share</string>
 </resources>

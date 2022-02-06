@@ -38,10 +38,13 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
     private val details get() = binding.rvDetails
     private val progress get() = binding.pbLoading
     private val noConnection get() = binding.tvNoConnection
+    private val toolbar get() = binding.toolbar
 
     private val feedDetailsViewModel by viewModels<FeedDetailsViewModel>()
 
     private val args by navArgs<FeedDetailsFragmentArgs>()
+
+    private lateinit var photoShareLink: String
 
     private val feedPhotoDetailsAdapter
         get() = requireNotNull(details.adapter as FeedDetailsAdapter) {
@@ -53,6 +56,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         initFeedPhotoDetailsRv()
         getFeedPhotoDetails(args.id)
         bindViewModel()
+        setupToolbar()
     }
 
     private fun getFeedPhotoDetails(id: String) {
@@ -75,6 +79,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                                 progress.isVisible = false
                                 feedPhotoDetailsAdapter.items = listOf(state.data)
                                 bind(state.data)
+                                photoShareLink = state.data.links.self
                             }
                             is FeedDetailsState.Error -> {
                                 progress.isVisible = false
@@ -158,6 +163,33 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         }
         if (activity?.packageManager != null) {
             startActivity(intent)
+        }
+    }
+
+    private fun setupToolbar() {
+        with(toolbar) {
+            title = getString(R.string.feed_photo)
+
+            inflateMenu(R.menu.feed_details_toolbar_menu)
+
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.toolbar_menu_share -> {
+                        val sendIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, photoShareLink)
+                            type = "text/plain"
+                        }
+
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        startActivity(shareIntent)
+
+                        true
+                    }
+
+                    else -> false
+                }
+            }
         }
     }
 }

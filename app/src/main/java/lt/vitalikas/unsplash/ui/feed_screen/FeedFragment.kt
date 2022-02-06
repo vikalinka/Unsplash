@@ -1,7 +1,10 @@
 package lt.vitalikas.unsplash.ui.feed_screen
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,6 +33,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val noConnection get() = binding.tvNoConnection
     private val loading get() = binding.pbLoading
     private val refresh get() = binding.srl
+    private val toolbar get() = binding.toolbar
+
     private val feedViewModel by viewModels<FeedViewModel>()
 
     private val feedAdapter by autoCleaned {
@@ -64,6 +69,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         bindViewModel()
         getData()
         setListeners()
+        setupToolbar()
     }
 
     private fun initFeedPhotosRv() {
@@ -79,13 +85,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             setHasFixedSize(true)
 
             addItemDecoration(FeedOffsetDecoration(requireContext()))
-
-//            val verticalDividerItemDecor =
-//                DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-//            addItemDecoration(verticalDividerItemDecor)
-//            val horizontalDividerItemDecor =
-//                DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
-//            addItemDecoration(horizontalDividerItemDecor)
         }
     }
 
@@ -154,5 +153,57 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     override fun onDestroy() {
         super.onDestroy()
         feedViewModel.cancelScopeChildrenJobs()
+    }
+
+    private fun setupToolbar() {
+        with(toolbar) {
+            title = getString(R.string.nav_feed)
+
+            inflateMenu(R.menu.feed_toolbar_menu)
+
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.toolbar_menu_search -> {
+
+                        menuItem.setOnActionExpandListener(object :
+                            MenuItem.OnActionExpandListener {
+                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                                showToast("search expanded")
+                                return true
+                            }
+
+                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                                showToast("search collapsed")
+                                return true
+                            }
+                        })
+
+                        with(menuItem.actionView as SearchView) {
+                            setOnQueryTextListener(
+                                object : SearchView.OnQueryTextListener {
+                                    override fun onQueryTextSubmit(query: String?): Boolean {
+                                        return true
+                                    }
+
+                                    override fun onQueryTextChange(newText: String?): Boolean {
+                                        showToast("aaa")
+                                        return true
+                                    }
+                                })
+
+                            isIconified = false
+                        }
+
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }
+    }
+
+    private fun showToast(text: String) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 }

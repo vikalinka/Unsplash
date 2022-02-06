@@ -134,6 +134,6 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
 
     companion object {
-        private const val PAGE_SIZE = 40
+        private const val PAGE_SIZE = 10
     }
 }

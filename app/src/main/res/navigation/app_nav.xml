@@ -37,9 +37,14 @@
         android:id="@+id/feedDetailsFragment"
         android:name="lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment"
         android:label="FeedDetailsFragment"
-        tools:layout="@layout/fragment_feed_details" >
+        tools:layout="@layout/fragment_feed_details">
         <argument
             android:name="id"
             app:argType="string" />
+        <deepLink
+            android:id="@+id/deepLink"
+            app:action="ACTION_VIEW"
+            app:mimeType="text/html"
+            app:uri="https://unsplash.com/photos/{id}" />
     </fragment>
 </navigation>

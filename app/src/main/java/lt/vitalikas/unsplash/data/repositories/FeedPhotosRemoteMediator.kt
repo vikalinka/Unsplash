@@ -11,6 +11,7 @@ import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.*
 import okio.IOException
 import retrofit2.HttpException
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -32,6 +33,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
         if (feedPhotosDao.getFeedPhotoCount() > 0) {
             val timestamp = Calendar.getInstance().time.time
             val outdated = feedPhotosDao.outdated(timestamp, CACHE_TIMEOUT)
+            Timber.d("OUTDATED = $outdated")
             if (outdated) {
                 InitializeAction.LAUNCH_INITIAL_REFRESH
             } else {
@@ -216,6 +218,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
         private const val ITEMS_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
         private const val ORDER_BY = "popular"
-        private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(2, TimeUnit.HOURS)
+        private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(4, TimeUnit.HOURS)
     }
 }
