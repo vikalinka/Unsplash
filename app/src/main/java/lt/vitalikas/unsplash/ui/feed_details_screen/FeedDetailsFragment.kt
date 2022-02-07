@@ -54,6 +54,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initFeedPhotoDetailsRv()
+        // DeepLink
+        // https://api.unsplash/photos/4oovIxttThA
         getFeedPhotoDetails(args.id)
         bindViewModel()
         setupToolbar()
