@@ -55,7 +55,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         super.onViewCreated(view, savedInstanceState)
         initFeedPhotoDetailsRv()
         // DeepLink
-        // https://api.unsplash/photos/4oovIxttThA
+        // https://unsplash.com/photos/4oovIxttThA
         getFeedPhotoDetails(args.id)
         bindViewModel()
         setupToolbar()
@@ -81,7 +81,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                                 progress.isVisible = false
                                 feedPhotoDetailsAdapter.items = listOf(state.data)
                                 bind(state.data)
-                                photoShareLink = state.data.links.self
+                                photoShareLink = state.data.links.html
                             }
                             is FeedDetailsState.Error -> {
                                 progress.isVisible = false
