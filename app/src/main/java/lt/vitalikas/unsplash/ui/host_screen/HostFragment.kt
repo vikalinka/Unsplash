@@ -17,7 +17,7 @@ class HostFragment : Fragment(R.layout.fragment_host) {
 
     private val navController by lazy {
         val navHostFragment =
-            childFragmentManager.findFragmentById(R.id.fragment_container)
+            childFragmentManager.findFragmentById(R.id.fcvNavHostFragment)
                 ?: error("Fragment not found")
 
         navHostFragment.findNavController()
@@ -25,11 +25,11 @@ class HostFragment : Fragment(R.layout.fragment_host) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpNavigation()
+        setupNavigation()
         setListener()
     }
 
-    private fun setUpNavigation() {
+    private fun setupNavigation() {
         bottomNav.setupWithNavController(navController)
     }
 
