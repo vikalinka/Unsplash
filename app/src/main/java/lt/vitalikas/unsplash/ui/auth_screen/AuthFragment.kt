@@ -8,11 +8,16 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentAuthBinding
 import net.openid.appauth.AuthorizationException
@@ -39,7 +44,14 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 AuthorizationResponse.fromIntent(intent)?.createTokenExchangeRequest()
             val exception = AuthorizationException.fromIntent(intent)
             when {
-                exception != null -> authViewModel.onAuthFailed()
+                exception != null -> {
+                    loading.isVisible = false
+                    listOf(image, text, signin).forEach { view ->
+                        view.isVisible = true
+                    }
+                    showSnackbar(R.string.auth_failed)
+                    Timber.d("Authorization failed")
+                }
                 tokenExchangeRequest != null ->
                     authViewModel.performTokenRequest(tokenExchangeRequest)
             }
@@ -57,31 +69,44 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             authViewModel.openLoginPage()
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    authViewModel.authState.collect { state ->
+                        when (state) {
+                            is AuthState.Loading -> {
+                                loading.isVisible = true
+                                listOf(image, text, signin).forEach { view ->
+                                    view.isVisible = false
+                                }
+                            }
+                            is AuthState.LoggedIn -> {
+                                loading.isVisible = false
+                                listOf(image, text, signin).forEach { view ->
+                                    view.isVisible = false
+                                }
+                                Timber.d("Authorization succeed")
+                                findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
+                            }
+                            is AuthState.Error -> {
+                                loading.isVisible = false
+                                listOf(image, text, signin).forEach { view ->
+                                    view.isVisible = true
+                                }
+                                showSnackbar(state.id)
+                                Timber.d("Authorization failed")
+                            }
+                            is AuthState.NotLoggedIn -> {
+                                Timber.d("Not logged in")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         authViewModel.authPageIntent.observe(viewLifecycleOwner) { authIntent ->
             launcher.launch(authIntent)
-        }
-
-        authViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            loading.isVisible = isLoading
-            listOf(image, text, signin).forEach { view ->
-                view.isVisible = !isLoading
-            }
-        }
-
-        authViewModel.authFailed.observe(viewLifecycleOwner) { textRes ->
-            Timber.d("Authorization failed")
-            showSnackbar(textRes)
-            listOf(image, text, signin).forEach { view ->
-                view.isVisible = true
-            }
-        }
-
-        authViewModel.authSuccess.observe(viewLifecycleOwner) {
-            Timber.d("Authorization succeed")
-            listOf(image, text, signin).forEach { view ->
-                view.isVisible = false
-            }
-            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
         }
     }
 
