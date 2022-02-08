@@ -44,8 +44,8 @@ class SplashFragment : Fragment(R.layout.fragment_start) {
                     splashViewModel.timerFlow
                         .collect { step ->
                             if (step == 0) {
-                                val onBoardingStatus = splashViewModel.onboardingNotFinished
-                                navigateToNextScreen(onBoardingStatus)
+                                val onboardingStatus = splashViewModel.onboardingNotFinished
+                                navigateToNextScreen(onboardingStatus)
                             } else {
                                 loadingText.text = step.toString()
                                 loadImageByStep(step)
