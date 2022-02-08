@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/startFragment"
-        android:name="lt.vitalikas.unsplash.ui.start_screen.StartFragment"
+        android:name="lt.vitalikas.unsplash.ui.splash_screen.SplashFragment"
         android:label="StartFragment"
         tools:layout="@layout/fragment_start">
         <action
