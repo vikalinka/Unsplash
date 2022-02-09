@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.models.OnboardingItem
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
+import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
@@ -13,12 +14,15 @@ class OnboardingRepositoryImpl @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher
 ) : OnboardingRepository {
 
-    override suspend fun getOnboardingSharedPrefsValue(key: String, value: Boolean): Boolean =
+    override suspend fun getOnboardingStatus(key: String, defaultValue: Boolean): OnboardingStatus =
         withContext(ioDispatcher) {
-            sharedPrefs.getBoolean(key, value)
+            return@withContext when (sharedPrefs.getBoolean(key, defaultValue)) {
+                true -> OnboardingStatus.Finished
+                false -> OnboardingStatus.NotFinished
+            }
         }
 
-    override suspend fun updateOnboardingSharedPrefsValue(key: String, value: Boolean) =
+    override suspend fun updateOnboardingStatus(key: String, value: Boolean) =
         withContext(ioDispatcher) {
             sharedPrefs
                 .edit()

@@ -11,19 +11,20 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
-import lt.vitalikas.unsplash.databinding.FragmentStartBinding
+import lt.vitalikas.unsplash.databinding.FragmentSplashBinding
+import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 
 @AndroidEntryPoint
-class SplashFragment : Fragment(R.layout.fragment_start) {
+class SplashFragment : Fragment(R.layout.fragment_splash) {
 
-    private val binding by viewBinding(FragmentStartBinding::bind)
+    private val binding by viewBinding(FragmentSplashBinding::bind)
     private val startImage get() = binding.ivStartImage
     private val startTitle get() = binding.tvStartTitle
     private val loadingText get() = binding.tvLoadingText
+    private val progress get() = binding.progressBar
 
     private val splashViewModel by viewModels<SplashViewModel>()
 
@@ -38,33 +39,25 @@ class SplashFragment : Fragment(R.layout.fragment_start) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                delay(500)
-
                 launch {
-                    splashViewModel.timerFlow
+                    splashViewModel.timerStateFlow
                         .collect { step ->
-                            if (step == 0) {
-                                val onboardingStatus = splashViewModel.onboardingNotFinished
-                                navigateToNextScreen(onboardingStatus)
-                            } else {
-                                loadingText.text = step.toString()
-                                loadImageByStep(step)
+                            when (step) {
+                                0, 1, 2 -> {
+                                    progress.progress = step * 33
+                                    loadingText.text = getString(R.string.progress, step * 33)
+                                    loadImageByStep(step + 1)
+                                }
+                                3 -> {
+                                    progress.progress = step * 33
+                                    loadingText.text = getString(R.string.progress, step * 33)
+                                    val onboardingStatus = splashViewModel.onboardingStatus
+                                    navigateOnStatus(onboardingStatus)
+                                }
                             }
                         }
                 }
             }
-        }
-    }
-
-    private fun navigateToNextScreen(onboardingNotFinished: Boolean) {
-        if (onboardingNotFinished) {
-            findNavController().navigate(
-                SplashFragmentDirections.actionStartFragmentToOnboardingFragment()
-            )
-        } else {
-            findNavController().navigate(
-                SplashFragmentDirections.actionStartFragmentToAuthFragment()
-            )
         }
     }
 
@@ -74,5 +67,16 @@ class SplashFragment : Fragment(R.layout.fragment_start) {
         Glide.with(this)
             .load(imageRes)
             .into(startImage)
+    }
+
+    private fun navigateOnStatus(status: OnboardingStatus) {
+        when (status) {
+            OnboardingStatus.NotFinished -> findNavController().navigate(
+                SplashFragmentDirections.actionStartFragmentToOnboardingFragment()
+            )
+            OnboardingStatus.Finished -> findNavController().navigate(
+                SplashFragmentDirections.actionStartFragmentToAuthFragment()
+            )
+        }
     }
 }

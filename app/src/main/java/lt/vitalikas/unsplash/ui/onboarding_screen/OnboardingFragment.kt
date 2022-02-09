@@ -36,24 +36,22 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                 onboardingViewModel.screens,
                 onActionGetStartedClick = {
                     scope.launch {
-                        onboardingViewModel.updateValue(
-                            getString(R.string.onboarding_not_finished),
-                            false
+                        onboardingViewModel.updateStatus(
+                            getString(R.string.onboarding_finished),
+                            true
                         )
                     }
-
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )
                 },
                 onActionSkipClick = {
                     scope.launch {
-                        onboardingViewModel.updateValue(
-                            getString(R.string.onboarding_not_finished),
-                            false
+                        onboardingViewModel.updateStatus(
+                            getString(R.string.onboarding_finished),
+                            true
                         )
                     }
-
                     findNavController().navigate(
                         OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
                     )

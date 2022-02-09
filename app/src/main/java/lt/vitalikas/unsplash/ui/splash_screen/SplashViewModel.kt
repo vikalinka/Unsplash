@@ -1,39 +1,59 @@
 package lt.vitalikas.unsplash.ui.splash_screen
 
 import android.content.Context
+import androidx.core.util.rangeTo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
-import lt.vitalikas.unsplash.domain.use_cases.CheckOnboardingStatusUseCase
+import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
+import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
+import timber.log.Timber
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val checkOnboardingStatusUseCase: CheckOnboardingStatusUseCase,
+    private val onboardingRepository: OnboardingRepository,
     @ApplicationContext context: Context
 ) : ViewModel() {
 
-    var onboardingNotFinished by Delegates.notNull<Boolean>()
+    private var _timerStateFlow = MutableStateFlow(0)
+    val timerStateFlow = _timerStateFlow.asStateFlow()
 
-    val timerFlow = (3 downTo 0)
-        .asFlow()
-        .onEach {
-            delay(1000L)
-        }
+    lateinit var onboardingStatus: OnboardingStatus
 
     init {
+        runTimer()
+        getOnboardingStatus(context)
+    }
+
+    private fun runTimer() {
+        (0 until totalSeconds + 1)
+            .asFlow()
+            .onEach { step ->
+                delay(1_000L)
+                _timerStateFlow.value = step
+            }
+            .catch { t ->
+                Timber.d(t)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun getOnboardingStatus(context: Context) {
         viewModelScope.launch {
-            onboardingNotFinished = checkOnboardingStatusUseCase(
-                context.getString(R.string.onboarding_not_finished),
-                true
+            onboardingStatus = onboardingRepository.getOnboardingStatus(
+                context.getString(R.string.onboarding_finished),
+                false
             )
         }
+    }
+
+    companion object {
+        const val totalSeconds = 3
     }
 }

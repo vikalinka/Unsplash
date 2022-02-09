@@ -35,7 +35,7 @@
         android:id="@+id/startFragment"
         android:name="lt.vitalikas.unsplash.ui.splash_screen.SplashFragment"
         android:label="StartFragment"
-        tools:layout="@layout/fragment_start">
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_startFragment_to_onboardingFragment"
             app:destination="@id/onboardingFragment"
