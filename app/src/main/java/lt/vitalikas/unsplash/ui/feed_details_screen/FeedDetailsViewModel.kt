@@ -1,12 +1,11 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
+import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import timber.log.Timber
@@ -35,6 +34,24 @@ class FeedDetailsViewModel @Inject constructor(
         } catch (t: Throwable) {
             _feedDetailsState.value = FeedDetailsState.Error(t)
         }
+    }
+
+    fun downloadPhoto(url: String, fileName: String) {
+        scope.launch {
+            if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+                return@launch
+            }
+
+            try {
+                ensureActive()
+
+            } catch (ce: CancellationException) {
+
+            } catch (t: Throwable) {
+
+            }
+        }
+
     }
 
     fun cancelScopeChildrenJobs() {

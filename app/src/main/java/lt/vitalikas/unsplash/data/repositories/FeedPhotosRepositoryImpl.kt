@@ -1,17 +1,26 @@
 package lt.vitalikas.unsplash.data.repositories
 
+import android.content.Context
 import androidx.paging.*
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
+import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
-    private val api: UnsplashApi
+    private val unsplashApi: UnsplashApi,
+    private val downloadApi: DownloadApi,
+    private val context: Context,
+    private val dispatcherIo: CoroutineDispatcher
 ) : FeedPhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -24,7 +33,7 @@ class FeedPhotosRepositoryImpl @Inject constructor(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            remoteMediator = FeedPhotosRemoteMediator(api),
+            remoteMediator = FeedPhotosRemoteMediator(unsplashApi),
             pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
             pagingData.map { entity ->
@@ -127,11 +136,29 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFeedPhotoDetailsById(id: String) =
-        api.getFeedPhotoDetails(id)
-
+        unsplashApi.getFeedPhotoDetails(id)
 
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
         Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
+
+    override suspend fun downloadPhoto(url: String, fileName: String) {
+        withContext(dispatcherIo) {
+            val folder = context.getExternalFilesDir("Downloads")
+            val file = File(folder, fileName)
+
+            file
+                .outputStream()
+                .buffered()
+                .use { outputStream ->
+                    downloadApi.downloadFile(url)
+                        .byteStream().use { inputStream ->
+                            inputStream.copyTo(outputStream)
+                        }
+                }
+            Timber.d("file size = ${file.length()}")
+        }
+    }
+
 
     companion object {
         private const val PAGE_SIZE = 10

@@ -61,6 +61,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         setupToolbar()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        feedDetailsViewModel.cancelScopeChildrenJobs()
+    }
+
     private fun getFeedPhotoDetails(id: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             feedDetailsViewModel.getFeedPhotoDetails(id)
@@ -150,10 +155,15 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
 
     private fun initFeedPhotoDetailsRv() {
         with(details) {
-            adapter = FeedDetailsAdapter { lat, lng ->
-                val locationUri = Uri.parse("geo: $lat,$lng")
-                showLocationInMap(locationUri)
-            }
+            adapter = FeedDetailsAdapter(
+                onLocationClick = { lat, lng ->
+                    val locationUri = Uri.parse("geo: $lat,$lng")
+                    showLocationInMap(locationUri)
+                },
+                onDownloadClick = { url ->
+                    feedDetailsViewModel.downloadPhoto(url, )
+                }
+            )
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
         }

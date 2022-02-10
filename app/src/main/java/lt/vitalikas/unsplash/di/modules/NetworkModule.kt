@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.networking.auth.AuthTokenInterceptor
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
@@ -40,7 +41,7 @@ class NetworkModule {
     fun provideAuthTokenInterceptor(): Interceptor = AuthTokenInterceptor()
 
     @Provides
-    fun provideOkHttpClient(
+    fun provideUnsplashClient(
         @LoggingInterceptorQualifier loggingInterceptor: Interceptor,
         @AuthTokenInterceptorQualifier authTokenInterceptor: Interceptor
     ): OkHttpClient = OkHttpClient.Builder()
@@ -50,10 +51,18 @@ class NetworkModule {
         .build()
 
     @Provides
+    fun provideDownloadClient(
+        @LoggingInterceptorQualifier loggingInterceptor: Interceptor
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addNetworkInterceptor(loggingInterceptor)
+        .followRedirects(true)
+        .build()
+
+    @Provides
     fun provideConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
 
     @Provides
-    fun provideApi(
+    fun provideUnsplashApi(
         okhttpClient: OkHttpClient,
         moshiConverterFactory: MoshiConverterFactory
     ): UnsplashApi {
@@ -64,5 +73,17 @@ class NetworkModule {
             .build()
 
         return retrofit.create<UnsplashApi>()
+    }
+
+    @Provides
+    fun provideDownloadApi(
+        okhttpClient: OkHttpClient
+    ): DownloadApi {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://google.com/")
+            .client(okhttpClient)
+            .build()
+
+        return retrofit.create<DownloadApi>()
     }
 }
