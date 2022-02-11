@@ -51,14 +51,6 @@ class NetworkModule {
         .build()
 
     @Provides
-    fun provideDownloadClient(
-        @LoggingInterceptorQualifier loggingInterceptor: Interceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addNetworkInterceptor(loggingInterceptor)
-        .followRedirects(true)
-        .build()
-
-    @Provides
     fun provideConverterFactory(): MoshiConverterFactory = MoshiConverterFactory.create()
 
     @Provides

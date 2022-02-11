@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
+import lt.vitalikas.unsplash.data.services.DownloadWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 import timber.log.Timber
@@ -59,6 +62,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         getFeedPhotoDetails(args.id)
         bindViewModel()
         setupToolbar()
+        observeDownload()
     }
 
     override fun onDestroy() {
@@ -161,7 +165,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                     showLocationInMap(locationUri)
                 },
                 onDownloadClick = { url ->
-                    feedDetailsViewModel.downloadPhoto(url, )
+                    feedDetailsViewModel.downloadPhoto(url)
                 }
             )
             layoutManager = LinearLayoutManager(context)
@@ -203,5 +207,35 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                 }
             }
         }
+    }
+
+    private fun observeDownload() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(DownloadWorker.DOWNLOAD_PHOTO_WORK_UNIQUE_ID)
+            .observe(viewLifecycleOwner) { workInfos ->
+                if (workInfos == null || workInfos.isEmpty()) {
+                    return@observe
+                }
+                when (workInfos.first().state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Timber.d("DOWNLOAD ENQUEUED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Timber.d("DOWNLOAD RUNNING")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Timber.d("DOWNLOAD FAILED")
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("DOWNLOAD SUCCEEDED")
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Timber.d("DOWNLOAD CANCELED")
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Timber.d("DOWNLOAD BLOCKED")
+                    }
+                }
+            }
     }
 }

@@ -1,7 +1,9 @@
 package lt.vitalikas.unsplash.data.repositories
 
 import android.content.Context
+import android.os.Environment
 import androidx.paging.*
+import androidx.work.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -10,6 +12,7 @@ import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
+import lt.vitalikas.unsplash.data.services.DownloadWorker
 import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
 import timber.log.Timber
@@ -18,9 +21,9 @@ import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
-    private val downloadApi: DownloadApi,
     private val context: Context,
-    private val dispatcherIo: CoroutineDispatcher
+    private val dispatcherIo: CoroutineDispatcher,
+    private val downloadApi: DownloadApi
 ) : FeedPhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -141,10 +144,15 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
         Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
 
-    override suspend fun downloadPhoto(url: String, fileName: String) {
+    override suspend fun downloadPhoto(url: String) {
+
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            return
+        }
+
         withContext(dispatcherIo) {
             val folder = context.getExternalFilesDir("Downloads")
-            val file = File(folder, fileName)
+            val file = File(folder, File(url).name)
 
             file
                 .outputStream()
@@ -155,10 +163,12 @@ class FeedPhotosRepositoryImpl @Inject constructor(
                             inputStream.copyTo(outputStream)
                         }
                 }
+
             Timber.d("file size = ${file.length()}")
         }
-    }
 
+
+    }
 
     companion object {
         private const val PAGE_SIZE = 10

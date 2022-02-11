@@ -1,18 +1,23 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
+import android.content.Context
 import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
+import lt.vitalikas.unsplash.data.services.DownloadRequest
+import lt.vitalikas.unsplash.data.services.DownloadWorker
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedDetailsViewModel @Inject constructor(
+    val context: Context,
     private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase,
     networkStatusTracker: NetworkStatusTracker
 ) : ViewModel() {
@@ -25,6 +30,18 @@ class FeedDetailsViewModel @Inject constructor(
         MutableStateFlow<FeedDetailsState>(FeedDetailsState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
+    fun downloadPhoto(url: String) {
+
+        val workRequest = DownloadRequest(url).workRequest
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                DownloadWorker.DOWNLOAD_PHOTO_WORK_UNIQUE_ID,
+                ExistingWorkPolicy.KEEP,
+                workRequest
+            )
+    }
+
     suspend fun getFeedPhotoDetails(id: String) {
         try {
             scope.launch {
@@ -34,24 +51,6 @@ class FeedDetailsViewModel @Inject constructor(
         } catch (t: Throwable) {
             _feedDetailsState.value = FeedDetailsState.Error(t)
         }
-    }
-
-    fun downloadPhoto(url: String, fileName: String) {
-        scope.launch {
-            if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
-                return@launch
-            }
-
-            try {
-                ensureActive()
-
-            } catch (ce: CancellationException) {
-
-            } catch (t: Throwable) {
-
-            }
-        }
-
     }
 
     fun cancelScopeChildrenJobs() {

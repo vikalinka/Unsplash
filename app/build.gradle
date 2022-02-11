@@ -60,6 +60,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     // Lifecycle -> Scope
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
     // Jetpack Navigation
     def nav_version = '2.5.0-alpha01'
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -105,9 +107,13 @@ dependencies {
     // Paging 3
     implementation 'androidx.paging:paging-runtime-ktx:3.1.0'
     // Swipe Refresh Layout
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     // Coordinator Layout
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    // WorkManager with coroutines
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'androidx.hilt:hilt-work:1.0.0'
+    kapt "com.google.dagger:hilt-android-compiler:2.37"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'

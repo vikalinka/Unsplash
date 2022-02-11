@@ -3,12 +3,15 @@ package lt.vitalikas.unsplash
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.os.StrictMode
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
 import lt.vitalikas.unsplash.data.db.Database
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
-class App : Application() {
+class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
@@ -16,6 +19,14 @@ class App : Application() {
         detectLongOperations()
         Database.init(this)
     }
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override fun getWorkManagerConfiguration() =
+        Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     private fun initTimber() {
         Timber.plant(Timber.DebugTree())
