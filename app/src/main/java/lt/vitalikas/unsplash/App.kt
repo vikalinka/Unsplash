@@ -13,13 +13,6 @@ import javax.inject.Inject
 @HiltAndroidApp
 class App : Application(), Configuration.Provider {
 
-    override fun onCreate() {
-        super.onCreate()
-        initTimber()
-        detectLongOperations()
-        Database.init(this)
-    }
-
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
@@ -27,6 +20,13 @@ class App : Application(), Configuration.Provider {
         Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    override fun onCreate() {
+        super.onCreate()
+        initTimber()
+        detectLongOperations()
+        Database.init(this)
+    }
 
     private fun initTimber() {
         Timber.plant(Timber.DebugTree())

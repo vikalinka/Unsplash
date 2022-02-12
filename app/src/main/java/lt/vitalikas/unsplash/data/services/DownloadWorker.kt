@@ -7,13 +7,12 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import lt.vitalikas.unsplash.domain.use_cases.DownloadPhotoUseCase
-import javax.inject.Inject
 
 @HiltWorker
 class DownloadWorker @AssistedInject constructor(
     @Assisted context: Context,
-    private val downloadPhotoUseCase: DownloadPhotoUseCase,
-    @Assisted params: WorkerParameters
+    @Assisted params: WorkerParameters,
+    val downloadPhotoUseCase: DownloadPhotoUseCase
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
