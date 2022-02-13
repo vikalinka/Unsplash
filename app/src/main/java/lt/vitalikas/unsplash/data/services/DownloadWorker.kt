@@ -1,6 +1,7 @@
 package lt.vitalikas.unsplash.data.services
 
 import android.content.Context
+import android.net.Uri
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -16,10 +17,11 @@ class DownloadWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val url = inputData.getString(DOWNLOAD_PHOTO_WORK_KEY).orEmpty()
+        val url = inputData.getString(DOWNLOAD_PHOTO_URL_KEY).orEmpty()
+        val uri = Uri.parse(inputData.getString(DOWNLOAD_PHOTO_URI_KEY).orEmpty())
 
         return try {
-            downloadPhotoUseCase(url)
+            downloadPhotoUseCase(url, uri)
             Result.success()
         } catch (t: Throwable) {
             Result.retry()
@@ -27,7 +29,8 @@ class DownloadWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val DOWNLOAD_PHOTO_WORK_KEY = "download_photo_work_key"
-        const val DOWNLOAD_PHOTO_WORK_UNIQUE_ID = "download_photo_work_key"
+        const val DOWNLOAD_PHOTO_URL_KEY = "url"
+        const val DOWNLOAD_PHOTO_URI_KEY = "uri"
+        const val DOWNLOAD_PHOTO_WORK_UNIQUE_ID = "id"
     }
 }

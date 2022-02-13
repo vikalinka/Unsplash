@@ -1,13 +1,16 @@
 package lt.vitalikas.unsplash.data.services
 
+import android.net.Uri
 import androidx.work.*
 
 class DownloadRequest(
-    url: String
+    url: String,
+    uri: Uri
 ) {
 
     private val workData = workDataOf(
-        DownloadWorker.DOWNLOAD_PHOTO_WORK_KEY to url
+        DownloadWorker.DOWNLOAD_PHOTO_URL_KEY to url,
+        DownloadWorker.DOWNLOAD_PHOTO_URI_KEY to uri.toString()
     )
 
     private val workConstraints = Constraints.Builder()

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -53,6 +54,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         get() = requireNotNull(details.adapter as FeedDetailsAdapter) {
             error("Adapter not initialized")
         }
+
+    private lateinit var photoDownloadUrl: String
+
+    private val savePhotoInSelectedFolderLauncher = registerForActivityResult(
+        CreateDocument(IMAGE_MIME_TYPE)
+    ) { uri ->
+        uri?.let { feedDetailsViewModel.downloadPhoto(photoDownloadUrl, it) }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -164,8 +173,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                     val locationUri = Uri.parse("geo: $lat,$lng")
                     showLocationInMap(locationUri)
                 },
-                onDownloadClick = { url ->
-                    feedDetailsViewModel.downloadPhoto(url)
+                onDownloadClick = { name, url ->
+                    photoDownloadUrl = url
+                    savePhotoInSelectedFolderLauncher.launch(name)
                 }
             )
             layoutManager = LinearLayoutManager(context)
@@ -225,17 +235,24 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                     }
                     WorkInfo.State.FAILED -> {
                         Timber.d("DOWNLOAD FAILED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DOWNLOAD SUCCEEDED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DOWNLOAD CANCELED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
                     }
                     WorkInfo.State.BLOCKED -> {
                         Timber.d("DOWNLOAD BLOCKED")
                     }
                 }
             }
+    }
+
+    companion object {
+        const val IMAGE_MIME_TYPE = "image/*"
     }
 }

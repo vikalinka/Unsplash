@@ -1,9 +1,12 @@
 package lt.vitalikas.unsplash.data.repositories
 
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.paging.*
-import androidx.work.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,9 +15,9 @@ import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
-import lt.vitalikas.unsplash.data.services.DownloadWorker
 import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
+import lt.vitalikas.unsplash.utils.hasQ
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -144,30 +147,13 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
         Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
 
-    override suspend fun downloadPhoto(url: String) {
-
-        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
-            return
-        }
-
-        withContext(dispatcherIo) {
-            val folder = context.getExternalFilesDir("Downloads")
-            val file = File(folder, File(url).name)
-
-            file
-                .outputStream()
-                .buffered()
-                .use { outputStream ->
-                    downloadApi.downloadFile(url)
-                        .byteStream().use { inputStream ->
-                            inputStream.copyTo(outputStream)
-                        }
+    override suspend fun downloadPhoto(url: String, uri: Uri) {
+        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+            downloadApi.downloadFile(url)
+                .byteStream().use { inputStream ->
+                    inputStream.copyTo(outputStream)
                 }
-
-            Timber.d("file size = ${file.length()}")
         }
-
-
     }
 
     companion object {

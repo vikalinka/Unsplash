@@ -3,7 +3,6 @@ package lt.vitalikas.unsplash.di.modules
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.data.repositories.AuthRepositoryImpl
 import lt.vitalikas.unsplash.data.repositories.FeedPhotosRepositoryImpl

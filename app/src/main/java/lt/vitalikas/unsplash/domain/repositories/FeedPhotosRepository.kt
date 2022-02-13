@@ -1,5 +1,6 @@
 package lt.vitalikas.unsplash.domain.repositories
 
+import android.net.Uri
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
@@ -11,5 +12,5 @@ interface FeedPhotosRepository {
     suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
     suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails
     suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
-    suspend fun downloadPhoto(url: String)
+    suspend fun downloadPhoto(url: String, uri: Uri)
 }

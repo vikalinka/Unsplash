@@ -6,7 +6,7 @@ import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 
 class FeedDetailsAdapter(
     onLocationClick: (lat: Double, lng: Double) -> Unit,
-    onDownloadClick: (url: String) -> Unit
+    onDownloadClick: (name: String, url: String) -> Unit
 ) : AsyncListDifferDelegationAdapter<FeedPhotoDetails>(FeedPhotoDetailsDiffUtilItemCallback()) {
 
     init {

@@ -1,7 +1,7 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
 import android.content.Context
-import android.os.Environment
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
@@ -30,9 +30,9 @@ class FeedDetailsViewModel @Inject constructor(
         MutableStateFlow<FeedDetailsState>(FeedDetailsState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
-    fun downloadPhoto(url: String) {
+    fun downloadPhoto(url: String, uri: Uri) {
 
-        val workRequest = DownloadRequest(url).workRequest
+        val workRequest = DownloadRequest(url, uri).workRequest
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
