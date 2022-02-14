@@ -44,5 +44,18 @@
         <deepLink
             android:id="@+id/deepLink"
             app:uri="https://unsplash.com/photos/{id}" />
+        <action
+            android:id="@+id/action_feedDetailsFragment_to_rationaleFragment"
+            app:destination="@id/rationaleFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/rationaleFragment"
+        android:name="lt.vitalikas.unsplash.ui.rationale_screen.RationaleFragment"
+        android:label="RationaleFragment">
+        <action
+            android:id="@+id/action_rationaleFragment_to_feedDetailsFragment"
+            app:destination="@id/feedDetailsFragment"
+            app:popUpTo="@id/feedDetailsFragment"
+            app:popUpToInclusive="true" />
+    </dialog>
 </navigation>

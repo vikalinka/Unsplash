@@ -1,10 +1,14 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -12,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
@@ -27,10 +32,13 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.data.services.DownloadWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.ui.rationale_screen.Launcher
+import lt.vitalikas.unsplash.utils.hasQ
 import timber.log.Timber
 
 @AndroidEntryPoint
-class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
+class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
+    Launcher {
 
     private val binding by viewBinding(FragmentFeedDetailsBinding::bind)
     private val photo get() = binding.ivPhoto
@@ -56,6 +64,23 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
         }
 
     private lateinit var photoDownloadUrl: String
+    private lateinit var photoName: String
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissionsWithStatuses ->
+        if (permissionsWithStatuses.values.all { isGranted ->
+                isGranted == true
+            }) {
+            savePhotoInSelectedFolderLauncher.launch(photoName)
+        } else {
+            if (isNeedToShowRationale()) {
+                showPermissionRationaleDialog()
+            } else {
+                showSnackbar("All permissions are required for application to work")
+            }
+        }
+    }
 
     private val savePhotoInSelectedFolderLauncher = registerForActivityResult(
         CreateDocument(IMAGE_MIME_TYPE)
@@ -77,6 +102,10 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
     override fun onDestroy() {
         super.onDestroy()
         feedDetailsViewModel.cancelScopeChildrenJobs()
+    }
+
+    override fun openLauncher() {
+        savePhotoInSelectedFolderLauncher.launch(photoName)
     }
 
     private fun getFeedPhotoDetails(id: String) {
@@ -174,8 +203,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
                     showLocationInMap(locationUri)
                 },
                 onDownloadClick = { name, url ->
+                    checkPermissions()
                     photoDownloadUrl = url
-                    savePhotoInSelectedFolderLauncher.launch(name)
+                    photoName = "${name}.jpg"
                 }
             )
             layoutManager = LinearLayoutManager(context)
@@ -252,7 +282,44 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details) {
             }
     }
 
+    private fun checkPermissions() {
+        if (hasAllPermissions().not()) {
+            requestPermissions()
+        } else {
+            savePhotoInSelectedFolderLauncher.launch(photoName)
+        }
+    }
+
+    private fun hasAllPermissions(): Boolean = PERMISSIONS.all { permission ->
+        ActivityCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermissions() = requestPermissionLauncher.launch(PERMISSIONS.toTypedArray())
+
+    private fun isNeedToShowRationale(): Boolean = PERMISSIONS.any { permission ->
+        isNeedRationaleForPermission(permission)
+    }
+
+    private fun isNeedRationaleForPermission(permission: String) =
+        ActivityCompat.shouldShowRequestPermissionRationale(
+            requireActivity(),
+            permission
+        )
+
+    private fun showPermissionRationaleDialog() =
+        findNavController().navigate(FeedDetailsFragmentDirections.actionFeedDetailsFragmentToRationaleFragment())
+
     companion object {
+        private val PERMISSIONS = listOfNotNull(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE.takeIf {
+                hasQ().not()
+            }
+        )
+
         const val IMAGE_MIME_TYPE = "image/*"
     }
 }
