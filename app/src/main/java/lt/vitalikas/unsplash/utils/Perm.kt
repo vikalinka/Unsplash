@@ -9,13 +9,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ComponentActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import dagger.hilt.android.internal.managers.FragmentComponentManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment
 import javax.inject.Inject
 
-class Perm(val activity: AppCompatActivity) {
+class Perm(val activity: FragmentActivity) {
     private val _state =
         MutableStateFlow<PermStatus>(PermStatus.NotGranted)
     val state = _state.asStateFlow()
@@ -47,8 +49,8 @@ class Perm(val activity: AppCompatActivity) {
     }
 
     private fun hasAllPermissions(): Boolean = PERMISSIONS.all { permission ->
-        ActivityCompat.checkSelfPermission(
-            activity,
+        ContextCompat.checkSelfPermission(
+            activity.baseContext,
             permission
         ) == PackageManager.PERMISSION_GRANTED
     }

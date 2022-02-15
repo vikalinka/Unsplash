@@ -40,6 +40,7 @@
     <string name="top">TODAY\'S TOP</string>
     <string name="username">\@%1$s</string>
     <string name="no_connection">No internet connection</string>
+    <string name="no_internet">No internet connection. Cached data is shown.</string>
     <string name="feed_photo">PHOTO</string>
     <string name="feed_photo_content">Feed photo</string>
     <string name="photo_details_title">PHOTO DETAILS</string>
@@ -60,4 +61,5 @@
     <string name="btn_ok">OK</string>
     <string name="btn_grant">Grant</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="download_succeeded">Download succeeded.</string>
 </resources>

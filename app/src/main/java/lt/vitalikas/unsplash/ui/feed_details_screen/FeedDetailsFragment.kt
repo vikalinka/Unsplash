@@ -23,7 +23,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -34,6 +33,8 @@ import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 import lt.vitalikas.unsplash.ui.rationale_screen.Launcher
 import lt.vitalikas.unsplash.utils.hasQ
+import lt.vitalikas.unsplash.utils.showInfo
+import lt.vitalikas.unsplash.utils.showInfoWithAction
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -65,6 +66,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private lateinit var photoDownloadUrl: String
     private lateinit var photoName: String
+    private lateinit var photoUri: Uri
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -77,15 +79,18 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             if (isNeedToShowRationale()) {
                 showPermissionRationaleDialog()
             } else {
-                showSnackbar("All permissions are required for application to work")
+                showInfo(requireView(), R.string.perm_all)
             }
         }
     }
 
     private val savePhotoInSelectedFolderLauncher = registerForActivityResult(
-        CreateDocument(IMAGE_MIME_TYPE)
+        CreateDocument(MIME_TYPE)
     ) { uri ->
-        uri?.let { feedDetailsViewModel.downloadPhoto(photoDownloadUrl, it) }
+        uri?.let {
+            photoUri = it
+            feedDetailsViewModel.downloadPhoto(photoDownloadUrl, it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,7 +137,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             }
                             is FeedDetailsState.Error -> {
                                 progress.isVisible = false
-                                state.error.message?.let { showSnackbar(it) }
+                                state.error.message?.let { showInfo(requireView(), it) }
                                 Timber.d("${state.error}")
                             }
                         }
@@ -147,7 +152,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnection.isVisible = true
-                                showSnackbar("No internet connection. Cached data is shown.")
+                                showInfo(requireView(), R.string.no_internet)
                             }
                         }
                     }
@@ -185,16 +190,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun showSnackbar(message: String) {
-        Snackbar
-            .make(
-                requireView(),
-                message,
-                Snackbar.LENGTH_LONG
-            )
-            .show()
-    }
-
     private fun initFeedPhotoDetailsRv() {
         with(details) {
             adapter = FeedDetailsAdapter(
@@ -203,9 +198,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     showLocationInMap(locationUri)
                 },
                 onDownloadClick = { name, url ->
-                    checkPermissions()
                     photoDownloadUrl = url
                     photoName = "${name}.jpg"
+                    checkPermissions()
                 }
             )
             layoutManager = LinearLayoutManager(context)
@@ -231,22 +226,33 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.toolbar_menu_share -> {
-                        val sendIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, photoShareLink)
-                            type = "text/plain"
-                        }
-
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        startActivity(shareIntent)
-
+                        sharePhotoLink()
                         true
                     }
-
                     else -> false
                 }
             }
         }
+    }
+
+    private fun sharePhotoLink() {
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, photoShareLink)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(intent, null)
+        startActivity(shareIntent)
+    }
+
+    private fun openPhotoInApp() {
+//        val intent = Intent().apply {
+//            action = Intent.ACTION_VIEW
+//            setDataAndType(photoUri, MIME_TYPE)
+//        }
+//        val shareIntent = Intent.createChooser(intent, null)
+//        startActivity(shareIntent)
     }
 
     private fun observeDownload() {
@@ -270,6 +276,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DOWNLOAD SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
+                        showInfoWithAction(requireView(), R.string.download_succeeded) {
+                            openPhotoInApp()
+                        }
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DOWNLOAD CANCELED")
@@ -291,7 +300,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     private fun hasAllPermissions(): Boolean = PERMISSIONS.all { permission ->
-        ActivityCompat.checkSelfPermission(
+        ContextCompat.checkSelfPermission(
             requireContext(),
             permission
         ) == PackageManager.PERMISSION_GRANTED
@@ -312,7 +321,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private fun showPermissionRationaleDialog() =
         findNavController().navigate(FeedDetailsFragmentDirections.actionFeedDetailsFragmentToRationaleFragment())
 
-    companion object {
+    private companion object {
         private val PERMISSIONS = listOfNotNull(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE.takeIf {
@@ -320,6 +329,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             }
         )
 
-        const val IMAGE_MIME_TYPE = "image/*"
+        const val MIME_TYPE = "image/*"
     }
 }
