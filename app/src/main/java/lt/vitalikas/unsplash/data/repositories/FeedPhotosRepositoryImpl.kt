@@ -1,31 +1,21 @@
 package lt.vitalikas.unsplash.data.repositories
 
-import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.paging.*
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
-import lt.vitalikas.unsplash.utils.hasQ
-import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
     private val context: Context,
-    private val dispatcherIo: CoroutineDispatcher,
     private val downloadApi: DownloadApi
 ) : FeedPhotosRepository {
 
@@ -155,6 +145,10 @@ class FeedPhotosRepositoryImpl @Inject constructor(
                 }
         }
     }
+
+    override suspend fun likePhoto(id: String) = unsplashApi.likePhoto(id)
+
+    override suspend fun dislikePhoto(id: String) = unsplashApi.dislikePhoto(id)
 
     companion object {
         private const val PAGE_SIZE = 10

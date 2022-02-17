@@ -3,20 +3,15 @@ package lt.vitalikas.unsplash.di.modules
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
-import lt.vitalikas.unsplash.data.use_cases.DownloadPhotoUseCaseImpl
-import lt.vitalikas.unsplash.data.use_cases.GetFeedPhotoDetailsUseCaseImpl
-import lt.vitalikas.unsplash.data.use_cases.GetFeedPhotosUseCaseImpl
-import lt.vitalikas.unsplash.data.use_cases.GetProfileDataUseCaseImpl
-import lt.vitalikas.unsplash.domain.use_cases.DownloadPhotoUseCase
-import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
-import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
-import lt.vitalikas.unsplash.domain.use_cases.GetProfileDataUseCase
+import lt.vitalikas.unsplash.data.use_cases.*
+import lt.vitalikas.unsplash.domain.use_cases.*
 
 @Module
 @InstallIn(SingletonComponent::class)
 class UseCaseModule {
+
+    // Using Worker with Hilt @Binds doesn't work
 
 //    @Binds
 //    abstract fun provideGetProfileDataUseCase(impl: GetProfileDataUseCaseImpl): GetProfileDataUseCase
@@ -37,4 +32,10 @@ class UseCaseModule {
 //    abstract fun provideDownloadPhotoUseCase(impl: DownloadPhotoUseCaseImpl): DownloadPhotoUseCase
     @Provides
     fun provideDownloadPhotoUseCase(impl: DownloadPhotoUseCaseImpl): DownloadPhotoUseCase = impl
+
+    @Provides
+    fun provideLikePhotoUseCase(impl: LikePhotoUseCaseImpl): LikePhotoUseCase = impl
+
+    @Provides
+    fun provideDislikePhotoUseCase(impl: DislikePhotoUseCaseImpl): DislikePhotoUseCase = impl
 }

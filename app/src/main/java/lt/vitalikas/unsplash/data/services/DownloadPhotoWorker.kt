@@ -10,15 +10,15 @@ import dagger.assisted.AssistedInject
 import lt.vitalikas.unsplash.domain.use_cases.DownloadPhotoUseCase
 
 @HiltWorker
-class DownloadWorker @AssistedInject constructor(
+class DownloadPhotoWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     val downloadPhotoUseCase: DownloadPhotoUseCase
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val url = inputData.getString(DOWNLOAD_PHOTO_URL_KEY).orEmpty()
-        val uri = Uri.parse(inputData.getString(DOWNLOAD_PHOTO_URI_KEY).orEmpty())
+        val url = inputData.getString(PHOTO_URL).orEmpty()
+        val uri = Uri.parse(inputData.getString(PHOTO_URI).orEmpty())
 
         return try {
             downloadPhotoUseCase(url, uri)
@@ -29,8 +29,8 @@ class DownloadWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val DOWNLOAD_PHOTO_URL_KEY = "url"
-        const val DOWNLOAD_PHOTO_URI_KEY = "uri"
-        const val DOWNLOAD_PHOTO_WORK_UNIQUE_ID = "id"
+        const val PHOTO_URL = "photo_url"
+        const val PHOTO_URI = "photo_uri"
+        const val DOWNLOAD_PHOTO_WORK_ID = "download_photo_work_id"
     }
 }

@@ -23,7 +23,7 @@ class FeedDetailsAdapterDelegate(
         private var lat: Double? = null
         private var lng: Double? = null
 
-        lateinit var name: String
+        private lateinit var name: String
         private lateinit var downloadUrl: String
 
         init {

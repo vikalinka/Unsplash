@@ -8,9 +8,10 @@ import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 
 interface FeedPhotosRepository {
-
     suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
     suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails
     suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
     suspend fun downloadPhoto(url: String, uri: Uri)
+    suspend fun likePhoto(id: String)
+    suspend fun dislikePhoto(id: String)
 }
