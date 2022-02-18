@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import lt.vitalikas.unsplash.data.api.DownloadApi
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
@@ -15,8 +14,7 @@ import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
-    private val context: Context,
-    private val downloadApi: DownloadApi
+    private val context: Context
 ) : FeedPhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -139,7 +137,8 @@ class FeedPhotosRepositoryImpl @Inject constructor(
 
     override suspend fun downloadPhoto(url: String, uri: Uri) {
         context.contentResolver.openOutputStream(uri)?.use { outputStream ->
-            downloadApi.downloadFile(url)
+            val download = unsplashApi.trackDownload(url)
+            unsplashApi.downloadPhoto(download.url)
                 .byteStream().use { inputStream ->
                     inputStream.copyTo(outputStream)
                 }

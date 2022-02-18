@@ -2,7 +2,9 @@ package lt.vitalikas.unsplash.data.api
 
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.Download
 import lt.vitalikas.unsplash.domain.models.Profile
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface UnsplashApi {
@@ -22,10 +24,15 @@ interface UnsplashApi {
         @Path("id") id: String
     ): FeedPhotoDetails
 
-    @GET("/photos/{id}/download")
+    @GET
     suspend fun trackDownload(
-        @Path("id") id: String
-    )
+        @Url url: String
+    ): Download
+
+    @GET
+    suspend fun downloadPhoto(
+        @Url url: String
+    ): ResponseBody
 
     @POST("/photos/{id}/like")
     suspend fun likePhoto(

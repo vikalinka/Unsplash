@@ -1,7 +1,6 @@
 package lt.vitalikas.unsplash.ui.feed_details_screen
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,10 +31,10 @@ class FeedDetailsViewModel @Inject constructor(
         MutableStateFlow<FeedDetailsState>(FeedDetailsState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
-    fun downloadPhoto(url: String, uri: Uri) {
+    fun downloadPhoto(id: String, uri: Uri) {
 
         val workData = workDataOf(
-            DownloadPhotoWorker.PHOTO_URL to url,
+            DownloadPhotoWorker.PHOTO_ID to id,
             DownloadPhotoWorker.PHOTO_URI to uri.toString()
         )
 
@@ -52,7 +51,7 @@ class FeedDetailsViewModel @Inject constructor(
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 workRequest
             )
     }
@@ -76,7 +75,7 @@ class FeedDetailsViewModel @Inject constructor(
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 LikePhotoWorker.LIKE_PHOTO_WORK_ID,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 workRequest
             )
     }
@@ -100,7 +99,7 @@ class FeedDetailsViewModel @Inject constructor(
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 workRequest
             )
     }

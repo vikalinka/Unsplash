@@ -67,7 +67,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
 
     private lateinit var photoDownloadUrl: String
-    private lateinit var photoName: String
     private lateinit var photoUri: Uri
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -76,7 +75,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         if (permissionsWithStatuses.values.all { isGranted ->
                 isGranted == true
             }) {
-            savePhotoInSelectedFolderLauncher.launch(photoName)
+            savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
         } else {
             if (isNeedToShowRationale()) {
                 showPermissionRationaleDialog()
@@ -114,7 +113,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     override fun openLauncher() {
-        savePhotoInSelectedFolderLauncher.launch(photoName)
+        savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
     }
 
     private fun getFeedPhotoDetails(id: String) {
@@ -209,9 +208,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     val locationUri = Uri.parse("geo: $lat,$lng")
                     showLocationInMap(locationUri)
                 },
-                onDownloadClick = { name, url ->
+                onDownloadClick = { url ->
                     photoDownloadUrl = url
-                    photoName = "${name}.jpg"
                     checkPermissions()
                 }
             )
@@ -258,11 +256,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         startActivity(shareIntent)
     }
 
-    private fun openPhotoUri() {
+    private fun openPhotoUri(uri: Uri) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, photoUri)
-            type = "image/jpg"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = MIME_TYPE
         }
 
         val shareIntent = Intent.createChooser(intent, null)
@@ -362,9 +360,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DOWNLOAD SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updatePhotoStats()
                         showInfoWithAction(requireView(), R.string.download_succeeded) {
-                            openPhotoUri()
+                            openPhotoUri(photoUri)
                         }
                     }
                     WorkInfo.State.CANCELLED -> {
@@ -382,7 +379,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         if (hasAllPermissions().not()) {
             requestPermissions()
         } else {
-            savePhotoInSelectedFolderLauncher.launch(photoName)
+            savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
         }
     }
 
@@ -417,6 +414,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             }
         )
 
-        const val MIME_TYPE = "image/*"
+        const val MIME_TYPE = "image/jpeg"
     }
 }

@@ -17,7 +17,7 @@ class DownloadPhotoWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val url = inputData.getString(PHOTO_URL).orEmpty()
+        val url = inputData.getString(PHOTO_ID).orEmpty()
         val uri = Uri.parse(inputData.getString(PHOTO_URI).orEmpty())
 
         return try {
@@ -29,7 +29,7 @@ class DownloadPhotoWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val PHOTO_URL = "photo_url"
+        const val PHOTO_ID = "photo_id"
         const val PHOTO_URI = "photo_uri"
         const val DOWNLOAD_PHOTO_WORK_ID = "download_photo_work_id"
     }

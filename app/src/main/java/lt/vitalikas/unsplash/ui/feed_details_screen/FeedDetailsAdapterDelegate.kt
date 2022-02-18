@@ -10,20 +10,19 @@ import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 
 class FeedDetailsAdapterDelegate(
     private val onLocationClick: (lat: Double, lng: Double) -> Unit,
-    private val onDownloadClick: (name: String, url: String) -> Unit
+    private val onDownloadClick: (url: String) -> Unit
 ) :
     AbsListItemAdapterDelegate<FeedPhotoDetails, FeedPhotoDetails, FeedDetailsAdapterDelegate.FeedPhotoDetailsViewHolder>() {
 
     class FeedPhotoDetailsViewHolder(
         private val binding: ItemFeedPhotoDetailsBinding,
         onLocationClick: (lat: Double, lng: Double) -> Unit,
-        onDownloadClick: (name: String, url: String) -> Unit
+        onDownloadClick: (url: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var lat: Double? = null
         private var lng: Double? = null
 
-        private lateinit var name: String
         private lateinit var downloadUrl: String
 
         init {
@@ -33,7 +32,7 @@ class FeedDetailsAdapterDelegate(
                 }
             }
             binding.tvDownload.setOnClickListener {
-                onDownloadClick(name, downloadUrl)
+                onDownloadClick(downloadUrl)
             }
         }
 
@@ -42,8 +41,8 @@ class FeedDetailsAdapterDelegate(
             lat = item.location.position.latitude
             lng = item.location.position.longitude
 
-            name = item.id
-            downloadUrl = item.urls.raw
+            downloadUrl = item.links.downloadLocation
+//            downloadUrl = item.urls.raw
 
             binding.tvLocation.text =
                 itemView.context.getString(
