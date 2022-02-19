@@ -14,5 +14,5 @@ data class UserAndFeedPhoto(
         parentColumn = UsersContract.Columns.ID,
         entityColumn = FeedPhotosContract.Columns.USER_ID
     )
-    val feedPhoto: FeedPhotoEntity
+    val feedPhoto: FeedPhotoEntity?
 )

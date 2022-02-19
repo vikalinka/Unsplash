@@ -15,9 +15,9 @@ data class FeedPhoto(
     val color: String,
     @Json(name = "blur_hash")
     val blurHash: String,
-    val likes: Int,
+    var likes: Int,
     @Json(name = "liked_by_user")
-    val likedByUser: Boolean,
+    var likedByUser: Boolean,
     val description: String?,
     val user: User,
     @Json(name = "current_user_collections")

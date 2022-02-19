@@ -14,4 +14,5 @@ interface FeedPhotosRepository {
     suspend fun downloadPhoto(url: String, uri: Uri)
     suspend fun likePhoto(id: String)
     suspend fun dislikePhoto(id: String)
+    suspend fun updatePhoto(photo: FeedPhotoEntity)
 }

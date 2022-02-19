@@ -14,6 +14,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,8 +23,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
+import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
+import lt.vitalikas.unsplash.utils.showInfo
+import lt.vitalikas.unsplash.utils.showInfoWithAction
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -38,10 +44,20 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val feedViewModel by viewModels<FeedViewModel>()
 
     private val feedAdapter by autoCleaned {
-        FeedAdapter { id ->
-            val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
-            findNavController().navigate(directions)
-        }.apply {
+        FeedAdapter(
+            onItemClick = { id ->
+                val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
+                findNavController().navigate(directions)
+            },
+            onLikeClick = { id, photo ->
+                feedViewModel.likePhoto(id)
+                feedViewModel.updatePhoto(photo)
+            },
+            onDislikeClick = { id, photo ->
+                feedViewModel.dislikePhoto(id)
+                feedViewModel.updatePhoto(photo)
+            }
+        ).apply {
             addLoadStateListener { loadStates ->
                 if (loadStates.refresh is LoadState.Loading) {
                     loading.isVisible = true
@@ -70,6 +86,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         getData()
         setListeners()
         setupToolbar()
+        observeLikingPhoto()
+        observeDislikingPhoto()
     }
 
     private fun initFeedPhotosRv() {
@@ -118,7 +136,12 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                             }
                             is FeedState.Error -> {
                                 refresh.isRefreshing = false
-                                state.error.message?.let { showSnackbar(it) }
+                                state.error.message?.let {
+                                    showInfo(
+                                        requireView(),
+                                        it
+                                    )
+                                }
                                 Timber.d("${state.error}")
                             }
                         }
@@ -205,5 +228,73 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun showToast(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun observeLikingPhoto() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_FEED)
+            .observe(viewLifecycleOwner) { workInfos ->
+                if (workInfos.isNullOrEmpty()) {
+                    return@observe
+                }
+                when (workInfos.first().state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Timber.d("LIKING PHOTO ENQUEUED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Timber.d("LIKING PHOTO RUNNING")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Timber.d("LIKING PHOTO FAILED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("LIKING PHOTO SUCCEEDED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+//                        feedAdapter.refresh()
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Timber.d("LIKING PHOTO CANCELED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Timber.d("LIKING PHOTO BLOCKED")
+                    }
+                }
+            }
+    }
+
+    private fun observeDislikingPhoto() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_FEED)
+            .observe(viewLifecycleOwner) { workInfos ->
+                if (workInfos.isNullOrEmpty()) {
+                    return@observe
+                }
+                when (workInfos.first().state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Timber.d("DISLIKING PHOTO ENQUEUED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Timber.d("DISLIKING PHOTO RUNNING")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Timber.d("DISLIKING PHOTO FAILED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("DISLIKING PHOTO SUCCEEDED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+//                        feedAdapter.refresh()
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Timber.d("DISLIKING PHOTO CANCELED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Timber.d("DISLIKING PHOTO BLOCKED")
+                    }
+                }
+            }
     }
 }

@@ -3,8 +3,10 @@ package lt.vitalikas.unsplash.data.repositories
 import android.content.Context
 import android.net.Uri
 import androidx.paging.*
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
-    private val context: Context
+    private val context: Context,
+    private val dispatcherIo: CoroutineDispatcher
 ) : FeedPhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -133,7 +136,9 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         unsplashApi.getFeedPhotoDetails(id)
 
     override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
-        Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
+        withContext(dispatcherIo) {
+            Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
+        }
 
     override suspend fun downloadPhoto(url: String, uri: Uri) {
         context.contentResolver.openOutputStream(uri)?.use { outputStream ->
@@ -148,6 +153,10 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     override suspend fun likePhoto(id: String) = unsplashApi.likePhoto(id)
 
     override suspend fun dislikePhoto(id: String) = unsplashApi.dislikePhoto(id)
+
+    override suspend fun updatePhoto(photo: FeedPhotoEntity) = withContext(dispatcherIo) {
+        Database.instance.feedPhotosDao().updateFeedPhoto(photo)
+    }
 
     companion object {
         private const val PAGE_SIZE = 10

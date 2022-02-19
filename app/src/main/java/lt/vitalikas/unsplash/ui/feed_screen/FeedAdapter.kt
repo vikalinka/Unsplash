@@ -11,12 +11,18 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
-class FeedAdapter(private val onItemClick: (id: String) -> Unit) :
+class FeedAdapter(
+    private val onItemClick: (id: String) -> Unit,
+    private val onLikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit,
+    private val onDislikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit
+) :
     PagingDataAdapter<FeedPhoto, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoDiffUtilCallback()) {
 
-    class FeedPhotoViewHolder(
+    inner class FeedPhotoViewHolder(
         private val binding: ItemFeedBinding,
-        onItemClick: (id: String) -> Unit
+        onItemClick: (id: String) -> Unit,
+        private val onLikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit,
+        private val onDislikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var id: String
@@ -46,16 +52,51 @@ class FeedAdapter(private val onItemClick: (id: String) -> Unit) :
             binding.tvUsername.text =
                 itemView.resources.getString(R.string.username, item.user.username)
 
-            binding.ivLove.run {
-                setImageResource(R.drawable.ic_love_filled)
-                setColorFilter(ContextCompat.getColor(context, R.color.red))
-            }.takeIf { item.likedByUser } ?: binding.ivLove.run {
-                setImageResource(R.drawable.ic_love)
-                setColorFilter(ContextCompat.getColor(context, R.color.red))
-            }
+            with(binding.ivLove) {
+                if (item.likedByUser) {
+                    setImageResource(R.drawable.ic_love_filled)
+                    setColorFilter(ContextCompat.getColor(context, R.color.red))
+                    setOnClickListener {
+                        // getting data from paging adapter`s snapshot
+                        val snapshotPhoto =
+                            this@FeedAdapter.snapshot().firstOrNull { snapshotPhoto ->
+                                snapshotPhoto?.id == item.id
+                            }
 
-            binding.tvLove.text = item.likes.toString()
+                        // updating adapter
+                        snapshotPhoto?.let {
+                            it.likedByUser = false
+                            it.likes -= 1
+                            this@FeedAdapter.notifyDataSetChanged()
+
+                            onDislikeClick(item.id, it)
+                        }
+                    }
+                } else {
+                    setImageResource(R.drawable.ic_love)
+                    setColorFilter(ContextCompat.getColor(context, R.color.red))
+                    setOnClickListener {
+                        // getting data from paging adapter`s snapshot
+                        val snapshotPhoto =
+                            this@FeedAdapter.snapshot().firstOrNull { snapshotPhoto ->
+                                snapshotPhoto?.id == item.id
+                            }
+
+                        // updating adapter
+                        snapshotPhoto?.let {
+                            it.likedByUser = true
+                            it.likes += 1
+                            this@FeedAdapter.notifyDataSetChanged()
+
+                            onLikeClick(item.id, it)
+                        }
+                    }
+                }
+
+                binding.tvLove.text = item.likes.toString()
+            }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedPhotoViewHolder =
@@ -65,23 +106,15 @@ class FeedAdapter(private val onItemClick: (id: String) -> Unit) :
                 parent,
                 false
             ),
-            onItemClick = onItemClick
+            onItemClick = onItemClick,
+            onLikeClick = onLikeClick,
+            onDislikeClick = onDislikeClick
         )
 
     override fun onBindViewHolder(holder: FeedPhotoViewHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bind(it) }
     }
-
-
-//    override fun onViewAttachedToWindow(holder: FeedPhotoViewHolder) {
-//        super.onViewAttachedToWindow(holder)
-//        if (holder.layoutPosition == 0) {
-//            val p =
-//                holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
-//            p.isFullSpan = true
-//        }
-//    }
 
     class FeedPhotoDiffUtilCallback : DiffUtil.ItemCallback<FeedPhoto>() {
         override fun areItemsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =

@@ -15,6 +15,7 @@ fun showInfo(view: View, message: String) {
             message,
             Snackbar.LENGTH_LONG
         )
+        .setAnchorView(R.id.bottom_navigation)
         .show()
 }
 
@@ -25,10 +26,16 @@ fun showInfo(view: View, @StringRes message: Int) {
             message,
             Snackbar.LENGTH_LONG
         )
+        .setAnchorView(R.id.bottom_navigation)
         .show()
 }
 
-fun showInfoWithAction(view: View, @StringRes message: Int, action: () -> Unit) {
+fun showInfoWithAction(
+    view: View,
+    @StringRes message: Int,
+    @StringRes actionText: Int,
+    action: () -> Unit
+) {
     Snackbar
         .make(
             view,
@@ -36,7 +43,7 @@ fun showInfoWithAction(view: View, @StringRes message: Int, action: () -> Unit) 
             Snackbar.LENGTH_LONG
         )
         .setAnchorView(R.id.bottom_navigation)
-        .setAction("Open") {
+        .setAction(actionText) {
             action()
         }
         .show()

@@ -74,7 +74,7 @@ class FeedDetailsViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID,
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )
@@ -98,7 +98,7 @@ class FeedDetailsViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_DETAILS,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )

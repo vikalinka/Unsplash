@@ -273,7 +273,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private fun observeLikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID)
+            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe
@@ -307,7 +307,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private fun observeDislikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID)
+            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_DETAILS)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe
@@ -360,7 +360,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DOWNLOAD SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        showInfoWithAction(requireView(), R.string.download_succeeded) {
+                        showInfoWithAction(
+                            requireView(),
+                            R.string.download_succeeded,
+                            R.string.open
+                        ) {
                             openPhotoUri(photoUri)
                         }
                     }

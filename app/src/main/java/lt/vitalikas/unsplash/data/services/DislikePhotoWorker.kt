@@ -29,6 +29,7 @@ class DislikePhotoWorker @AssistedInject constructor(
 
     companion object {
         const val DISLIKE_PHOTO_ID = "dislike_photo_id"
-        const val DISLIKE_PHOTO_WORK_ID = "dislike_photo_work_id"
+        const val DISLIKE_PHOTO_WORK_ID_FROM_DETAILS = "dislike_photo_work_id_from_details"
+        const val DISLIKE_PHOTO_WORK_ID_FROM_FEED = "dislike_photo_work_id_from_feed"
     }
 }

@@ -1,12 +1,10 @@
 package lt.vitalikas.unsplash.data.db.dao
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.data.db.contracts.FeedPhotosContract
+import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 @Dao
 interface FeedPhotosDao {
@@ -22,6 +20,9 @@ interface FeedPhotosDao {
 
     @Query("DELETE FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun deleteAllFeedPhotos()
+
+    @Update
+    suspend fun updateFeedPhoto(photo: FeedPhotoEntity)
 
     @Query("SELECT COUNT(*) FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun getFeedPhotoCount(): Int
