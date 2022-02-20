@@ -38,6 +38,7 @@ import lt.vitalikas.unsplash.utils.hasQ
 import lt.vitalikas.unsplash.utils.showInfo
 import lt.vitalikas.unsplash.utils.showInfoWithAction
 import timber.log.Timber
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
@@ -60,6 +61,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private val args by navArgs<FeedDetailsFragmentArgs>()
 
     private lateinit var photoShareLink: String
+
+    private var likeCount by Delegates.notNull<Int>()
 
     private val feedPhotoDetailsAdapter
         get() = requireNotNull(details.adapter as FeedDetailsAdapter) {
@@ -105,6 +108,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         observeDownload()
         observeLikingPhoto()
         observeDislikingPhoto()
+        handleToolbarNavigation()
     }
 
     override fun onDestroy() {
@@ -183,6 +187,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         userUsername.text = getString(R.string.username, details.user.username)
 
         userTotalLikes.text = details.likes.toString()
+        likeCount = details.likes
 
         with(likedByUser) {
             if (details.likedByUser) {
@@ -267,10 +272,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         startActivity(shareIntent)
     }
 
-    private fun updatePhotoStats() {
-        getFeedPhotoDetails(args.id)
-    }
-
     private fun observeLikingPhoto() {
         WorkManager.getInstance(requireContext())
             .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS)
@@ -292,7 +293,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("LIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updatePhotoStats()
+                        updateDataOnFeedLike()
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("LIKING PHOTO CANCELED")
@@ -303,6 +304,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
+    }
+
+    private fun updateDataOnFeedLike() {
+        likedByUser.setImageResource(R.drawable.ic_love_filled)
+        userTotalLikes.text = (likeCount + 1).toString()
     }
 
     private fun observeDislikingPhoto() {
@@ -326,7 +332,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DISLIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updatePhotoStats()
+                        updateDataOnFeedDislike()
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DISLIKING PHOTO CANCELED")
@@ -337,6 +343,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
+    }
+
+    private fun updateDataOnFeedDislike() {
+        likedByUser.setImageResource(R.drawable.ic_love)
+        userTotalLikes.text = (likeCount - 1).toString()
     }
 
     private fun observeDownload() {
@@ -377,6 +388,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
+    }
+
+    private fun handleToolbarNavigation() {
+        toolbar.setNavigationOnClickListener {
+            val directions =
+                FeedDetailsFragmentDirections.actionFeedDetailsFragmentToHome()
+            findNavController().navigate(directions)
+        }
     }
 
     private fun checkPermissions() {

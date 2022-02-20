@@ -13,16 +13,16 @@ import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 class FeedAdapter(
     private val onItemClick: (id: String) -> Unit,
-    private val onLikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit,
-    private val onDislikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit
+    private val onLikeClick: (id: String) -> Unit,
+    private val onDislikeClick: (id: String) -> Unit
 ) :
     PagingDataAdapter<FeedPhoto, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoDiffUtilCallback()) {
 
     inner class FeedPhotoViewHolder(
         private val binding: ItemFeedBinding,
         onItemClick: (id: String) -> Unit,
-        private val onLikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit,
-        private val onDislikeClick: (id: String, updatedPhoto: FeedPhoto) -> Unit
+        private val onLikeClick: (id: String) -> Unit,
+        private val onDislikeClick: (id: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var id: String
@@ -57,46 +57,19 @@ class FeedAdapter(
                     setImageResource(R.drawable.ic_love_filled)
                     setColorFilter(ContextCompat.getColor(context, R.color.red))
                     setOnClickListener {
-                        // getting data from paging adapter`s snapshot
-                        val snapshotPhoto =
-                            this@FeedAdapter.snapshot().firstOrNull { snapshotPhoto ->
-                                snapshotPhoto?.id == item.id
-                            }
-
-                        // updating adapter
-                        snapshotPhoto?.let {
-                            it.likedByUser = false
-                            it.likes -= 1
-                            this@FeedAdapter.notifyDataSetChanged()
-
-                            onDislikeClick(item.id, it)
-                        }
+                        onDislikeClick(item.id)
                     }
                 } else {
                     setImageResource(R.drawable.ic_love)
                     setColorFilter(ContextCompat.getColor(context, R.color.red))
                     setOnClickListener {
-                        // getting data from paging adapter`s snapshot
-                        val snapshotPhoto =
-                            this@FeedAdapter.snapshot().firstOrNull { snapshotPhoto ->
-                                snapshotPhoto?.id == item.id
-                            }
-
-                        // updating adapter
-                        snapshotPhoto?.let {
-                            it.likedByUser = true
-                            it.likes += 1
-                            this@FeedAdapter.notifyDataSetChanged()
-
-                            onLikeClick(item.id, it)
-                        }
+                        onLikeClick(item.id)
                     }
                 }
 
                 binding.tvLove.text = item.likes.toString()
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedPhotoViewHolder =

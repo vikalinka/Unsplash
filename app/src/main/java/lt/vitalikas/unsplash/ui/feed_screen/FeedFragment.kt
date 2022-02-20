@@ -28,7 +28,6 @@ import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.showInfo
-import lt.vitalikas.unsplash.utils.showInfoWithAction
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -43,19 +42,23 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val feedViewModel by viewModels<FeedViewModel>()
 
+    private lateinit var id: String
+
     private val feedAdapter by autoCleaned {
         FeedAdapter(
             onItemClick = { id ->
                 val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
                 findNavController().navigate(directions)
             },
-            onLikeClick = { id, photo ->
+            onLikeClick = { id ->
+                this.id = id
+
                 feedViewModel.likePhoto(id)
-                feedViewModel.updatePhoto(photo)
             },
-            onDislikeClick = { id, photo ->
+            onDislikeClick = { id ->
+                this.id = id
+
                 feedViewModel.dislikePhoto(id)
-                feedViewModel.updatePhoto(photo)
             }
         ).apply {
             addLoadStateListener { loadStates ->
@@ -88,6 +91,12 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         setupToolbar()
         observeLikingPhoto()
         observeDislikingPhoto()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.d("ON PAUSE CALLED")
+        feedViewModel.cancelScopeChildrenJobs()
     }
 
     private fun initFeedPhotosRv() {
@@ -173,11 +182,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        feedViewModel.cancelScopeChildrenJobs()
-    }
-
     private fun setupToolbar() {
         with(toolbar) {
             title = getString(R.string.nav_feed)
@@ -251,7 +255,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("LIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-//                        feedAdapter.refresh()
+                        updateDataOnFeedLike()
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("LIKING PHOTO CANCELED")
@@ -262,6 +266,25 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
                 }
             }
+    }
+
+    private fun updateDataOnFeedLike() {
+        // getting data from paging adapter`s snapshot
+        val snapshotItem = feedAdapter.snapshot().firstOrNull { snapshotItem ->
+            snapshotItem?.id == this.id
+        }
+
+        snapshotItem?.let {
+            // updating snapshot data
+            it.likedByUser = true
+            it.likes += 1
+
+            // updating paging data adapter
+            feedAdapter.notifyDataSetChanged()
+
+            // updating database data
+            feedViewModel.updatePhotoInDatabase(it.id, true, it.likes)
+        }
     }
 
     private fun observeDislikingPhoto() {
@@ -285,7 +308,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DISLIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-//                        feedAdapter.refresh()
+                        updateDataOnFeedDislike()
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DISLIKING PHOTO CANCELED")
@@ -296,5 +319,24 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
                 }
             }
+    }
+
+    private fun updateDataOnFeedDislike() {
+        // getting data from paging adapter`s snapshot
+        val snapshotItem = feedAdapter.snapshot().firstOrNull { snapshotItem ->
+            snapshotItem?.id == this.id
+        }
+
+        snapshotItem?.let {
+            // updating snapshot data
+            it.likedByUser = false
+            it.likes -= 1
+
+            // updating paging data adapter
+            feedAdapter.notifyDataSetChanged()
+
+            // updating database data
+            feedViewModel.updatePhotoInDatabase(it.id, false, it.likes)
+        }
     }
 }

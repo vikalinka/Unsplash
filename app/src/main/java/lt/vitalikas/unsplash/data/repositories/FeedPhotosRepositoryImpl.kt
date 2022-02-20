@@ -154,9 +154,10 @@ class FeedPhotosRepositoryImpl @Inject constructor(
 
     override suspend fun dislikePhoto(id: String) = unsplashApi.dislikePhoto(id)
 
-    override suspend fun updatePhoto(photo: FeedPhotoEntity) = withContext(dispatcherIo) {
-        Database.instance.feedPhotosDao().updateFeedPhoto(photo)
-    }
+    override suspend fun updatePhoto(id: String, isLiked: Boolean, likeCount: Int) =
+        withContext(dispatcherIo) {
+            Database.instance.feedPhotosDao().updatePhoto(id, isLiked, likeCount)
+        }
 
     companion object {
         private const val PAGE_SIZE = 10

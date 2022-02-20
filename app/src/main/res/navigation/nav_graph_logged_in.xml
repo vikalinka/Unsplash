@@ -47,6 +47,11 @@
         <action
             android:id="@+id/action_feedDetailsFragment_to_rationaleFragment"
             app:destination="@id/rationaleFragment" />
+        <action
+            android:id="@+id/action_feedDetailsFragment_to_home"
+            app:destination="@id/home"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <dialog
         android:id="@+id/rationaleFragment"

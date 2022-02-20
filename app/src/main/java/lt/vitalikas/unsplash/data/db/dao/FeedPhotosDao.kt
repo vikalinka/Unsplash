@@ -21,8 +21,13 @@ interface FeedPhotosDao {
     @Query("DELETE FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun deleteAllFeedPhotos()
 
-    @Update
-    suspend fun updateFeedPhoto(photo: FeedPhotoEntity)
+    @Query(
+        "UPDATE ${FeedPhotosContract.TABLE_NAME} " +
+                "SET ${FeedPhotosContract.Columns.LIKED_BY_USER} = :liked, " +
+                "${FeedPhotosContract.Columns.LIKES} = :count " +
+                "WHERE ${FeedPhotosContract.Columns.ID} = :id"
+    )
+    suspend fun updatePhoto(id: String, liked: Boolean, count: Int)
 
     @Query("SELECT COUNT(*) FROM ${FeedPhotosContract.TABLE_NAME}")
     suspend fun getFeedPhotoCount(): Int

@@ -12,6 +12,7 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class FeedDetailsViewModel @Inject constructor(
     val context: Application,
     private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase,
-    networkStatusTracker: NetworkStatusTracker
+    networkStatusTracker: NetworkStatusTracker,
+    private val feedPhotosRepository: FeedPhotosRepository
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -121,4 +123,14 @@ class FeedDetailsViewModel @Inject constructor(
             Timber.i("photo details fetching canceled")
         }
     }
+
+    fun updatePhotoInDatabase(id: String, isLiked: Boolean, likeCount: Int) =
+        viewModelScope.launch {
+            try {
+                feedPhotosRepository.updatePhoto(id, isLiked, likeCount)
+            } catch (t: Throwable) {
+                Timber.d(t)
+                _feedDetailsState.value = FeedDetailsState.Error(t)
+            }
+        }
 }
