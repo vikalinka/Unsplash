@@ -27,7 +27,7 @@
     </style>
 
     <style name="ToolbarNavigationStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
-        <item name="tint">@color/custom_color_secondary</item>
+        <item name="tint">@color/black</item>
     </style>
 
     <style name="PopupTheme" parent="ThemeOverlay.AppCompat.DayNight">

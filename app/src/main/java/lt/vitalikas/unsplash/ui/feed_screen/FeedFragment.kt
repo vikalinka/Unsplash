@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.*
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -75,7 +74,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
 
                     errorState?.let { state ->
-                        state.error.message?.let { text -> showSnackbar(text) }
+                        state.error.message?.let { text -> showInfo(requireView(), text) }
                     }
                 }
             }
@@ -95,7 +94,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     override fun onPause() {
         super.onPause()
-        Timber.d("ON PAUSE CALLED")
         feedViewModel.cancelScopeChildrenJobs()
     }
 
@@ -119,17 +117,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         viewLifecycleOwner.lifecycleScope.launch {
             feedViewModel.getFeedPhotos()
         }
-    }
-
-    private fun showSnackbar(message: String) {
-        Snackbar
-            .make(
-                requireView(),
-                message,
-                Snackbar.LENGTH_LONG
-            )
-            .setAnchorView(R.id.bottom_navigation)
-            .show()
     }
 
     private fun bindViewModel() {
@@ -167,7 +154,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnection.isVisible = true
-                                showSnackbar("No internet connection. Cached data is shown.")
+                                showInfo(
+                                    requireView(),
+                                    "No internet connection. Cached data is shown."
+                                )
                             }
                         }
                     }
