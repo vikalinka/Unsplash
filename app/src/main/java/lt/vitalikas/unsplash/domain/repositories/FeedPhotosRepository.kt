@@ -15,4 +15,5 @@ interface FeedPhotosRepository {
     suspend fun likePhoto(id: String)
     suspend fun dislikePhoto(id: String)
     suspend fun updatePhoto(id: String, isLiked: Boolean, likeCount: Int)
+    suspend fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>>
 }

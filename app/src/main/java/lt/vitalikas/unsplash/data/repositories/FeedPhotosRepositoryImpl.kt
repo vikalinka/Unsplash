@@ -159,7 +159,24 @@ class FeedPhotosRepositoryImpl @Inject constructor(
             Database.instance.feedPhotosDao().updatePhoto(id, isLiked, likeCount)
         }
 
+    @OptIn(ExperimentalPagingApi::class)
+    override suspend fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>> {
+        val pagingSourceFactory = {
+            UnsplashPagingSource(
+                query = query,
+                api = unsplashApi
+            )
+        }
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+    }
+
     companion object {
-        private const val PAGE_SIZE = 10
+        private const val PAGE_SIZE = 14
     }
 }

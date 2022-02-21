@@ -43,4 +43,12 @@ interface UnsplashApi {
     suspend fun dislikePhoto(
         @Path("id") id: String
     )
+
+    @GET("/search/photos")
+    suspend fun searchPhotos(
+        @Query("query") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
+        @Query("order_by") orderBy: String
+    ): List<FeedPhoto>
 }

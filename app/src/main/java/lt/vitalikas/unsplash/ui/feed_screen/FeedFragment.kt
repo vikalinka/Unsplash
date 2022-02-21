@@ -203,7 +203,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                                     }
 
                                     override fun onQueryTextChange(newText: String?): Boolean {
-                                        showToast("aaa")
+                                        viewLifecycleOwner.lifecycleScope.launch {
+                                            Timber.d("SEARCHING...")
+                                            newText?.let { feedViewModel.searchFeedPhotos(it) }
+                                        }
+                                        Timber.d("$newText")
                                         return true
                                     }
                                 })
