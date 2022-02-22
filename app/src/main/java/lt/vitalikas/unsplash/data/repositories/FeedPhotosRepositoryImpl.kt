@@ -160,7 +160,7 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>> {
+    override fun searchPhotos(query: String): Flow<PagingData<Search>> {
         val pagingSourceFactory = {
             UnsplashPagingSource(
                 query = query,

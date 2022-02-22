@@ -3,16 +3,16 @@ package lt.vitalikas.unsplash.data.repositories
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import lt.vitalikas.unsplash.data.api.UnsplashApi
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
+import lt.vitalikas.unsplash.domain.models.Search
 
 class UnsplashPagingSource(
     val query: String,
     private val api: UnsplashApi,
     val pageSize: Int
-) : PagingSource<Int, FeedPhoto>() {
+) : PagingSource<Int, Search>() {
 
     // The refresh key is used for subsequent refresh calls to PagingSource.load after the initial load
-    override fun getRefreshKey(state: PagingState<Int, FeedPhoto>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Search>): Int? {
         // get the most recently accessed index in data list
         val anchorPosition = state.anchorPosition ?: return null
         // convert item index to page index
@@ -21,7 +21,7 @@ class UnsplashPagingSource(
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FeedPhoto> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Search> {
         return try {
             // pageIndex = params.key, perPage = params.loadSize
 

@@ -1,9 +1,7 @@
 package lt.vitalikas.unsplash.data.api
 
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
-import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
-import lt.vitalikas.unsplash.domain.models.Download
-import lt.vitalikas.unsplash.domain.models.Profile
+import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.ui.feed_screen.PhotoSearchState
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -50,5 +48,5 @@ interface UnsplashApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
-    ): List<FeedPhoto>
+    ): List<Search>
 }

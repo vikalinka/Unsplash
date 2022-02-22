@@ -33,6 +33,10 @@ class FeedViewModel @Inject constructor(
         MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
     val feedState = _feedState.asStateFlow()
 
+    private val _searchState =
+        MutableStateFlow<PhotoSearchState>(PhotoSearchState.Success(PagingData.empty()))
+    val searchState = _searchState.asStateFlow()
+
     val networkStatus = networkStatusTracker.networkStatus
 
     suspend fun getFeedPhotos() {
@@ -50,7 +54,6 @@ class FeedViewModel @Inject constructor(
     }
 
     fun searchFeedPhotos(query: Flow<String>) {
-
         val dataFlow =
             query
                 .debounce(1000L)
@@ -60,14 +63,13 @@ class FeedViewModel @Inject constructor(
                     searchFeedPhotosUseCase.invoke(query)
                 }
                 .cachedIn(scope)
-
         dataFlow
             .onEach { pagingData ->
-                _feedState.value = FeedState.Success(pagingData)
+                _searchState.value = PhotoSearchState.Success(pagingData)
             }
             .catch { t ->
                 Timber.d(t)
-                _feedState.value = FeedState.Error(t)
+                _searchState.value = PhotoSearchState.Error(t)
             }
             .launchIn(scope)
     }

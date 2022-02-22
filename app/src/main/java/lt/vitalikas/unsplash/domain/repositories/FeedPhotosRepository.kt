@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.Search
 
 interface FeedPhotosRepository {
     suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
@@ -15,5 +16,5 @@ interface FeedPhotosRepository {
     suspend fun likePhoto(id: String)
     suspend fun dislikePhoto(id: String)
     suspend fun updatePhoto(id: String, isLiked: Boolean, likeCount: Int)
-    fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>>
+    fun searchPhotos(query: String): Flow<PagingData<Search>>
 }

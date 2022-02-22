@@ -146,6 +146,27 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 }
 
                 launch {
+                    feedViewModel.searchState.collect { state ->
+                        when (state) {
+                            is PhotoSearchState.Success -> {
+                                feedAdapter.submitData(state.data)
+                                refresh.isRefreshing = false
+                            }
+                            is PhotoSearchState.Error -> {
+                                refresh.isRefreshing = false
+                                state.error.message?.let {
+                                    showInfo(
+                                        requireView(),
+                                        it
+                                    )
+                                }
+                                Timber.d("${state.error}")
+                            }
+                        }
+                    }
+                }
+
+                launch {
                     feedViewModel.networkStatus.collect { status ->
                         when (status) {
                             NetworkStatus.Available -> {
