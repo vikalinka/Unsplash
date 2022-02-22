@@ -26,6 +26,7 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
+import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
 
@@ -196,22 +197,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                         })
 
                         with(menuItem.actionView as SearchView) {
-                            setOnQueryTextListener(
-                                object : SearchView.OnQueryTextListener {
-                                    override fun onQueryTextSubmit(query: String?): Boolean {
-                                        return true
-                                    }
-
-                                    override fun onQueryTextChange(newText: String?): Boolean {
-                                        viewLifecycleOwner.lifecycleScope.launch {
-                                            Timber.d("SEARCHING...")
-                                            newText?.let { feedViewModel.searchFeedPhotos(it) }
-                                        }
-                                        Timber.d("$newText")
-                                        return true
-                                    }
-                                })
-
+                            feedViewModel.searchFeedPhotos(this.onTextChangedFlow())
                             isIconified = false
                         }
 

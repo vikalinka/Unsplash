@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_screen
+package lt.vitalikas.unsplash.ui.favorites_screen
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -13,15 +13,14 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
-import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import lt.vitalikas.unsplash.domain.use_cases.SearchFeedPhotosUseCase
+import lt.vitalikas.unsplash.ui.feed_screen.FeedState
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(
+class FavoritesViewModel @Inject constructor(
     val context: Application,
-    private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
     private val searchFeedPhotosUseCase: SearchFeedPhotosUseCase,
     networkStatusTracker: NetworkStatusTracker,
     private val feedPhotosRepository: FeedPhotosRepository
@@ -34,20 +33,6 @@ class FeedViewModel @Inject constructor(
     val feedState = _feedState.asStateFlow()
 
     val networkStatus = networkStatusTracker.networkStatus
-
-    suspend fun getFeedPhotos() {
-        val dataFlow = getFeedPhotosUseCase()
-            .cachedIn(scope)
-        dataFlow
-            .onEach { pagingData ->
-                _feedState.value = FeedState.Success(pagingData)
-            }
-            .catch { t ->
-                Timber.d(t)
-                _feedState.value = FeedState.Error(t)
-            }
-            .launchIn(scope)
-    }
 
     fun searchFeedPhotos(query: Flow<String>) {
 

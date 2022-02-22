@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.data.db.contracts.FeedPhotosContract
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
 
 @Dao
 interface FeedPhotosDao {

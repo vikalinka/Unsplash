@@ -2,8 +2,13 @@ package lt.vitalikas.unsplash.utils
 
 import android.os.Build
 import android.view.View
+import android.widget.SearchView
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import lt.vitalikas.unsplash.R
 
 fun hasQ(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
@@ -47,4 +52,28 @@ fun showInfoWithAction(
             action()
         }
         .show()
+}
+
+fun SearchView.onTextChangedFlow(): Flow<String> {
+    var listener: SearchView.OnQueryTextListener?
+
+    return callbackFlow {
+        listener = object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                p0?.let { trySend(it) }
+                return true
+            }
+        }
+
+        this@onTextChangedFlow.setOnQueryTextListener(listener)
+
+        awaitClose {
+            listener = null
+        }
+    }
 }

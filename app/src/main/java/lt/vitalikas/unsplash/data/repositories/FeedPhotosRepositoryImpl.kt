@@ -160,11 +160,12 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         }
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>> {
+    override fun searchPhotos(query: String): Flow<PagingData<FeedPhoto>> {
         val pagingSourceFactory = {
             UnsplashPagingSource(
                 query = query,
-                api = unsplashApi
+                api = unsplashApi,
+                pageSize = PAGE_SIZE
             )
         }
         return Pager(
@@ -177,6 +178,6 @@ class FeedPhotosRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        private const val PAGE_SIZE = 14
+        private const val PAGE_SIZE = 10
     }
 }
