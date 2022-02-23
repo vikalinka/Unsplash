@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.SearchView
 import androidx.annotation.StringRes
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

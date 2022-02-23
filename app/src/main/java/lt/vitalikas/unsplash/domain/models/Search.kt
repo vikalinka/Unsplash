@@ -28,9 +28,9 @@ data class SearchResult(
     @Json(name = "blur_hash")
     val blurHash: String,
     @Json(name = "likes")
-    val likes: Int,
+    var likes: Int,
     @Json(name = "liked_by_user")
-    val likedByUser: Boolean,
+    var likedByUser: Boolean,
     @Json(name = "description")
     val description: String,
     @Json(name = "user")

@@ -11,21 +11,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
-import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
-import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFavoritesBinding
-import lt.vitalikas.unsplash.ui.feed_screen.*
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
@@ -35,73 +29,45 @@ import timber.log.Timber
 class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
     private val binding by viewBinding(FragmentFavoritesBinding::bind)
-    private val feed get() = binding.rvFeed
-    private val noConnection get() = binding.tvNoConnection
-    private val loading get() = binding.pbLoading
-    private val refresh get() = binding.srl
-    private val toolbar get() = binding.toolbar
+    private val searchList get() = binding.searchRecyclerView
+    private val noConnectionText get() = binding.noConnectionTextView
+    private val loadingProgress get() = binding.loadingProgressBar
+    private val refreshLayout get() = binding.searchSwipeRefreshLayout
+    private val toolbar get() = binding.searchToolbar
 
-    private val favoritesViewModel by viewModels<FavoritesViewModel>()
+    private val searchViewModel by viewModels<SearchViewModel>()
 
-    private lateinit var id: String
-
-    private val favoritesAdapter by autoCleaned {
-        FeedAdapter(
+    private val searchAdapter by autoCleaned {
+        SearchAdapter(
             onItemClick = { id ->
-                val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
-                findNavController().navigate(directions)
+                //
             },
             onLikeClick = { id ->
-                this.id = id
-
-                favoritesViewModel.likePhoto(id)
+                //
             },
             onDislikeClick = { id ->
-                this.id = id
-
-                favoritesViewModel.dislikePhoto(id)
+                //
             }
-        ).apply {
-            addLoadStateListener { loadStates ->
-                if (loadStates.refresh is LoadState.Loading) {
-                    loading.isVisible = true
-                } else {
-                    loading.isVisible = false
-
-                    val errorState = when {
-                        loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
-                        loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
-                        loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
-                        else -> null
-                    }
-
-                    errorState?.let { state ->
-                        state.error.message?.let { text -> showInfo(requireView(), text) }
-                    }
-                }
-            }
-        }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initFeedPhotosRv()
-        bindViewModel()
+        initSearchList()
+        observeNetworkConnection()
+        observeSearchResult()
         setListeners()
         setupToolbar()
-        observeLikingPhoto()
-        observeDislikingPhoto()
     }
 
-    override fun onPause() {
-        super.onPause()
-        favoritesViewModel.cancelScopeChildrenJobs()
-    }
+    private fun initSearchList() {
+        with(searchList) {
+            val searchLoadStateAdapter = SearchLoadStateAdapter {
+                searchAdapter.retry()
+            }
 
-    private fun initFeedPhotosRv() {
-        with(feed) {
-            val concatAdapter = favoritesAdapter.withLoadStateFooter(
-                footer = FeedLoadStateAdapter()
+            val concatAdapter = searchAdapter.withLoadStateFooter(
+                footer = searchLoadStateAdapter
             )
 
             adapter = concatAdapter
@@ -110,23 +76,22 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
             setHasFixedSize(true)
 
-            addItemDecoration(FeedOffsetDecoration(requireContext()))
+            addItemDecoration(SearchOffsetDecoration(requireContext()))
         }
     }
 
-    private fun bindViewModel() {
+    private fun observeSearchResult() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 launch {
-                    favoritesViewModel.feedState.collect { state ->
+                    searchViewModel.searchState.collectLatest { state ->
                         when (state) {
-                            is FeedState.Success -> {
-                                favoritesAdapter.submitData(state.data)
-                                refresh.isRefreshing = false
+                            is SearchState.Success -> {
+                                searchAdapter.submitData(state.data)
+                                refreshLayout.isRefreshing = false
                             }
-                            is FeedState.Error -> {
-                                refresh.isRefreshing = false
+                            is SearchState.Error -> {
+                                refreshLayout.isRefreshing = false
                                 state.error.message?.let {
                                     showInfo(
                                         requireView(),
@@ -138,17 +103,23 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
                         }
                     }
                 }
+            }
+        }
+    }
 
+    private fun observeNetworkConnection() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    favoritesViewModel.networkStatus.collect { status ->
+                    searchViewModel.networkStatus.collect { status ->
                         when (status) {
                             NetworkStatus.Available -> {
-                                noConnection.isVisible = false
+                                noConnectionText.isVisible = false
                                 // retry after connection re-established
-                                favoritesAdapter.retry()
+                                searchAdapter.retry()
                             }
                             NetworkStatus.Unavailable -> {
-                                noConnection.isVisible = true
+                                noConnectionText.isVisible = true
                                 showInfo(
                                     requireView(),
                                     "No internet connection. Cached data is shown."
@@ -162,14 +133,14 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     }
 
     private fun setListeners() {
-        refresh.setOnRefreshListener {
-            favoritesAdapter.refresh()
+        refreshLayout.setOnRefreshListener {
+            searchAdapter.refresh()
         }
     }
 
     private fun setupToolbar() {
         with(toolbar) {
-            title = getString(R.string.nav_feed)
+            title = "SEARCH"
 
             inflateMenu(R.menu.feed_toolbar_menu)
 
@@ -191,7 +162,7 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
                         })
 
                         with(menuItem.actionView as SearchView) {
-                            favoritesViewModel.searchFeedPhotos(this.onTextChangedFlow())
+                            searchViewModel.searchPhotos(this.onTextChangedFlow())
                             isIconified = false
                         }
 
@@ -206,111 +177,5 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
 
     private fun showToast(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun observeLikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_FEED)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("LIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("LIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("LIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("LIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedLike()
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("LIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("LIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
-    private fun updateDataOnFeedLike() {
-        // getting data from paging adapter`s snapshot
-        val snapshotItem = favoritesAdapter.snapshot().firstOrNull { snapshotItem ->
-            snapshotItem?.id == this.id
-        }
-
-        snapshotItem?.let {
-            // updating snapshot data
-            it.likedByUser = true
-            it.likes += 1
-
-            // updating paging data adapter
-            favoritesAdapter.notifyDataSetChanged()
-
-            // updating database data
-            favoritesViewModel.updatePhotoInDatabase(it.id, true, it.likes)
-        }
-    }
-
-    private fun observeDislikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_FEED)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("DISLIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("DISLIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("DISLIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("DISLIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedDislike()
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("DISLIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("DISLIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
-    private fun updateDataOnFeedDislike() {
-        // getting data from paging adapter`s snapshot
-        val snapshotItem = favoritesAdapter.snapshot().firstOrNull { snapshotItem ->
-            snapshotItem?.id == this.id
-        }
-
-        snapshotItem?.let {
-            // updating snapshot data
-            it.likedByUser = false
-            it.likes -= 1
-
-            // updating paging data adapter
-            favoritesAdapter.notifyDataSetChanged()
-
-            // updating database data
-            favoritesViewModel.updatePhotoInDatabase(it.id, false, it.likes)
-        }
     }
 }

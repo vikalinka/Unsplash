@@ -6,14 +6,14 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/searchAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/searchToolbar"
             style="@style/ToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
@@ -26,7 +26,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
+        android:id="@+id/searchSwipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="6dp"
@@ -35,10 +35,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar">
+        app:layout_constraintTop_toBottomOf="@id/searchAppBarLayout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFeed"
+            android:id="@+id/searchRecyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -50,19 +50,19 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/tvNoConnection"
+        android:id="@+id/noConnectionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center"
         android:text="@string/no_connection"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/srl"
-        app:layout_constraintStart_toStartOf="@id/srl"
-        app:layout_constraintTop_toTopOf="@id/srl" />
+        app:layout_constraintEnd_toEndOf="@id/searchSwipeRefreshLayout"
+        app:layout_constraintStart_toStartOf="@id/searchSwipeRefreshLayout"
+        app:layout_constraintTop_toTopOf="@id/searchSwipeRefreshLayout" />
 
     <ProgressBar
-        android:id="@+id/pbLoading"
+        android:id="@+id/loadingProgressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

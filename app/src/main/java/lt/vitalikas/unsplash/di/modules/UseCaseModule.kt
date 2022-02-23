@@ -40,5 +40,5 @@ class UseCaseModule {
     fun provideDislikePhotoUseCase(impl: DislikePhotoUseCaseImpl): DislikePhotoUseCase = impl
 
     @Provides
-    fun provideSearchFeedPhotosUseCase(impl: SearchFeedPhotosUseCaseImpl): SearchFeedPhotosUseCase = impl
+    fun provideSearchFeedPhotosUseCase(impl: SearchPhotosUseCaseImpl): SearchPhotosUseCase = impl
 }

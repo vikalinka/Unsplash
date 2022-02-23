@@ -14,16 +14,14 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
-import lt.vitalikas.unsplash.domain.use_cases.SearchFeedPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    val context: Application,
-    private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
-    private val searchFeedPhotosUseCase: SearchFeedPhotosUseCase,
+    private val context: Application,
     networkStatusTracker: NetworkStatusTracker,
+    private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
     private val feedPhotosRepository: FeedPhotosRepository
 ) : ViewModel() {
 
@@ -33,16 +31,13 @@ class FeedViewModel @Inject constructor(
         MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
     val feedState = _feedState.asStateFlow()
 
-    private val _searchState =
-        MutableStateFlow<PhotoSearchState>(PhotoSearchState.Success(PagingData.empty()))
-    val searchState = _searchState.asStateFlow()
-
     val networkStatus = networkStatusTracker.networkStatus
 
     suspend fun getFeedPhotos() {
         val dataFlow = getFeedPhotosUseCase()
-            .cachedIn(scope)
+
         dataFlow
+            .cachedIn(scope)
             .onEach { pagingData ->
                 _feedState.value = FeedState.Success(pagingData)
             }
@@ -53,33 +48,12 @@ class FeedViewModel @Inject constructor(
             .launchIn(scope)
     }
 
-    fun searchFeedPhotos(query: Flow<String>) {
-        val dataFlow =
-            query
-                .debounce(1000L)
-                .distinctUntilChanged()
-                .flatMapLatest { query ->
-                    Timber.d("VIEW MODEL QUERY = $query")
-                    searchFeedPhotosUseCase.invoke(query)
-                }
-                .cachedIn(scope)
-        dataFlow
-            .onEach { pagingData ->
-                _searchState.value = PhotoSearchState.Success(pagingData)
-            }
-            .catch { t ->
-                Timber.d(t)
-                _searchState.value = PhotoSearchState.Error(t)
-            }
-            .launchIn(scope)
-    }
-
-    fun cancelScopeChildrenJobs() {
-        if (!scope.coroutineContext.job.children.none()) {
-            scope.coroutineContext.cancelChildren()
-            Timber.i("photos fetching canceled")
-        }
-    }
+//    fun cancelScopeChildrenJobs() {
+//        if (!scope.coroutineContext.job.children.none()) {
+//            scope.coroutineContext.cancelChildren()
+//            Timber.i("photos fetching canceled")
+//        }
+//    }
 
     fun likePhoto(id: String) {
 

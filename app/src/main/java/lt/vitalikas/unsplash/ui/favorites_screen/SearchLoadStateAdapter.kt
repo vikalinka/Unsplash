@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_screen
+package lt.vitalikas.unsplash.ui.favorites_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,9 +8,9 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import lt.vitalikas.unsplash.databinding.LoadStateBinding
 
-class FeedLoadStateAdapter(
+class SearchLoadStateAdapter(
     private val onRetryButtonClick: () -> Unit
-) : LoadStateAdapter<FeedLoadStateAdapter.LoadStateViewHolder>() {
+) : LoadStateAdapter<SearchLoadStateAdapter.LoadStateViewHolder>() {
 
     class LoadStateViewHolder(
         private val binding: LoadStateBinding,

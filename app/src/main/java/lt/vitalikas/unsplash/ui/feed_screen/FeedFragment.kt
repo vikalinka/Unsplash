@@ -26,7 +26,6 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
-import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
 
@@ -93,15 +92,19 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         observeDislikingPhoto()
     }
 
-    override fun onPause() {
-        super.onPause()
-        feedViewModel.cancelScopeChildrenJobs()
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        feedViewModel.cancelScopeChildrenJobs()
+//    }
 
     private fun initFeedPhotosRv() {
         with(feed) {
+            val feedLoadStateAdapter = FeedLoadStateAdapter {
+                feedAdapter.retry()
+            }
+
             val concatAdapter = feedAdapter.withLoadStateFooter(
-                footer = FeedLoadStateAdapter()
+                footer = feedLoadStateAdapter
             )
 
             adapter = concatAdapter
@@ -132,27 +135,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                                 refresh.isRefreshing = false
                             }
                             is FeedState.Error -> {
-                                refresh.isRefreshing = false
-                                state.error.message?.let {
-                                    showInfo(
-                                        requireView(),
-                                        it
-                                    )
-                                }
-                                Timber.d("${state.error}")
-                            }
-                        }
-                    }
-                }
-
-                launch {
-                    feedViewModel.searchState.collect { state ->
-                        when (state) {
-                            is PhotoSearchState.Success -> {
-                                feedAdapter.submitData(state.data)
-                                refresh.isRefreshing = false
-                            }
-                            is PhotoSearchState.Error -> {
                                 refresh.isRefreshing = false
                                 state.error.message?.let {
                                     showInfo(
@@ -218,7 +200,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                         })
 
                         with(menuItem.actionView as SearchView) {
-                            feedViewModel.searchFeedPhotos(this.onTextChangedFlow())
                             isIconified = false
                         }
 

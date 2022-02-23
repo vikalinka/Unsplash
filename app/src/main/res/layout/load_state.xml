@@ -5,26 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!--<TextView
+    <TextView
         android:id="@+id/tvLoadStateErrorMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/bRetry"
+        app:layout_constraintBottom_toTopOf="@id/bRetry"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Error" />
+        tools:text="Unexpected error occurred" />
 
     <Button
         android:id="@+id/bRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Retry"
+        android:text="@string/retry"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvLoadStateErrorMsg"
-        app:layout_constraintTop_toTopOf="parent" />-->
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLoadStateErrorMsg" />
 
     <ProgressBar
         android:id="@+id/pbLoading"
@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminateTint="@color/custom_color_primary"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
