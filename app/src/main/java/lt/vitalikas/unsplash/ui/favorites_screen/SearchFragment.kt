@@ -26,7 +26,7 @@ import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
+class SearchFragment : Fragment(R.layout.fragment_favorites) {
 
     private val binding by viewBinding(FragmentFavoritesBinding::bind)
     private val searchList get() = binding.searchRecyclerView

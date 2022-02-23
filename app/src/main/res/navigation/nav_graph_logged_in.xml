@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/favorites"
-        android:name="lt.vitalikas.unsplash.ui.favorites_screen.FavoritesFragment"
+        android:name="lt.vitalikas.unsplash.ui.favorites_screen.SearchFragment"
         android:label="FavoritesFragment"
         tools:layout="@layout/fragment_favorites">
         <action
