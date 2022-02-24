@@ -19,7 +19,7 @@ class RationaleFragment : DialogFragment() {
             .setPositiveButton(
                 getString(R.string.btn_grant)
             ) { _, _ ->
-                launcher?.openLauncher()
+                launcher?.onGrantButtonClick()
             }
             .setNegativeButton(
                 getString(R.string.btn_cancel),

@@ -74,7 +74,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
 
                     errorState?.let { state ->
-                        state.error.message?.let { text -> showInfo(requireView(), text) }
+                        state.error.message?.let { text -> showInfo(text) }
                     }
                 }
             }
@@ -137,10 +137,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                             is FeedState.Error -> {
                                 refresh.isRefreshing = false
                                 state.error.message?.let {
-                                    showInfo(
-                                        requireView(),
-                                        it
-                                    )
+                                    showInfo(it)
                                 }
                                 Timber.d("${state.error}")
                             }
@@ -158,10 +155,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnection.isVisible = true
-                                showInfo(
-                                    requireView(),
-                                    "No internet connection. Cached data is shown."
-                                )
+                                showInfo("No internet connection. Cached data is shown.")
                             }
                         }
                     }

@@ -64,4 +64,5 @@
     <string name="download_succeeded">Download succeeded.</string>
     <string name="open">Open</string>
     <string name="back_button_navigation">back button navigation</string>
+    <string name="oops_error_loading_data">Oops! Error loading data.</string>
 </resources>

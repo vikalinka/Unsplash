@@ -83,7 +83,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             if (isNeedToShowRationale()) {
                 showPermissionRationaleDialog()
             } else {
-                showInfo(requireView(), R.string.perm_all)
+                showInfo(R.string.perm_all)
             }
         }
     }
@@ -116,8 +116,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         feedDetailsViewModel.cancelScopeChildrenJobs()
     }
 
-    override fun openLauncher() {
-        savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
+    override fun onGrantButtonClick() {
+        requestPermissions()
     }
 
     private fun getFeedPhotoDetails(id: String) {
@@ -144,7 +144,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             }
                             is FeedDetailsState.Error -> {
                                 progress.isVisible = false
-                                state.error.message?.let { showInfo(requireView(), it) }
+                                state.error.message?.let { showInfo(it) }
                                 Timber.d("${state.error}")
                             }
                         }
@@ -159,7 +159,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnection.isVisible = true
-                                showInfo(requireView(), R.string.no_internet)
+                                showInfo(R.string.no_internet)
                             }
                         }
                     }
@@ -372,7 +372,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                         Timber.d("DOWNLOAD SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
                         showInfoWithAction(
-                            requireView(),
                             R.string.download_succeeded,
                             R.string.open
                         ) {

@@ -93,10 +93,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
                             is SearchState.Error -> {
                                 refreshLayout.isRefreshing = false
                                 state.error.message?.let {
-                                    showInfo(
-                                        requireView(),
-                                        it
-                                    )
+                                    showInfo(it)
                                 }
                                 Timber.d("${state.error}")
                             }
@@ -120,10 +117,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnectionText.isVisible = true
-                                showInfo(
-                                    requireView(),
-                                    "No internet connection. Cached data is shown."
-                                )
+                                showInfo("No internet connection. Cached data is shown.")
                             }
                         }
                     }

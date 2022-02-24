@@ -1,9 +1,9 @@
 package lt.vitalikas.unsplash.utils
 
 import android.os.Build
-import android.view.View
 import android.widget.SearchView
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,10 +12,10 @@ import lt.vitalikas.unsplash.R
 
 fun hasQ(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
-fun showInfo(view: View, message: String) {
+fun Fragment.showInfo(message: String) {
     Snackbar
         .make(
-            view,
+            this.requireView(),
             message,
             Snackbar.LENGTH_LONG
         )
@@ -23,10 +23,10 @@ fun showInfo(view: View, message: String) {
         .show()
 }
 
-fun showInfo(view: View, @StringRes message: Int) {
+fun Fragment.showInfo(@StringRes message: Int) {
     Snackbar
         .make(
-            view,
+            this.requireView(),
             message,
             Snackbar.LENGTH_LONG
         )
@@ -34,15 +34,14 @@ fun showInfo(view: View, @StringRes message: Int) {
         .show()
 }
 
-fun showInfoWithAction(
-    view: View,
+fun Fragment.showInfoWithAction(
     @StringRes message: Int,
     @StringRes actionText: Int,
     action: () -> Unit
 ) {
     Snackbar
         .make(
-            view,
+            this.requireView(),
             message,
             Snackbar.LENGTH_LONG
         )
