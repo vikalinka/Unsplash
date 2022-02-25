@@ -23,7 +23,6 @@ import lt.vitalikas.unsplash.databinding.FragmentFavoritesBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
-import timber.log.Timber
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(R.layout.fragment_favorites) {
@@ -34,6 +33,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
     private val loadingProgress get() = binding.loadingProgressBar
     private val refreshLayout get() = binding.searchSwipeRefreshLayout
     private val toolbar get() = binding.searchToolbar
+    private val search get() = binding.queryTextInput
 
     private val searchViewModel by viewModels<SearchViewModel>()
 
@@ -81,25 +81,11 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
     }
 
     private fun observeSearchResult() {
+        val query = search.onTextChangedFlow()
+
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    searchViewModel.searchState.collectLatest { state ->
-                        when (state) {
-                            is SearchState.Success -> {
-                                searchAdapter.submitData(state.data)
-                                refreshLayout.isRefreshing = false
-                            }
-                            is SearchState.Error -> {
-                                refreshLayout.isRefreshing = false
-                                state.error.message?.let {
-                                    showInfo(it)
-                                }
-                                Timber.d("${state.error}")
-                            }
-                        }
-                    }
-                }
+            searchViewModel.getSearchData(query).collectLatest { data ->
+                searchAdapter.submitData(data)
             }
         }
     }
@@ -156,7 +142,15 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
                         })
 
                         with(menuItem.actionView as SearchView) {
-                            searchViewModel.searchPhotos(this.onTextChangedFlow())
+                            this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                                override fun onQueryTextSubmit(p0: String?): Boolean {
+                                    return true
+                                }
+
+                                override fun onQueryTextChange(text: String?): Boolean {
+                                    return true
+                                }
+                            })
                             isIconified = false
                         }
 

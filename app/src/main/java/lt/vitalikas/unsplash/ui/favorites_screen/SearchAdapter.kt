@@ -9,18 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
-import lt.vitalikas.unsplash.domain.models.SearchResult
+import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
 class SearchAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) :
-    PagingDataAdapter<SearchResult, SearchAdapter.SearchResultViewHolder>(
-        SearchResultDiffUtilCallback()
-    ) {
+) : PagingDataAdapter<SearchPhoto, SearchAdapter.SearchPhotoHolder>(SearchPhotoComparator()) {
 
-    inner class SearchResultViewHolder(
+    inner class SearchPhotoHolder(
         private val binding: ItemFeedBinding,
         onItemClick: (id: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
@@ -35,7 +32,7 @@ class SearchAdapter(
             }
         }
 
-        fun bind(item: SearchResult) {
+        fun bind(item: SearchPhoto) {
             id = item.id
 
             Glide.with(itemView)
@@ -45,14 +42,14 @@ class SearchAdapter(
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.resultUser.resultUserProfileImage.medium)
+                .load(item.user.searchUserProfileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)
 
-            binding.tvName.text = item.resultUser.name
+            binding.tvName.text = item.user.name
             binding.tvUsername.text =
-                itemView.resources.getString(R.string.username, item.resultUser.username)
+                itemView.resources.getString(R.string.username, item.user.username)
 
             with(binding.ivLove) {
                 if (item.likedByUser) {
@@ -74,8 +71,8 @@ class SearchAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultViewHolder =
-        SearchResultViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPhotoHolder =
+        SearchPhotoHolder(
             binding = ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -86,16 +83,16 @@ class SearchAdapter(
             onDislikeClick = onDislikeClick
         )
 
-    override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SearchPhotoHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bind(it) }
     }
 
-    class SearchResultDiffUtilCallback : DiffUtil.ItemCallback<SearchResult>() {
-        override fun areItemsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean =
+    class SearchPhotoComparator : DiffUtil.ItemCallback<SearchPhoto>() {
+        override fun areItemsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: SearchResult, newItem: SearchResult): Boolean =
+        override fun areContentsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
             oldItem == newItem
     }
 }

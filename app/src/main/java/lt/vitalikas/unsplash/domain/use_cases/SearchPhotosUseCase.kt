@@ -2,8 +2,8 @@ package lt.vitalikas.unsplash.domain.use_cases
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import lt.vitalikas.unsplash.domain.models.SearchResult
+import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
 interface SearchPhotosUseCase {
-    operator fun invoke(query: String): Flow<PagingData<SearchResult>>
+    suspend operator fun invoke(query: String): Flow<PagingData<SearchPhoto>>
 }

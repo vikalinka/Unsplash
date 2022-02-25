@@ -11,8 +11,8 @@ import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
-import timber.log.Timber
 import javax.inject.Inject
 
 class FeedPhotosRepositoryImpl @Inject constructor(
@@ -160,27 +160,24 @@ class FeedPhotosRepositoryImpl @Inject constructor(
             Database.instance.feedPhotosDao().updatePhoto(id, isLiked, likeCount)
         }
 
-    override fun getSearchResult(query: String): Flow<PagingData<SearchResult>> {
-        val pagingSourceFactory = {
-            UnsplashPagingSource(
-                api = unsplashApi,
-                query = query,
-                pageSize = PAGE_SIZE
-            )
-        }
-
-        Timber.d("QUERY = $query")
+    override fun getSearchResult(query: String): Flow<PagingData<SearchPhoto>> {
 
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = pagingSourceFactory
+            pagingSourceFactory = {
+                UnsplashPagingSource(
+                    api = unsplashApi,
+                    query = query
+                )
+            }
         ).flow
     }
 
+
     companion object {
-        private const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 10
     }
 }

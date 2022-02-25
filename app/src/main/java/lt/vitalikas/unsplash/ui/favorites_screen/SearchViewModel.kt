@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
+import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,30 +20,16 @@ class SearchViewModel @Inject constructor(
     private val searchPhotosUseCase: SearchPhotosUseCase
 ) : ViewModel() {
 
-    private val scope = viewModelScope
-
-    private val _searchState =
-        MutableStateFlow<SearchState>(SearchState.Success(PagingData.empty()))
-    val searchState = _searchState.asStateFlow()
-
     val networkStatus = networkStatusTracker.networkStatus
 
-    fun searchPhotos(flowQuery: Flow<String>) {
-        flowQuery
+    @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
+    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<SearchPhoto>> {
+        return queryFlow
             .debounce(1000L)
             .distinctUntilChanged()
             .flatMapLatest { query ->
                 searchPhotosUseCase.invoke(query)
             }
-            .cachedIn(scope)
-            .onEach { pagingData ->
-                _searchState.value = SearchState.Success(pagingData)
-            }
-            .catch { t ->
-                Timber.d(t)
-                _searchState.value = SearchState.Error(t)
-            }
-
-            .launchIn(scope)
+            .cachedIn(viewModelScope)
     }
 }
