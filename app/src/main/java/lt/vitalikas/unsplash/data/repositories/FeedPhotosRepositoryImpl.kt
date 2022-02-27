@@ -160,9 +160,8 @@ class FeedPhotosRepositoryImpl @Inject constructor(
             Database.instance.feedPhotosDao().updatePhoto(id, isLiked, likeCount)
         }
 
-    override fun getSearchResult(query: String): Flow<PagingData<SearchPhoto>> {
-
-        return Pager(
+    override fun getSearchResult(query: String): Flow<PagingData<SearchPhoto>> =
+        Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
@@ -170,14 +169,22 @@ class FeedPhotosRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 UnsplashPagingSource(
                     api = unsplashApi,
-                    query = query
+                    query = query,
+                    page = STARTING_PAGE_INDEX,
+                    pageSize = PAGE_SIZE,
+                    orderBy = ORDER_BY
                 )
             }
         ).flow
-    }
-
 
     companion object {
+        // default page value = 1
+        private const val STARTING_PAGE_INDEX = 1
+
+        // default per_page value = 10
         const val PAGE_SIZE = 10
+
+        // default order_by value = relevant
+        private const val ORDER_BY = "latest"
     }
 }

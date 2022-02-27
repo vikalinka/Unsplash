@@ -84,9 +84,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initPhotoList()
-        bindViewModel()
         getData()
-        setListeners()
+        observeDataFetching()
+        observeNetworkConnection()
+        initListRefresh()
         setupToolbar()
         observeLikingPhoto()
         observeDislikingPhoto()
@@ -123,10 +124,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    private fun bindViewModel() {
+    private fun observeDataFetching() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 launch {
                     feedViewModel.feedState.collect { state ->
                         when (state) {
@@ -144,7 +144,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                         }
                     }
                 }
+            }
+        }
+    }
 
+    private fun observeNetworkConnection() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     feedViewModel.networkStatus.collect { status ->
                         when (status) {
@@ -164,7 +170,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    private fun setListeners() {
+    private fun initListRefresh() {
         refreshLayout.setOnRefreshListener {
             feedAdapter.refresh()
         }
@@ -180,22 +186,25 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 when (menuItem.itemId) {
                     R.id.toolbar_menu_search -> {
 
-                        menuItem.setOnActionExpandListener(object :
-                            MenuItem.OnActionExpandListener {
-                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                                showToast("search expanded")
-                                return true
-                            }
+//                        menuItem.setOnActionExpandListener(object :
+//                            MenuItem.OnActionExpandListener {
+//                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+//                                showToast("search expanded")
+//                                return true
+//                            }
+//
+//                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+//                                showToast("search collapsed")
+//                                return true
+//                            }
+//                        })
+//
+//                        with(menuItem.actionView as SearchView) {
+//                            isIconified = false
+//                        }
 
-                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                                showToast("search collapsed")
-                                return true
-                            }
-                        })
-
-                        with(menuItem.actionView as SearchView) {
-                            isIconified = false
-                        }
+                        val directions = FeedFragmentDirections.actionHomeToSearchFragment()
+                        findNavController().navigate(directions)
 
                         true
                     }

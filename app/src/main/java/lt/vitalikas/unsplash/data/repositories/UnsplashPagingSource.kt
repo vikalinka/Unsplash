@@ -7,7 +7,10 @@ import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
 class UnsplashPagingSource(
     private val api: UnsplashApi,
-    private val query: String
+    private val query: String,
+    private val page: Int,
+    private val pageSize: Int,
+    private val orderBy: String
 ) : PagingSource<Int, SearchPhoto>() {
 
     // The refresh key is used for subsequent refresh calls to PagingSource.load after the initial load
@@ -22,28 +25,25 @@ class UnsplashPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchPhoto> {
         return try {
-
             // pageIndex = params.key, perPage = params.loadSize
-            val pageIndex = params.key ?: STARTING_PAGE_INDEX
+            val pageIndex = params.key ?: page
 
-            // initial load size (initial perPage value) = 3 * NETWORK_PAGE_SIZE
-            val response = api.searchPhotos(query = query)
+            // initial load size (initial perPage value) = 3 * PAGE_SIZE
+            val response = api.searchPhotos(
+                query = query,
+                page = pageIndex,
+                perPage = params.loadSize,
+                orderBy = orderBy
+            )
+            val photos = response.results
 
             LoadResult.Page(
-                data = response.results,
+                data = photos,
                 prevKey = if (pageIndex > 1) pageIndex - 1 else null,
-                nextKey = if (pageIndex < response.total) pageIndex + 1 else null
+                nextKey = if (photos.isEmpty()) null else pageIndex + (params.loadSize / pageSize)
             )
         } catch (t: Throwable) {
             LoadResult.Error(t)
         }
-    }
-
-    companion object {
-        // default per_page value = 1
-        private const val STARTING_PAGE_INDEX = 1
-
-        // default order_by value = latest
-        private const val ORDER_BY = "latest"
     }
 }

@@ -18,12 +18,14 @@
             app:destination="@id/feedDetailsFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:popEnterAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_home_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/favorites"
-        android:name="lt.vitalikas.unsplash.ui.favorites_screen.SearchFragment"
-        android:label="FavoritesFragment"
-        tools:layout="@layout/fragment_favorites">
+        android:name="lt.vitalikas.unsplash.ui.favorites_screen.FavoritesFragment"
+        android:label="FavoritesFragment">
         <action
             android:id="@+id/action_favoritesFragment_to_profileFragment"
             app:destination="@id/profile" />
@@ -52,6 +54,9 @@
             app:destination="@id/home"
             app:exitAnim="@android:anim/slide_out_right"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_feedDetailsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <dialog
         android:id="@+id/rationaleFragment"
@@ -63,4 +68,16 @@
             app:popUpTo="@id/feedDetailsFragment"
             app:popUpToInclusive="true" />
     </dialog>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="lt.vitalikas.unsplash.ui.favorites_screen.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_searchFragment_to_home"
+            app:destination="@id/home" />
+        <action
+            android:id="@+id/action_searchFragment_to_feedDetailsFragment"
+            app:destination="@id/feedDetailsFragment" />
+    </fragment>
 </navigation>

@@ -51,9 +51,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private val userUsername get() = binding.tvUsername
     private val userTotalLikes get() = binding.tvLikeCount
     private val likedByUser get() = binding.ivLove
-    private val details get() = binding.rvDetails
-    private val progress get() = binding.pbLoading
-    private val noConnection get() = binding.tvNoConnection
+    private val photoDetails get() = binding.rvDetails
+    private val loadingProgress get() = binding.pbLoading
+    private val noConnectionText get() = binding.tvNoConnection
     private val toolbar get() = binding.toolbar
 
     private val feedDetailsViewModel by viewModels<FeedDetailsViewModel>()
@@ -65,7 +65,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private var likeCount by Delegates.notNull<Int>()
 
     private val feedPhotoDetailsAdapter
-        get() = requireNotNull(details.adapter as FeedDetailsAdapter) {
+        get() = requireNotNull(photoDetails.adapter as FeedDetailsAdapter) {
             error("Adapter not initialized")
         }
 
@@ -99,12 +99,16 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initFeedPhotoDetailsRv()
-        // DeepLink
-        // https://unsplash.com/photos/4oovIxttThA
+        initPhotoDetails()
+        /**
+         * DeepLink
+         * https://unsplash.com/photos/4oovIxttThA
+         * Implicit DeepLink uses args parameter for automatic parsing
+         */
         getFeedPhotoDetails(args.id)
-        bindViewModel()
         setupToolbar()
+        observeDataFetching()
+        observeNetworkConnection()
         observeDownload()
         observeLikingPhoto()
         observeDislikingPhoto()
@@ -126,39 +130,44 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun bindViewModel() {
+    private fun observeDataFetching() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 launch {
                     feedDetailsViewModel.feedDetailsState.collect { state ->
                         when (state) {
                             is FeedDetailsState.Loading -> {
-                                progress.isVisible = true
+                                loadingProgress.isVisible = true
                             }
                             is FeedDetailsState.Success -> {
-                                progress.isVisible = false
+                                loadingProgress.isVisible = false
                                 feedPhotoDetailsAdapter.items = listOf(state.data)
-                                bind(state.data)
+                                bindFetchedData(state.data)
                                 photoShareLink = state.data.links.html
                             }
                             is FeedDetailsState.Error -> {
-                                progress.isVisible = false
+                                loadingProgress.isVisible = false
                                 state.error.message?.let { showInfo(it) }
                                 Timber.d("${state.error}")
                             }
                         }
                     }
                 }
+            }
+        }
+    }
 
+    private fun observeNetworkConnection() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     feedDetailsViewModel.networkStatus.collect { status ->
                         when (status) {
                             NetworkStatus.Available -> {
-                                noConnection.isVisible = false
+                                noConnectionText.isVisible = false
                             }
                             NetworkStatus.Unavailable -> {
-                                noConnection.isVisible = true
+                                noConnectionText.isVisible = true
                                 showInfo(R.string.no_internet)
                             }
                         }
@@ -168,8 +177,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun bind(details: FeedPhotoDetails) {
-
+    private fun bindFetchedData(details: FeedPhotoDetails) {
         Glide.with(this)
             .load(details.urls.raw)
             .placeholder(R.drawable.picture)
@@ -206,8 +214,8 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun initFeedPhotoDetailsRv() {
-        with(details) {
+    private fun initPhotoDetails() {
+        with(photoDetails) {
             adapter = FeedDetailsAdapter(
                 onLocationClick = { lat, lng ->
                     val locationUri = Uri.parse("geo: $lat,$lng")

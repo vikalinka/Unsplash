@@ -11,11 +11,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
@@ -40,7 +43,9 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
     private val searchAdapter by autoCleaned {
         SearchAdapter(
             onItemClick = { id ->
-                //
+                val directions =
+                    SearchFragmentDirections.actionSearchFragmentToFeedDetailsFragment(id)
+                findNavController().navigate(directions)
             },
             onLikeClick = { id ->
                 //
@@ -55,9 +60,10 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
         super.onViewCreated(view, savedInstanceState)
         initSearchList()
         observeNetworkConnection()
-        observeSearchResult()
+        observeSearchResults()
         setListeners()
         setupToolbar()
+        handleToolbarNavigation()
     }
 
     private fun initSearchList() {
@@ -72,7 +78,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
 
             adapter = concatAdapter
 
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
 
             setHasFixedSize(true)
 
@@ -80,12 +86,18 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
         }
     }
 
-    private fun observeSearchResult() {
+    private fun observeSearchResults() {
         val query = search.onTextChangedFlow()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            searchViewModel.getSearchData(query).collectLatest { data ->
-                searchAdapter.submitData(data)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    searchViewModel.getSearchData(query)
+                        .collectLatest { data ->
+                            searchAdapter.submitData(data)
+                            refreshLayout.isRefreshing = false
+                        }
+                }
             }
         }
     }
@@ -151,7 +163,6 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
                                     return true
                                 }
                             })
-                            isIconified = false
                         }
 
                         true
@@ -160,6 +171,14 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
                     else -> false
                 }
             }
+        }
+    }
+
+    private fun handleToolbarNavigation() {
+        toolbar.setNavigationOnClickListener {
+            val directions =
+                SearchFragmentDirections.actionSearchFragmentToHome()
+            findNavController().navigate(directions)
         }
     }
 
