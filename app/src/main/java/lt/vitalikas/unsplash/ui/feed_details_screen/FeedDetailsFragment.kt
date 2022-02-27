@@ -399,9 +399,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private fun handleToolbarNavigation() {
         toolbar.setNavigationOnClickListener {
-            val directions =
-                FeedDetailsFragmentDirections.actionFeedDetailsFragmentToHome()
-            findNavController().navigate(directions)
+            findNavController().navigateUp()
         }
     }
 

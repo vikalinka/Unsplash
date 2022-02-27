@@ -176,9 +176,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
 
     private fun handleToolbarNavigation() {
         toolbar.setNavigationOnClickListener {
-            val directions =
-                SearchFragmentDirections.actionSearchFragmentToHome()
-            findNavController().navigate(directions)
+            findNavController().navigateUp()
         }
     }
 
