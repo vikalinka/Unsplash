@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.favorites_screen
+package lt.vitalikas.unsplash.ui.search_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

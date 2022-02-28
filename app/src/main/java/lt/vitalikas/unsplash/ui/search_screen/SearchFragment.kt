@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.favorites_screen
+package lt.vitalikas.unsplash.ui.search_screen
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -20,15 +20,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
-import lt.vitalikas.unsplash.databinding.FragmentFavoritesBinding
+import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(R.layout.fragment_favorites) {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
-    private val binding by viewBinding(FragmentFavoritesBinding::bind)
+    private val binding by viewBinding(FragmentSearchBinding::bind)
     private val searchList get() = binding.searchRecyclerView
     private val noConnectionText get() = binding.noConnectionTextView
     private val loadingProgress get() = binding.loadingProgressBar
@@ -57,9 +57,9 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initSearchList()
+        initAdapterRefresh()
         observeNetworkConnection()
         observeSearchResults()
-        setListeners()
         setupToolbar()
         handleToolbarNavigation()
     }
@@ -122,7 +122,7 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
         }
     }
 
-    private fun setListeners() {
+    private fun initAdapterRefresh() {
         refreshLayout.setOnRefreshListener {
             searchAdapter.refresh()
         }
@@ -134,41 +134,41 @@ class SearchFragment : Fragment(R.layout.fragment_favorites) {
 
             inflateMenu(R.menu.feed_toolbar_menu)
 
-            setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.toolbar_menu_search -> {
-
-                        menuItem.setOnActionExpandListener(object :
-                            MenuItem.OnActionExpandListener {
-                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                                showToast("search expanded")
-                                return true
-                            }
-
-                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                                showToast("search collapsed")
-                                return true
-                            }
-                        })
-
-                        with(menuItem.actionView as SearchView) {
-                            this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                                override fun onQueryTextSubmit(p0: String?): Boolean {
-                                    return true
-                                }
-
-                                override fun onQueryTextChange(text: String?): Boolean {
-                                    return true
-                                }
-                            })
-                        }
-
-                        true
-                    }
-
-                    else -> false
-                }
-            }
+//            setOnMenuItemClickListener { menuItem ->
+//                when (menuItem.itemId) {
+//                    R.id.toolbar_menu_search -> {
+//
+//                        menuItem.setOnActionExpandListener(object :
+//                            MenuItem.OnActionExpandListener {
+//                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+//                                showToast("search expanded")
+//                                return true
+//                            }
+//
+//                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+//                                showToast("search collapsed")
+//                                return true
+//                            }
+//                        })
+//
+//                        with(menuItem.actionView as SearchView) {
+//                            this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                                override fun onQueryTextSubmit(p0: String?): Boolean {
+//                                    return true
+//                                }
+//
+//                                override fun onQueryTextChange(text: String?): Boolean {
+//                                    return true
+//                                }
+//                            })
+//                        }
+//
+//                        true
+//                    }
+//
+//                    else -> false
+//                }
+//            }
         }
     }
 

@@ -5,11 +5,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.data.repositories.AuthRepositoryImpl
-import lt.vitalikas.unsplash.data.repositories.FeedPhotosRepositoryImpl
+import lt.vitalikas.unsplash.data.repositories.PhotosRepositoryImpl
 import lt.vitalikas.unsplash.data.repositories.OnboardingRepositoryImpl
 import lt.vitalikas.unsplash.data.repositories.ProfileRepositoryImpl
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
-import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
+import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import lt.vitalikas.unsplash.domain.repositories.ProfileRepository
 
@@ -25,7 +25,7 @@ class RepositoryModule {
 //    @Binds
 //    abstract fun provideFeedPhotoRepository(impl: FeedPhotosRepositoryImpl): FeedPhotosRepository
     @Provides
-    fun provideFeedPhotoRepository(impl: FeedPhotosRepositoryImpl): FeedPhotosRepository = impl
+    fun provideFeedPhotoRepository(impl: PhotosRepositoryImpl): PhotosRepository = impl
 
 //    @Binds
 //    abstract fun provideOnboardingRepository(impl: OnboardingRepositoryImpl): OnboardingRepository

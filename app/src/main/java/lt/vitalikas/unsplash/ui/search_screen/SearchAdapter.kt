@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_screen
+package lt.vitalikas.unsplash.ui.search_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
+import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
-class FeedAdapter(
+class SearchAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<FeedPhoto, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
+) : PagingDataAdapter<SearchPhoto, SearchAdapter.SearchPhotoHolder>(SearchPhotoComparator()) {
 
-    inner class FeedPhotoViewHolder(
+    inner class SearchPhotoHolder(
         private val binding: ItemFeedBinding,
         onItemClick: (id: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
@@ -32,7 +32,7 @@ class FeedAdapter(
             }
         }
 
-        fun bind(item: FeedPhoto) {
+        fun bind(item: SearchPhoto) {
             id = item.id
 
             Glide.with(itemView)
@@ -42,7 +42,7 @@ class FeedAdapter(
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.user.imageUser.medium)
+                .load(item.user.searchUserProfileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)
@@ -71,8 +71,8 @@ class FeedAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedPhotoViewHolder =
-        FeedPhotoViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPhotoHolder =
+        SearchPhotoHolder(
             binding = ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -83,16 +83,16 @@ class FeedAdapter(
             onDislikeClick = onDislikeClick
         )
 
-    override fun onBindViewHolder(holder: FeedPhotoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SearchPhotoHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bind(it) }
     }
 
-    class FeedPhotoComparator : DiffUtil.ItemCallback<FeedPhoto>() {
-        override fun areItemsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =
+    class SearchPhotoComparator : DiffUtil.ItemCallback<SearchPhoto>() {
+        override fun areItemsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =
+        override fun areContentsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
             oldItem == newItem
     }
 }

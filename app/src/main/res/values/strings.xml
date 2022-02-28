@@ -20,7 +20,7 @@
     <string name="sign_in_button">Sign in</string>
     <string name="sign_in_text">Sign in to your Unsplash account to continue</string>
     <string name="home">Home</string>
-    <string name="favorites">Favorites</string>
+    <string name="collections_fragment">Collections</string>
     <string name="profile">Profile</string>
     <string name="location_icon">location icon</string>
     <string name="email_icon">email icon</string>

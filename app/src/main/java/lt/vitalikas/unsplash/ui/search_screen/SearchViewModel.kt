@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.favorites_screen
+package lt.vitalikas.unsplash.ui.search_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

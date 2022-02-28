@@ -11,8 +11,8 @@
         android:label="HomeFragment"
         tools:layout="@layout/fragment_feed">
         <action
-            android:id="@+id/action_homeFragment_to_favoritesFragment"
-            app:destination="@id/favorites" />
+            android:id="@+id/action_homeFragment_to_collectionsFragment"
+            app:destination="@id/collections" />
         <action
             android:id="@+id/action_home_to_feedDetailsFragment"
             app:destination="@id/feedDetailsFragment"
@@ -23,11 +23,12 @@
             app:destination="@id/searchFragment" />
     </fragment>
     <fragment
-        android:id="@+id/favorites"
-        android:name="lt.vitalikas.unsplash.ui.favorites_screen.FavoritesFragment"
-        android:label="FavoritesFragment">
+        android:id="@+id/collections"
+        android:name="lt.vitalikas.unsplash.ui.collections_screen.CollectionsFragment"
+        android:label="CollectionsFragment"
+        tools:layout="@layout/fragment_collections">
         <action
-            android:id="@+id/action_favoritesFragment_to_profileFragment"
+            android:id="@+id/action_collectionsFragment_to_profileFragment"
             app:destination="@id/profile" />
     </fragment>
     <fragment
@@ -70,9 +71,9 @@
     </dialog>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="lt.vitalikas.unsplash.ui.favorites_screen.SearchFragment"
+        android:name="lt.vitalikas.unsplash.ui.search_screen.SearchFragment"
         android:label="SearchFragment"
-        tools:layout="@layout/fragment_favorites" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_home"
             app:destination="@id/home" />

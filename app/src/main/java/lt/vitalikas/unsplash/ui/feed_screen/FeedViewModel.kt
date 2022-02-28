@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
-import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
+import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class FeedViewModel @Inject constructor(
     private val context: Application,
     networkStatusTracker: NetworkStatusTracker,
     private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
-    private val feedPhotosRepository: FeedPhotosRepository
+    private val photosRepository: PhotosRepository
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -106,7 +106,7 @@ class FeedViewModel @Inject constructor(
     fun updatePhotoInDatabase(id: String, isLiked: Boolean, likeCount: Int) =
         viewModelScope.launch {
             try {
-                feedPhotosRepository.updatePhoto(id, isLiked, likeCount)
+                photosRepository.updatePhoto(id, isLiked, likeCount)
             } catch (t: Throwable) {
                 Timber.d(t)
                 _feedState.value = FeedState.Error(t)

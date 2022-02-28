@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.favorites_screen
+package lt.vitalikas.unsplash.ui.collections_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,15 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
-import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
+import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 
-class SearchAdapter(
+class CollectionAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<SearchPhoto, SearchAdapter.SearchPhotoHolder>(SearchPhotoComparator()) {
+) : PagingDataAdapter<CollectionResponse, CollectionAdapter.CollectionResponseViewHolder>(
+    CollectionResponseComparator()
+) {
 
-    inner class SearchPhotoHolder(
+    inner class CollectionResponseViewHolder(
         private val binding: ItemFeedBinding,
         onItemClick: (id: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
@@ -32,17 +34,17 @@ class SearchAdapter(
             }
         }
 
-        fun bind(item: SearchPhoto) {
+        fun bind(item: CollectionResponse) {
             id = item.id
 
             Glide.with(itemView)
-                .load(item.urls.regular)
+                .load(item.coverPhoto.urls.regular)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.user.searchUserProfileImage.medium)
+                .load(item.user.profileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)
@@ -52,7 +54,7 @@ class SearchAdapter(
                 itemView.resources.getString(R.string.username, item.user.username)
 
             with(binding.ivLove) {
-                if (item.likedByUser) {
+                if (item.coverPhoto.likedByUser) {
                     setImageResource(R.drawable.ic_love_filled)
                     setColorFilter(ContextCompat.getColor(context, R.color.red))
                     setOnClickListener {
@@ -66,13 +68,16 @@ class SearchAdapter(
                     }
                 }
 
-                binding.tvLove.text = item.likes.toString()
+                binding.tvLove.text = item.coverPhoto.likes.toString()
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPhotoHolder =
-        SearchPhotoHolder(
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): CollectionResponseViewHolder =
+        CollectionResponseViewHolder(
             binding = ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -83,16 +88,20 @@ class SearchAdapter(
             onDislikeClick = onDislikeClick
         )
 
-    override fun onBindViewHolder(holder: SearchPhotoHolder, position: Int) {
+    override fun onBindViewHolder(holder: CollectionResponseViewHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bind(it) }
     }
 
-    class SearchPhotoComparator : DiffUtil.ItemCallback<SearchPhoto>() {
-        override fun areItemsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
-            oldItem.id == newItem.id
+    class CollectionResponseComparator : DiffUtil.ItemCallback<CollectionResponse>() {
+        override fun areItemsTheSame(
+            oldItem: CollectionResponse,
+            newItem: CollectionResponse
+        ): Boolean = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: SearchPhoto, newItem: SearchPhoto): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(
+            oldItem: CollectionResponse,
+            newItem: CollectionResponse
+        ): Boolean = oldItem == newItem
     }
 }

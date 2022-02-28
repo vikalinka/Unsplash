@@ -11,15 +11,16 @@ import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
-import lt.vitalikas.unsplash.domain.repositories.FeedPhotosRepository
+import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import javax.inject.Inject
 
-class FeedPhotosRepositoryImpl @Inject constructor(
+class PhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
     private val context: Context,
     private val dispatcherIo: CoroutineDispatcher
-) : FeedPhotosRepository {
+) : PhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
@@ -167,12 +168,27 @@ class FeedPhotosRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                UnsplashPagingSource(
+                SearchPagingSource(
                     api = unsplashApi,
                     query = query,
                     page = STARTING_PAGE_INDEX,
                     pageSize = PAGE_SIZE,
                     orderBy = ORDER_BY
+                )
+            }
+        ).flow
+
+    override fun getCollections(): Flow<PagingData<CollectionResponse>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                CollectionsPagingSource(
+                    api = unsplashApi,
+                    page = STARTING_PAGE_INDEX,
+                    pageSize = PAGE_SIZE
                 )
             }
         ).flow
@@ -184,7 +200,7 @@ class FeedPhotosRepositoryImpl @Inject constructor(
         // default per_page value = 10
         const val PAGE_SIZE = 10
 
-        // default order_by value = relevant
+        // default order_by value for search = relevant
         private const val ORDER_BY = "latest"
     }
 }

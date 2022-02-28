@@ -1,6 +1,7 @@
 package lt.vitalikas.unsplash.data.api
 
 import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchResponse
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -49,4 +50,10 @@ interface UnsplashApi {
         @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
     ): SearchResponse
+
+    @GET("/collections")
+    suspend fun getCollections(
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
+    ): List<CollectionResponse>
 }

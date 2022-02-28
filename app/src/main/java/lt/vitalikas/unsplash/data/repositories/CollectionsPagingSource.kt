@@ -3,18 +3,17 @@ package lt.vitalikas.unsplash.data.repositories
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import lt.vitalikas.unsplash.data.api.UnsplashApi
-import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
+import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
+import timber.log.Timber
 
-class UnsplashPagingSource(
+class CollectionsPagingSource(
     private val api: UnsplashApi,
-    private val query: String,
     private val page: Int,
-    private val pageSize: Int,
-    private val orderBy: String
-) : PagingSource<Int, SearchPhoto>() {
+    private val pageSize: Int
+) : PagingSource<Int, CollectionResponse>() {
 
     // The refresh key is used for subsequent refresh calls to PagingSource.load after the initial load
-    override fun getRefreshKey(state: PagingState<Int, SearchPhoto>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, CollectionResponse>): Int? {
         // get the most recently accessed index in data list
         val anchorPosition = state.anchorPosition ?: return null
         // convert item index to page index
@@ -23,24 +22,23 @@ class UnsplashPagingSource(
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchPhoto> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CollectionResponse> {
         return try {
             // pageIndex = params.key, perPage = params.loadSize
             val pageIndex = params.key ?: page
 
             // initial load size (initial perPage value) = 3 * PAGE_SIZE
-            val response = api.searchPhotos(
-                query = query,
+            val response = api.getCollections(
                 page = pageIndex,
-                perPage = params.loadSize,
-                orderBy = orderBy
+                perPage = params.loadSize
             )
-            val photos = response.results
+
+            Timber.d("$response")
 
             LoadResult.Page(
-                data = photos,
+                data = response,
                 prevKey = if (pageIndex > 1) pageIndex - 1 else null,
-                nextKey = if (photos.isEmpty()) null else pageIndex + (params.loadSize / pageSize)
+                nextKey = if (response.isEmpty()) null else pageIndex + (params.loadSize / pageSize)
             )
         } catch (t: Throwable) {
             LoadResult.Error(t)

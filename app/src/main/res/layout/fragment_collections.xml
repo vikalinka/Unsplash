@@ -6,18 +6,18 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/collectionsAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/collectionsToolbar"
             style="@style/ToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:title="@string/app_name"
+            android:title="@string/collections"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +25,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
+        android:id="@+id/collectionsSwipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="6dp"
@@ -34,10 +34,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar">
+        app:layout_constraintTop_toBottomOf="@id/collectionsAppBarLayout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFeed"
+            android:id="@+id/collectionsRecyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -56,9 +56,9 @@
         android:gravity="center"
         android:text="@string/no_connection"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@id/srl"
-        app:layout_constraintStart_toStartOf="@id/srl"
-        app:layout_constraintTop_toTopOf="@id/srl" />
+        app:layout_constraintEnd_toEndOf="@id/collectionsSwipeRefreshLayout"
+        app:layout_constraintStart_toStartOf="@id/collectionsSwipeRefreshLayout"
+        app:layout_constraintTop_toTopOf="@id/collectionsSwipeRefreshLayout" />
 
     <ProgressBar
         android:id="@+id/pbLoading"

@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
     <item
-        android:id="@+id/favorites"
+        android:id="@+id/collections"
         android:enabled="true"
-        android:icon="@drawable/ic_favorites"
-        android:title="@string/favorites" />
+        android:icon="@drawable/ic_collections"
+        android:title="@string/collections_fragment" />
     <item
         android:id="@+id/profile"
         android:enabled="true"
