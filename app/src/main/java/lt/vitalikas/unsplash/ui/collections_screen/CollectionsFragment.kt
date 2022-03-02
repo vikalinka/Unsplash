@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,10 +34,14 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
     private val collectionsViewModel by viewModels<CollectionsViewModel>()
 
+    private lateinit var id: String
+
     private val collectionAdapter by autoCleaned {
         CollectionAdapter(
             onItemClick = { id ->
-                //
+                val directions =
+                    CollectionsFragmentDirections.actionCollectionsToCollectionFragment(id)
+                findNavController().navigate(directions)
             },
             onLikeClick = { id ->
                 //

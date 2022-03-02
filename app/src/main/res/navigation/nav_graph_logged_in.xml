@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_collectionsFragment_to_profileFragment"
             app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_collections_to_collectionFragment"
+            app:destination="@id/collectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/profile"
@@ -80,5 +83,16 @@
         <action
             android:id="@+id/action_searchFragment_to_feedDetailsFragment"
             app:destination="@id/feedDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/collectionFragment"
+        android:name="lt.vitalikas.unsplash.ui.collection_with_photos_screen.CollectionFragment"
+        android:label="CollectionFragment" >
+        <action
+            android:id="@+id/action_collectionFragment_to_collections"
+            app:destination="@id/collections" />
+        <argument
+            android:name="id"
+            app:argType="string" />
     </fragment>
 </navigation>

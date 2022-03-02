@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -20,10 +22,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
+import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
+import timber.log.Timber
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(R.layout.fragment_search) {
@@ -38,6 +43,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private val searchViewModel by viewModels<SearchViewModel>()
 
+    private lateinit var id: String
+
     private val searchAdapter by autoCleaned {
         SearchAdapter(
             onItemClick = { id ->
@@ -46,10 +53,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 findNavController().navigate(directions)
             },
             onLikeClick = { id ->
-                //
+                this.id = id
+
+                searchViewModel.likePhoto(id)
             },
             onDislikeClick = { id ->
-                //
+                this.id = id
+
+                searchViewModel.dislikePhoto(id)
             }
         )
     }
@@ -62,6 +73,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         observeSearchResults()
         setupToolbar()
         handleToolbarNavigation()
+        observeLikingPhoto()
+        observeDislikingPhoto()
     }
 
     private fun initSearchList() {
@@ -180,5 +193,105 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun showToast(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun observeLikingPhoto() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_FEED)
+            .observe(viewLifecycleOwner) { workInfos ->
+                if (workInfos.isNullOrEmpty()) {
+                    return@observe
+                }
+                when (workInfos.first().state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Timber.d("LIKING PHOTO ENQUEUED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Timber.d("LIKING PHOTO RUNNING")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Timber.d("LIKING PHOTO FAILED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("LIKING PHOTO SUCCEEDED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                        updateDataOnFeedLike()
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Timber.d("LIKING PHOTO CANCELED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Timber.d("LIKING PHOTO BLOCKED")
+                    }
+                }
+            }
+    }
+
+    private fun updateDataOnFeedLike() {
+        // getting data from paging adapter`s snapshot
+        val snapshotItem = searchAdapter.snapshot().firstOrNull { snapshotItem ->
+            snapshotItem?.id == this.id
+        }
+
+        snapshotItem?.let {
+            // updating snapshot data
+            it.likedByUser = true
+            it.likes += 1
+
+            // updating paging data adapter
+            searchAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun observeDislikingPhoto() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_FEED)
+            .observe(viewLifecycleOwner) { workInfos ->
+                if (workInfos.isNullOrEmpty()) {
+                    return@observe
+                }
+                when (workInfos.first().state) {
+                    WorkInfo.State.ENQUEUED -> {
+                        Timber.d("DISLIKING PHOTO ENQUEUED")
+                    }
+                    WorkInfo.State.RUNNING -> {
+                        Timber.d("DISLIKING PHOTO RUNNING")
+                    }
+                    WorkInfo.State.FAILED -> {
+                        Timber.d("DISLIKING PHOTO FAILED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("DISLIKING PHOTO SUCCEEDED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                        updateDataOnFeedDislike()
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        Timber.d("DISLIKING PHOTO CANCELED")
+                        WorkManager.getInstance(requireContext()).pruneWork()
+                    }
+                    WorkInfo.State.BLOCKED -> {
+                        Timber.d("DISLIKING PHOTO BLOCKED")
+                    }
+                }
+            }
+    }
+
+    private fun updateDataOnFeedDislike() {
+        // getting data from paging adapter`s snapshot
+        val snapshotItem = searchAdapter.snapshot().firstOrNull { snapshotItem ->
+            snapshotItem?.id == this.id
+        }
+
+        snapshotItem?.let {
+            // updating snapshot data
+            it.likedByUser = false
+            it.likes -= 1
+
+            // updating paging data adapter
+            searchAdapter.notifyDataSetChanged()
+        }
     }
 }

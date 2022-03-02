@@ -11,6 +11,7 @@ import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
@@ -192,6 +193,8 @@ class PhotosRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
+
+    override suspend fun getCollection(id: String): Collection = unsplashApi.getCollection(id)
 
     companion object {
         // default page value = 1
