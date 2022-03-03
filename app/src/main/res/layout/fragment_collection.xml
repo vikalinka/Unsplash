@@ -18,6 +18,13 @@
         app:navigationIcon="@drawable/ic_back"
         app:titleTextColor="@color/black" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/collectionGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/collectionConstraintLayout"
         android:layout_width="match_parent"
@@ -25,6 +32,7 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="6dp"
+        app:layout_constraintBottom_toTopOf="@id/collectionGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -151,7 +159,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/collectionConstraintLayout">
+        app:layout_constraintTop_toBottomOf="@id/collectionGuideline">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photosRecyclerView"

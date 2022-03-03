@@ -27,6 +27,7 @@ class CollectionViewModel @Inject constructor(
 
     suspend fun getCollection(id: String) {
         try {
+            _collectionState.value = CollectionState.Loading
             val collection = getCollectionUseCase(id)
             _collectionState.value = CollectionState.Success(collection)
         } catch (t: Throwable) {

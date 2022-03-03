@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class CollectionOffsetDecoration @Inject constructor(
+class CollectionsOffsetDecoration @Inject constructor(
     @ApplicationContext private val context: Context
 ) : RecyclerView.ItemDecoration() {
 

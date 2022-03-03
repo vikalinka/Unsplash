@@ -8,9 +8,9 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import lt.vitalikas.unsplash.databinding.LoadStateBinding
 
-class CollectionLoadStateAdapter(
+class CollectionsLoadStateAdapter(
     private val onRetryButtonClick: () -> Unit
-) : LoadStateAdapter<CollectionLoadStateAdapter.LoadStateViewHolder>() {
+) : LoadStateAdapter<CollectionsLoadStateAdapter.LoadStateViewHolder>() {
 
     class LoadStateViewHolder(
         private val binding: LoadStateBinding,

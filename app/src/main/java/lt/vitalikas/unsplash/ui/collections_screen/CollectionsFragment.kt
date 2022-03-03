@@ -37,7 +37,7 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
     private lateinit var id: String
 
     private val collectionAdapter by autoCleaned {
-        CollectionAdapter(
+        CollectionsAdapter(
             onItemClick = { id ->
                 val directions =
                     CollectionsFragmentDirections.actionCollectionsToCollectionFragment(id)
@@ -63,7 +63,7 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
     private fun initCollectionsList() {
         with(collectionsList) {
-            val collectionLoadStateAdapter = CollectionLoadStateAdapter {
+            val collectionLoadStateAdapter = CollectionsLoadStateAdapter {
                 collectionAdapter.retry()
             }
 
@@ -77,7 +77,7 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
             setHasFixedSize(true)
 
-            addItemDecoration(CollectionOffsetDecoration(requireContext()))
+            addItemDecoration(CollectionsOffsetDecoration(requireContext()))
         }
     }
 

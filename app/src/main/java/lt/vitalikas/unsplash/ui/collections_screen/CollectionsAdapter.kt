@@ -11,11 +11,11 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 
-class CollectionAdapter(
+class CollectionsAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<CollectionResponse, CollectionAdapter.CollectionResponseViewHolder>(
+) : PagingDataAdapter<CollectionResponse, CollectionsAdapter.CollectionResponseViewHolder>(
     CollectionResponseComparator()
 ) {
 
