@@ -25,6 +25,10 @@ data class CollectionUser(
     val totalPhotos: Int,
     @Json(name = "total_collections")
     val totalCollections: Int,
+    @Json(name = "instagram_username")
+    val instagramUsername: String?,
+    @Json(name = "twitter_username")
+    val twitterUsername: String?,
     @Json(name = "profile_image")
     val profileImage: CollectionCoverPhotoUserProfileImage,
     @Json(name = "links")

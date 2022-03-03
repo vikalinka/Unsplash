@@ -14,5 +14,5 @@ data class FeedUrlAndFeedPhoto(
         parentColumn = FeedUrlsContract.Columns.ID,
         entityColumn = FeedPhotosContract.Columns.FEED_URL_ID
     )
-    val feedPhoto: FeedPhotoEntity
+    val feedPhoto: FeedPhotoEntity?
 )

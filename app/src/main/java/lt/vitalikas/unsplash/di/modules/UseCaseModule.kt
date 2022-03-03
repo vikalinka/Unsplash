@@ -47,4 +47,7 @@ class UseCaseModule {
 
     @Provides
     fun provideGetCollectionUseCase(impl: GetCollectionUseCaseImpl): GetCollectionUseCase = impl
+
+    @Provides
+    fun provideGetCollectionPhotosUseCase(impl: GetCollectionPhotosUseCaseImpl): GetCollectionPhotosUseCase = impl
 }

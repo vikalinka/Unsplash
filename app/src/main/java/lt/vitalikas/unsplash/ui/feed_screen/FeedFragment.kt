@@ -91,11 +91,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         observeDislikingPhoto()
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        feedViewModel.cancelScopeChildrenJobs()
-//    }
-
     private fun initPhotoList() {
         with(photoList) {
             val feedLoadStateAdapter = FeedLoadStateAdapter {

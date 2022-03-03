@@ -7,6 +7,7 @@ import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
 import lt.vitalikas.unsplash.domain.models.collections.Collection
+import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
@@ -21,4 +22,5 @@ interface PhotosRepository {
     fun getSearchResult(query: String): Flow<PagingData<SearchPhoto>>
     fun getCollections(): Flow<PagingData<CollectionResponse>>
     suspend fun getCollection(id: String): Collection
+    fun getCollectionPhotos(id: String): Flow<PagingData<CollectionPhoto>>
 }

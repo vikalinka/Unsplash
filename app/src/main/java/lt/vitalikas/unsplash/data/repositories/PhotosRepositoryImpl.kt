@@ -10,8 +10,12 @@ import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
+import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionPhotosPagingSource
+import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionsPagingSource
+import lt.vitalikas.unsplash.data.repositories.paging_sources.SearchPagingSource
 import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.models.collections.Collection
+import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
@@ -195,6 +199,22 @@ class PhotosRepositoryImpl @Inject constructor(
         ).flow
 
     override suspend fun getCollection(id: String): Collection = unsplashApi.getCollection(id)
+
+    override fun getCollectionPhotos(id: String): Flow<PagingData<CollectionPhoto>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                CollectionPhotosPagingSource(
+                    api = unsplashApi,
+                    id = id,
+                    page = STARTING_PAGE_INDEX,
+                    pageSize = PAGE_SIZE
+                )
+            }
+        ).flow
 
     companion object {
         // default page value = 1

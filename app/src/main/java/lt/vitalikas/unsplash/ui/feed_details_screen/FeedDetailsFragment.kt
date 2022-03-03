@@ -133,23 +133,21 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private fun observeDataFetching() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    feedDetailsViewModel.feedDetailsState.collect { state ->
-                        when (state) {
-                            is FeedDetailsState.Loading -> {
-                                loadingProgress.isVisible = true
-                            }
-                            is FeedDetailsState.Success -> {
-                                loadingProgress.isVisible = false
-                                feedPhotoDetailsAdapter.items = listOf(state.data)
-                                bindFetchedData(state.data)
-                                photoShareLink = state.data.links.html
-                            }
-                            is FeedDetailsState.Error -> {
-                                loadingProgress.isVisible = false
-                                state.error.message?.let { showInfo(it) }
-                                Timber.d("${state.error}")
-                            }
+                feedDetailsViewModel.feedDetailsState.collect { state ->
+                    when (state) {
+                        is FeedDetailsState.Loading -> {
+                            loadingProgress.isVisible = true
+                        }
+                        is FeedDetailsState.Success -> {
+                            loadingProgress.isVisible = false
+                            feedPhotoDetailsAdapter.items = listOf(state.data)
+                            bindFetchedData(state.data)
+                            photoShareLink = state.data.links.html
+                        }
+                        is FeedDetailsState.Error -> {
+                            loadingProgress.isVisible = false
+                            state.error.message?.let { showInfo(it) }
+                            Timber.d("${state.error}")
                         }
                     }
                 }
@@ -160,16 +158,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private fun observeNetworkConnection() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    feedDetailsViewModel.networkStatus.collect { status ->
-                        when (status) {
-                            NetworkStatus.Available -> {
-                                noConnectionText.isVisible = false
-                            }
-                            NetworkStatus.Unavailable -> {
-                                noConnectionText.isVisible = true
-                                showInfo(R.string.no_internet)
-                            }
+                feedDetailsViewModel.networkStatus.collect { status ->
+                    when (status) {
+                        NetworkStatus.Available -> {
+                            noConnectionText.isVisible = false
+                        }
+                        NetworkStatus.Unavailable -> {
+                            noConnectionText.isVisible = true
+                            showInfo(R.string.no_internet)
                         }
                     }
                 }

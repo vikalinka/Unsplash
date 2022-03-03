@@ -10,5 +10,7 @@ data class CollectionCoverPhotoLinks(
     @Json(name = "html")
     val html: String,
     @Json(name = "download")
-    val download: String
+    val download: String,
+    @Json(name = "download_location")
+    val downloadLocation: String?
 )
