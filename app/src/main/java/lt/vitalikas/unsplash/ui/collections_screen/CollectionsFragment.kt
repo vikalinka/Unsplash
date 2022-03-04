@@ -84,14 +84,11 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
     private fun observeSearchResults() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    collectionsViewModel.getCollections()
-                        .collectLatest { data ->
-                            Timber.d("$data")
-                            collectionAdapter.submitData(data)
-                            refreshLayout.isRefreshing = false
-                        }
-                }
+                collectionsViewModel.getCollections()
+                    .collectLatest { data ->
+                        collectionAdapter.submitData(data)
+                        refreshLayout.isRefreshing = false
+                    }
             }
         }
     }
@@ -99,18 +96,16 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
     private fun observeNetworkConnection() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    collectionsViewModel.networkStatus.collect { status ->
-                        when (status) {
-                            NetworkStatus.Available -> {
-                                noConnectionText.isVisible = false
-                                // retry after connection re-established
-                                collectionAdapter.retry()
-                            }
-                            NetworkStatus.Unavailable -> {
-                                noConnectionText.isVisible = true
-                                showInfo("No internet connection. Cached data is shown.")
-                            }
+                collectionsViewModel.networkStatus.collect { status ->
+                    when (status) {
+                        NetworkStatus.Available -> {
+                            noConnectionText.isVisible = false
+                            // retry after connection re-established
+                            collectionAdapter.retry()
+                        }
+                        NetworkStatus.Unavailable -> {
+                            noConnectionText.isVisible = true
+                            showInfo("No internet connection. Cached data is shown.")
                         }
                     }
                 }

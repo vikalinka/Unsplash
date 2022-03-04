@@ -57,7 +57,9 @@
             android:id="@+id/action_feedDetailsFragment_to_home"
             app:destination="@id/home"
             app:exitAnim="@android:anim/slide_out_right"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            app:launchSingleTop="false"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_feedDetailsFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
@@ -87,12 +89,16 @@
     <fragment
         android:id="@+id/collectionFragment"
         android:name="lt.vitalikas.unsplash.ui.collection_with_photos_screen.CollectionFragment"
-        android:label="CollectionFragment" >
+        android:label="CollectionFragment"
+        tools:layout="@layout/fragment_collection">
         <action
             android:id="@+id/action_collectionFragment_to_collections"
             app:destination="@id/collections" />
         <argument
             android:name="id"
             app:argType="string" />
+        <action
+            android:id="@+id/action_collectionFragment_to_feedDetailsFragment"
+            app:destination="@id/feedDetailsFragment" />
     </fragment>
 </navigation>

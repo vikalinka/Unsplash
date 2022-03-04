@@ -2,6 +2,7 @@ package lt.vitalikas.unsplash.ui.collection_with_photos_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -32,6 +33,7 @@ class CollectionAdapter(
             binding.root.setOnClickListener {
                 onItemClick(id)
             }
+            binding.ivPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
         fun bind(item: CollectionPhoto) {

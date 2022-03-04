@@ -120,20 +120,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun observeDataFetching() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    feedViewModel.feedState.collect { state ->
-                        when (state) {
-                            is FeedState.Success -> {
-                                feedAdapter.submitData(state.data)
-                                refreshLayout.isRefreshing = false
+                feedViewModel.feedState.collect { state ->
+                    when (state) {
+                        is FeedState.Success -> {
+                            feedAdapter.submitData(state.data)
+                            refreshLayout.isRefreshing = false
+                        }
+                        is FeedState.Error -> {
+                            refreshLayout.isRefreshing = false
+                            state.error.message?.let {
+                                showInfo(it)
                             }
-                            is FeedState.Error -> {
-                                refreshLayout.isRefreshing = false
-                                state.error.message?.let {
-                                    showInfo(it)
-                                }
-                                Timber.d("${state.error}")
-                            }
+                            Timber.d("${state.error}")
                         }
                     }
                 }
@@ -144,18 +142,16 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun observeNetworkConnection() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    feedViewModel.networkStatus.collect { status ->
-                        when (status) {
-                            NetworkStatus.Available -> {
-                                noConnectionText.isVisible = false
-                                // retry after connection re-established
-                                feedAdapter.retry()
-                            }
-                            NetworkStatus.Unavailable -> {
-                                noConnectionText.isVisible = true
-                                showInfo("No internet connection. Cached data is shown.")
-                            }
+                feedViewModel.networkStatus.collect { status ->
+                    when (status) {
+                        NetworkStatus.Available -> {
+                            noConnectionText.isVisible = false
+                            // retry after connection re-established
+                            feedAdapter.retry()
+                        }
+                        NetworkStatus.Unavailable -> {
+                            noConnectionText.isVisible = true
+                            showInfo("No internet connection. Cached data is shown.")
                         }
                     }
                 }

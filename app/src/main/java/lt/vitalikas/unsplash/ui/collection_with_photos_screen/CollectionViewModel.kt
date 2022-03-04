@@ -2,10 +2,13 @@ package lt.vitalikas.unsplash.ui.collection_with_photos_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
+import lt.vitalikas.unsplash.domain.models.collections.Collection
+import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.use_cases.GetCollectionPhotosUseCase
 import lt.vitalikas.unsplash.domain.use_cases.GetCollectionUseCase
 import javax.inject.Inject
@@ -36,9 +39,7 @@ class CollectionViewModel @Inject constructor(
     }
 
     suspend fun getCollectionPhotos(id: String) {
-        val photos = getCollectionPhotosUseCase(id)
-            .cachedIn(viewModelScope)
-
+        val photos = getCollectionPhotosUseCase(id).cachedIn(viewModelScope)
         photos
             .onEach { pagingData ->
                 _photosState.value = CollectionPhotosState.Success(pagingData)
@@ -48,4 +49,5 @@ class CollectionViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
+
 }
