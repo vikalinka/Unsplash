@@ -116,7 +116,6 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
                         }
                         is CollectionState.Success -> {
                             bindFetchedCollectionData(state.collection)
-                            delay(5000)
                             collectionViewModel.getCollectionPhotos(args.id)
                         }
                     }
