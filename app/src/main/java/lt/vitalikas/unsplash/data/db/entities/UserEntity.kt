@@ -46,6 +46,10 @@ data class UserEntity(
     val username: String,
     @ColumnInfo(name = UsersContract.Columns.NAME)
     val name: String,
+    @ColumnInfo(name = UsersContract.Columns.FIRST_NAME)
+    val firstName: String,
+    @ColumnInfo(name = UsersContract.Columns.LAST_NAME)
+    val lastName: String,
     @ColumnInfo(name = UsersContract.Columns.PORTFOLIO_URL)
     val portfolioUrl: String?,
     @ColumnInfo(name = UsersContract.Columns.BIO)

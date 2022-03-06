@@ -2,6 +2,7 @@ package lt.vitalikas.unsplash.domain.models.search
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import lt.vitalikas.unsplash.domain.models.UserProfileImage
 
 @JsonClass(generateAdapter = true)
 data class SearchUser(
@@ -22,7 +23,7 @@ data class SearchUser(
     @Json(name = "portfolio_url")
     val portfolioUrl: String?,
     @Json(name = "profile_image")
-    val searchUserProfileImage: SearchUserProfileImage,
+    val userProfileImage: UserProfileImage,
     @Json(name = "links")
     val searchUserLinks: SearchUserLinks
 )

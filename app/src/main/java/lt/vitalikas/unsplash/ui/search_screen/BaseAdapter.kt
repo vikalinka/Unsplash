@@ -40,13 +40,13 @@ class BaseAdapter<T : Any>(
                     id = item.id
 
                     Glide.with(itemView)
-                        .load(item.urls.regular)
+                        .load(item.url.regular)
                         .placeholder(R.drawable.picture)
                         .error(R.drawable.picture)
                         .into(binding.ivPhoto)
 
                     Glide.with(itemView)
-                        .load(item.user.imageUser.medium)
+                        .load(item.user.userProfileImage.medium)
                         .placeholder(R.drawable.picture)
                         .error(R.drawable.picture)
                         .into(binding.ivAvatar)
@@ -83,7 +83,7 @@ class BaseAdapter<T : Any>(
                         .into(binding.ivPhoto)
 
                     Glide.with(itemView)
-                        .load(item.user.searchUserProfileImage.medium)
+                        .load(item.user.userProfileImage.medium)
                         .placeholder(R.drawable.picture)
                         .error(R.drawable.picture)
                         .into(binding.ivAvatar)

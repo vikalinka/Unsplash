@@ -11,6 +11,8 @@ object UsersContract {
         const val ID = "id"
         const val USERNAME = "username"
         const val NAME = "name"
+        const val FIRST_NAME = "first_name"
+        const val LAST_NAME = "last_name"
         const val PORTFOLIO_URL = "portfolio_url"
         const val BIO = "bio"
         const val LOCATION = "location"

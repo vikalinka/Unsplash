@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -12,8 +13,10 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.domain.models.FeedPhoto
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
+import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,10 +25,9 @@ class FeedViewModel @Inject constructor(
     private val context: Application,
     networkStatusTracker: NetworkStatusTracker,
     private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
+    private val searchPhotosUseCase: SearchPhotosUseCase,
     private val photosRepository: PhotosRepository
 ) : ViewModel() {
-
-    private val scope = viewModelScope
 
     private val _feedState =
         MutableStateFlow<FeedState>(FeedState.Success(PagingData.empty()))
@@ -34,10 +36,12 @@ class FeedViewModel @Inject constructor(
     val networkStatus = networkStatusTracker.networkStatus
 
     suspend fun getFeedPhotos() {
+        _feedState.value = FeedState.Loading
+
         val dataFlow = getFeedPhotosUseCase()
 
         dataFlow
-            .cachedIn(scope)
+            .cachedIn(viewModelScope)
             .onEach { pagingData ->
                 _feedState.value = FeedState.Success(pagingData)
             }
@@ -45,18 +49,10 @@ class FeedViewModel @Inject constructor(
                 Timber.d(t)
                 _feedState.value = FeedState.Error(t)
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
     }
 
-//    fun cancelScopeChildrenJobs() {
-//        if (!scope.coroutineContext.job.children.none()) {
-//            scope.coroutineContext.cancelChildren()
-//            Timber.i("photos fetching canceled")
-//        }
-//    }
-
     fun likePhoto(id: String) {
-
         val workData = workDataOf(
             LikePhotoWorker.LIKE_PHOTO_ID to id
         )
@@ -80,7 +76,6 @@ class FeedViewModel @Inject constructor(
     }
 
     fun dislikePhoto(id: String) {
-
         val workData = workDataOf(
             DislikePhotoWorker.DISLIKE_PHOTO_ID to id
         )
@@ -112,4 +107,38 @@ class FeedViewModel @Inject constructor(
                 _feedState.value = FeedState.Error(t)
             }
         }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<FeedPhoto>> =
+        queryFlow
+            .debounce(2000L)
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                searchPhotosUseCase.invoke(query)
+            }
+            .cachedIn(viewModelScope)
+            .map { pagingData ->
+                pagingData.map { searchPhoto ->
+                    FeedPhoto(
+                        id = searchPhoto.id,
+                        createdAt = searchPhoto.createdAt,
+                        updatedAt = searchPhoto.updatedAt,
+                        width = searchPhoto.width,
+                        height = searchPhoto.height,
+                        color = searchPhoto.color,
+                        blurHash = searchPhoto.blurHash,
+                        likes = searchPhoto.likes,
+                        likedByUser = searchPhoto.likedByUser,
+                        description = searchPhoto.description,
+                        user = searchPhoto.user,
+                        currentUserUserCollections = searchPhoto.userCollections,
+                        url = searchPhoto.urls,
+                        link = searchPhoto.link
+                    )
+                }
+            }
+            .catch { error ->
+                Timber.d(error)
+                _feedState.value = FeedState.Error(error)
+            }
 }

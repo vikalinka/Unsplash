@@ -2,7 +2,7 @@ package lt.vitalikas.unsplash.ui.feed_screen
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -10,13 +10,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
@@ -24,6 +24,7 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
+import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
 
@@ -57,26 +58,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
                 feedViewModel.dislikePhoto(id)
             }
-        ).apply {
-            addLoadStateListener { loadStates ->
-                if (loadStates.refresh is LoadState.Loading) {
-                    loadingProgress.isVisible = true
-                } else {
-                    loadingProgress.isVisible = false
-
-                    val errorState = when {
-                        loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
-                        loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
-                        loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
-                        else -> null
-                    }
-
-                    errorState?.let { state ->
-                        state.error.message?.let { text -> showInfo(text) }
-                    }
-                }
-            }
-        }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,12 +104,16 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 feedViewModel.feedState.collect { state ->
                     when (state) {
+                        is FeedState.Loading -> loadingProgress.isVisible = true
                         is FeedState.Success -> {
-                            feedAdapter.submitData(state.data)
+                            loadingProgress.isVisible = false
                             refreshLayout.isRefreshing = false
+                            feedAdapter.submitData(state.data)
+
                         }
                         is FeedState.Error -> {
                             refreshLayout.isRefreshing = false
+                            loadingProgress.isVisible = false
                             state.error.message?.let {
                                 showInfo(it)
                             }
@@ -171,41 +157,24 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
             inflateMenu(R.menu.feed_toolbar_menu)
 
-            setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.toolbar_menu_search -> {
+            val searchItem = menu.findItem(R.id.searchAction)
+            with(searchItem.actionView as SearchView) {
+                val queryFlow = this.onTextChangedFlow()
 
-//                        menuItem.setOnActionExpandListener(object :
-//                            MenuItem.OnActionExpandListener {
-//                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                                showToast("search expanded")
-//                                return true
-//                            }
-//
-//                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-//                                showToast("search collapsed")
-//                                return true
-//                            }
-//                        })
-//
-//                        with(menuItem.actionView as SearchView) {
-//                            isIconified = false
-//                        }
-
-                        val directions = FeedFragmentDirections.actionHomeToSearchFragment()
-                        findNavController().navigate(directions)
-
-                        true
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        feedViewModel.getSearchData(queryFlow)
+                            .collectLatest { data ->
+                                refreshLayout.isRefreshing = false
+                                feedAdapter.submitData(data)
+                            }
                     }
-
-                    else -> false
                 }
+
+                // focus text input on search icon click
+                isIconified = false
             }
         }
-    }
-
-    private fun showToast(text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     private fun observeLikingPhoto() {

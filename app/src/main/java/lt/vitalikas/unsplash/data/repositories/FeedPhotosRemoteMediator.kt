@@ -96,19 +96,19 @@ class FeedPhotosRemoteMediator @Inject constructor(
 
                     val userProfileImage = UserProfileImageEntity(
                         id = feed.user.id,
-                        small = feed.user.imageUser.small,
-                        medium = feed.user.imageUser.medium,
-                        large = feed.user.imageUser.large
+                        small = feed.user.userProfileImage.small,
+                        medium = feed.user.userProfileImage.medium,
+                        large = feed.user.userProfileImage.large
                     )
                     feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
 
                     val userLink = UserLinkEntity(
                         id = feed.user.id,
-                        self = feed.user.links.self,
-                        html = feed.user.links.html,
-                        photos = feed.user.links.photos,
-                        likes = feed.user.links.likes,
-                        portfolio = feed.user.links.portfolio,
+                        self = feed.user.link.self,
+                        html = feed.user.link.html,
+                        photos = feed.user.link.photos,
+                        likes = feed.user.link.likes,
+                        portfolio = feed.user.link.portfolio,
                     )
                     feedUserLinkDao.insertFeedUserLink(userLink)
 
@@ -118,33 +118,35 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         userLinkId = feed.user.id,
                         username = feed.user.username,
                         name = feed.user.name,
+                        firstName = feed.user.firstName ?: "N/A",
+                        lastName = feed.user.lastName ?: "N/A",
                         portfolioUrl = feed.user.portfolioUrl,
                         bio = feed.user.bio,
                         location = feed.user.location,
                         totalLikes = feed.user.totalLikes,
                         totalPhotos = feed.user.totalPhotos,
                         totalCollections = feed.user.totalCollections,
-                        instagram = feed.user.instagram,
-                        twitter = feed.user.twitter
+                        instagram = feed.user.instagramUsername,
+                        twitter = feed.user.twitterUsername
                     )
                     feedUserDao.insertFeedUser(user)
 
                     val feedUrl = FeedUrlEntity(
                         id = feed.user.id,
-                        raw = feed.urls.raw,
-                        full = feed.urls.full,
-                        regular = feed.urls.regular,
-                        small = feed.urls.small,
-                        thumb = feed.urls.thumb
+                        raw = feed.url.raw,
+                        full = feed.url.full,
+                        regular = feed.url.regular,
+                        small = feed.url.small,
+                        thumb = feed.url.thumb
                     )
                     feedUrlDao.insertFeedUrl(feedUrl)
 
                     val feedLink = FeedLinkEntity(
                         id = feed.user.id,
-                        self = feed.links.self,
-                        html = feed.links.html,
-                        download = feed.links.download,
-                        downloadLocation = feed.links.downloadLocation
+                        self = feed.link.self,
+                        html = feed.link.html,
+                        download = feed.link.download,
+                        downloadLocation = feed.link.downloadLocation
                     )
                     feedLinkDao.insertFeedLink(feedLink)
 
@@ -166,7 +168,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                     )
                     feedPhotos.add(feedPhoto)
 
-                    feedCollections = feed.currentUserFeedCollections.map { collection ->
+                    feedCollections = feed.currentUserUserCollections.map { collection ->
                         FeedCollectionEntity(
                             id = collection.id,
                             feedPhotoId = feedPhoto.id,

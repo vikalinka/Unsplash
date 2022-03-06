@@ -31,8 +31,8 @@
     </style>
 
     <style name="PopupTheme" parent="ThemeOverlay.AppCompat.DayNight">
-        <item name="android:backgroundTint">@color/white</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/custom_color_primary</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>

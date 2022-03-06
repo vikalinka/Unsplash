@@ -79,10 +79,12 @@ class PhotosRepositoryImpl @Inject constructor(
                     totalLikes = feedUser.user.totalLikes,
                     totalPhotos = feedUser.user.totalPhotos,
                     totalCollections = feedUser.user.totalCollections,
-                    instagram = feedUser.user.instagram,
-                    twitter = feedUser.user.twitter,
-                    imageUser = userProfileImage,
-                    links = userLink
+                    instagramUsername = feedUser.user.instagram,
+                    twitterUsername = feedUser.user.twitter,
+                    userProfileImage = userProfileImage,
+                    link = userLink,
+                    firstName = feedUser.user.firstName,
+                    lastName = feedUser.user.lastName
                 )
 
                 val feedCollections = Database.instance.feedCollectionDao().getAllFeedCollections()
@@ -121,8 +123,8 @@ class PhotosRepositoryImpl @Inject constructor(
                     likedByUser = entity.likedByUser,
                     description = entity.description,
                     user = user,
-                    currentUserFeedCollections = feedCollections.map { collection ->
-                        FeedCollection(
+                    currentUserUserCollections = feedCollections.map { collection ->
+                        UserCollection(
                             id = collection.id,
                             title = collection.title,
                             publishedAt = collection.publishedAt,
@@ -132,8 +134,8 @@ class PhotosRepositoryImpl @Inject constructor(
                             user = user
                         )
                     },
-                    urls = url,
-                    links = link
+                    url = url,
+                    link = link
                 )
             }
         }
