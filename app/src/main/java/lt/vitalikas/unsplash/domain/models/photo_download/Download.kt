@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.domain.models
+package lt.vitalikas.unsplash.domain.models.photo_download
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

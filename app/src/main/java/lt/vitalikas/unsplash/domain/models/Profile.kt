@@ -11,7 +11,7 @@ data class Profile(
     @Json(name = "first_name")
     val firstname: String,
     @Json(name = "last_name")
-    val lastname: String,
+    val lastname: String?,
     @Json(name = "twitter_username")
     val twitter: String?,
     @Json(name = "portfolio_url")

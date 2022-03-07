@@ -42,7 +42,7 @@ class SearchAdapter(
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.user.userProfileImage.medium)
+                .load(item.user.profileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
+import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
@@ -109,9 +109,9 @@ class FeedViewModel @Inject constructor(
         }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<FeedPhoto>> =
+    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> =
         queryFlow
-            .debounce(2000L)
+            .debounce(1000L)
             .distinctUntilChanged()
             .flatMapLatest { query ->
                 searchPhotosUseCase.invoke(query)
@@ -119,7 +119,7 @@ class FeedViewModel @Inject constructor(
             .cachedIn(viewModelScope)
             .map { pagingData ->
                 pagingData.map { searchPhoto ->
-                    FeedPhoto(
+                    Photo(
                         id = searchPhoto.id,
                         createdAt = searchPhoto.createdAt,
                         updatedAt = searchPhoto.updatedAt,

@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedPhotoDetailsBinding
-import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 
 class FeedDetailsAdapterDelegate(
     private val onLocationClick: (lat: Double, lng: Double) -> Unit,
     private val onDownloadClick: (url: String) -> Unit
 ) :
-    AbsListItemAdapterDelegate<FeedPhotoDetails, FeedPhotoDetails, FeedDetailsAdapterDelegate.FeedPhotoDetailsViewHolder>() {
+    AbsListItemAdapterDelegate<PhotoDetails, PhotoDetails, FeedDetailsAdapterDelegate.FeedPhotoDetailsViewHolder>() {
 
     class FeedPhotoDetailsViewHolder(
         private val binding: ItemFeedPhotoDetailsBinding,
@@ -36,12 +36,12 @@ class FeedDetailsAdapterDelegate(
             }
         }
 
-        fun bind(item: FeedPhotoDetails) {
+        fun bind(item: PhotoDetails) {
 
             lat = item.location.position.latitude
             lng = item.location.position.longitude
 
-            downloadUrl = item.links.downloadLocation
+            downloadUrl = item.link.downloadLocation
 //            downloadUrl = item.urls.raw
 
             binding.tvLocation.text =
@@ -74,8 +74,8 @@ class FeedDetailsAdapterDelegate(
     }
 
     override fun isForViewType(
-        item: FeedPhotoDetails,
-        items: MutableList<FeedPhotoDetails>,
+        item: PhotoDetails,
+        items: MutableList<PhotoDetails>,
         position: Int
     ): Boolean = true
 
@@ -91,7 +91,7 @@ class FeedDetailsAdapterDelegate(
         )
 
     override fun onBindViewHolder(
-        item: FeedPhotoDetails,
+        item: PhotoDetails,
         holder: FeedPhotoDetailsViewHolder,
         payloads: MutableList<Any>
     ) = holder.bind(item)

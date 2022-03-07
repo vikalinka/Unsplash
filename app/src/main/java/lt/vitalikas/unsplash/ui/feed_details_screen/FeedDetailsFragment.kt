@@ -32,7 +32,7 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
-import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.ui.rationale_screen.Launcher
 import lt.vitalikas.unsplash.utils.hasQ
 import lt.vitalikas.unsplash.utils.showInfo
@@ -142,7 +142,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             loadingProgress.isVisible = false
                             feedPhotoDetailsAdapter.items = listOf(state.data)
                             bindFetchedData(state.data)
-                            photoShareLink = state.data.links.html
+                            photoShareLink = state.data.link.html
                         }
                         is FeedDetailsState.Error -> {
                             loadingProgress.isVisible = false
@@ -173,9 +173,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun bindFetchedData(details: FeedPhotoDetails) {
+    private fun bindFetchedData(details: PhotoDetails) {
         Glide.with(this)
-            .load(details.urls.raw)
+            .load(details.url.raw)
             .placeholder(R.drawable.picture)
             .error(R.drawable.picture)
             .into(photo)

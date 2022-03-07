@@ -96,9 +96,9 @@ class FeedPhotosRemoteMediator @Inject constructor(
 
                     val userProfileImage = UserProfileImageEntity(
                         id = feed.user.id,
-                        small = feed.user.userProfileImage.small,
-                        medium = feed.user.userProfileImage.medium,
-                        large = feed.user.userProfileImage.large
+                        small = feed.user.profileImage.small,
+                        medium = feed.user.profileImage.medium,
+                        large = feed.user.profileImage.large
                     )
                     feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
 
@@ -118,7 +118,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         userLinkId = feed.user.id,
                         username = feed.user.username,
                         name = feed.user.name,
-                        firstName = feed.user.firstName ?: "N/A",
+                        firstName = feed.user.firstName,
                         lastName = feed.user.lastName ?: "N/A",
                         portfolioUrl = feed.user.portfolioUrl,
                         bio = feed.user.bio,

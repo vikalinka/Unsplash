@@ -14,10 +14,16 @@ import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionPhotosPa
 import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionsPagingSource
 import lt.vitalikas.unsplash.data.repositories.paging_sources.SearchPagingSource
 import lt.vitalikas.unsplash.domain.models.*
+import lt.vitalikas.unsplash.domain.models.base.Link
+import lt.vitalikas.unsplash.domain.models.base.Url
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
+import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
+import lt.vitalikas.unsplash.domain.models.user.User
+import lt.vitalikas.unsplash.domain.models.user.UserLink
+import lt.vitalikas.unsplash.domain.models.user.UserProfileImage
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import javax.inject.Inject
 
@@ -28,7 +34,7 @@ class PhotosRepositoryImpl @Inject constructor(
 ) : PhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>> {
+    override suspend fun getFeedPhotos(): Flow<PagingData<Photo>> {
         val pagingSourceFactory = {
             Database.instance.feedPhotosDao().getPagingSource()
         }
@@ -81,7 +87,7 @@ class PhotosRepositoryImpl @Inject constructor(
                     totalCollections = feedUser.user.totalCollections,
                     instagramUsername = feedUser.user.instagram,
                     twitterUsername = feedUser.user.twitter,
-                    userProfileImage = userProfileImage,
+                    profileImage = userProfileImage,
                     link = userLink,
                     firstName = feedUser.user.firstName,
                     lastName = feedUser.user.lastName
@@ -93,7 +99,7 @@ class PhotosRepositoryImpl @Inject constructor(
                 val feedUrl = Database.instance.feedUrlDao()
                     .getFeedUrlAndFeedPhotoWithFeedUrlId(entity.feedUrlId)
                     ?: error("url with id = ${entity.feedUrlId} not found")
-                val url = FeedUrl(
+                val url = Url(
                     raw = feedUrl.url.raw,
                     full = feedUrl.url.full,
                     regular = feedUrl.url.regular,
@@ -104,14 +110,14 @@ class PhotosRepositoryImpl @Inject constructor(
                 val feedLink = Database.instance.feedLinkDao()
                     .getFeedLinkAndFeedPhotoWithFeedLinkId(entity.feedLinkId)
                     ?: error("link with id = ${entity.feedLinkId} not found")
-                val link = FeedLink(
+                val link = Link(
                     self = feedLink.link.self,
                     html = feedLink.link.html,
                     download = feedLink.link.download,
                     downloadLocation = feedLink.link.downloadLocation
                 )
 
-                FeedPhoto(
+                Photo(
                     id = entity.id,
                     createdAt = entity.createdAt,
                     updatedAt = entity.updatedAt,

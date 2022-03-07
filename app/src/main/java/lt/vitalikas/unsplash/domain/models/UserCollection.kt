@@ -2,6 +2,7 @@ package lt.vitalikas.unsplash.domain.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import lt.vitalikas.unsplash.domain.models.user.User
 
 @JsonClass(generateAdapter = true)
 data class UserCollection(

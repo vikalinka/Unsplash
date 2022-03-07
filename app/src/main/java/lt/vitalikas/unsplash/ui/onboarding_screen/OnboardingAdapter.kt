@@ -6,7 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.databinding.ItemOnboardingBinding
-import lt.vitalikas.unsplash.domain.models.OnboardingItem
+import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
 
 class OnboardingAdapter(
     private val items: List<OnboardingItem>,

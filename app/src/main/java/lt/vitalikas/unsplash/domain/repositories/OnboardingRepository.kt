@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.domain.repositories
 
-import lt.vitalikas.unsplash.domain.models.OnboardingItem
+import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
 import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 
 interface OnboardingRepository {

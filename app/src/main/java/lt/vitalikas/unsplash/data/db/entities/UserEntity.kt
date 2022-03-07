@@ -49,7 +49,7 @@ data class UserEntity(
     @ColumnInfo(name = UsersContract.Columns.FIRST_NAME)
     val firstName: String,
     @ColumnInfo(name = UsersContract.Columns.LAST_NAME)
-    val lastName: String,
+    val lastName: String?,
     @ColumnInfo(name = UsersContract.Columns.PORTFOLIO_URL)
     val portfolioUrl: String?,
     @ColumnInfo(name = UsersContract.Columns.BIO)
@@ -57,11 +57,11 @@ data class UserEntity(
     @ColumnInfo(name = UsersContract.Columns.LOCATION)
     val location: String?,
     @ColumnInfo(name = UsersContract.Columns.TOTAL_LIKES)
-    val totalLikes: Long,
+    val totalLikes: Int,
     @ColumnInfo(name = UsersContract.Columns.TOTAL_PHOTOS)
-    val totalPhotos: Long,
+    val totalPhotos: Int,
     @ColumnInfo(name = UsersContract.Columns.TOTAL_COLLECTIONS)
-    val totalCollections: Long,
+    val totalCollections: Int,
     @ColumnInfo(name = UsersContract.Columns.INSTAGRAM_USERNAME)
     val instagram: String?,
     @ColumnInfo(name = UsersContract.Columns.TWITTER_USERNAME)

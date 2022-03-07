@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
+import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
 class BaseAdapter<T : Any>(
@@ -36,7 +36,7 @@ class BaseAdapter<T : Any>(
 
         fun bind(item: T) {
             when (item) {
-                is FeedPhoto -> {
+                is Photo -> {
                     id = item.id
 
                     Glide.with(itemView)
@@ -46,7 +46,7 @@ class BaseAdapter<T : Any>(
                         .into(binding.ivPhoto)
 
                     Glide.with(itemView)
-                        .load(item.user.userProfileImage.medium)
+                        .load(item.user.profileImage.medium)
                         .placeholder(R.drawable.picture)
                         .error(R.drawable.picture)
                         .into(binding.ivAvatar)
@@ -83,7 +83,7 @@ class BaseAdapter<T : Any>(
                         .into(binding.ivPhoto)
 
                     Glide.with(itemView)
-                        .load(item.user.userProfileImage.medium)
+                        .load(item.user.profileImage.medium)
                         .placeholder(R.drawable.picture)
                         .error(R.drawable.picture)
                         .into(binding.ivAvatar)
@@ -135,7 +135,7 @@ class BaseAdapter<T : Any>(
     class PhotoComparator<T : Any> : DiffUtil.ItemCallback<T>() {
         override fun areItemsTheSame(oldItem: T, newItem: T): Boolean =
             when {
-                oldItem is FeedPhoto && newItem is FeedPhoto -> oldItem.id == newItem.id
+                oldItem is Photo && newItem is Photo -> oldItem.id == newItem.id
                 oldItem is SearchPhoto && newItem is SearchPhoto -> oldItem.id == newItem.id
                 else -> error("No such type")
             }
@@ -143,7 +143,7 @@ class BaseAdapter<T : Any>(
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: T, newItem: T): Boolean =
             when {
-                oldItem is FeedPhoto && newItem is FeedPhoto -> oldItem == newItem
+                oldItem is Photo && newItem is Photo -> oldItem == newItem
                 oldItem is SearchPhoto && newItem is SearchPhoto -> oldItem == newItem
                 else -> error("No such type")
             }

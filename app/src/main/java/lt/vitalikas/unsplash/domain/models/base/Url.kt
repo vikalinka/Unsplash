@@ -1,10 +1,10 @@
-package lt.vitalikas.unsplash.domain.models
+package lt.vitalikas.unsplash.domain.models.base
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class FeedUrl(
+data class Url(
     @Json(name = "raw") val raw: String,
     @Json(name = "full") val full: String,
     @Json(name = "regular") val regular: String,

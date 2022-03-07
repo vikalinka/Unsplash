@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.domain.models
+package lt.vitalikas.unsplash.domain.models.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

@@ -4,6 +4,9 @@ import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
+import lt.vitalikas.unsplash.domain.models.photo.Photo
+import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
+import lt.vitalikas.unsplash.domain.models.photo_download.Download
 import lt.vitalikas.unsplash.domain.models.search.SearchResponse
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -18,12 +21,12 @@ interface UnsplashApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
-    ): List<FeedPhoto>
+    ): List<Photo>
 
     @GET("/photos/{id}")
     suspend fun getFeedPhotoDetails(
         @Path("id") id: String
-    ): FeedPhotoDetails
+    ): PhotoDetails
 
     @GET
     suspend fun trackDownload(

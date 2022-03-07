@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
+import lt.vitalikas.unsplash.domain.models.photo.Photo
 
 class FeedAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<FeedPhoto, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
+) : PagingDataAdapter<Photo, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
 
     inner class FeedPhotoViewHolder(
         private val binding: ItemFeedBinding,
@@ -32,7 +32,7 @@ class FeedAdapter(
             }
         }
 
-        fun bind(item: FeedPhoto) {
+        fun bind(item: Photo) {
             id = item.id
 
             Glide.with(itemView)
@@ -42,7 +42,7 @@ class FeedAdapter(
                 .into(binding.ivPhoto)
 
             Glide.with(itemView)
-                .load(item.user.userProfileImage.medium)
+                .load(item.user.profileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivAvatar)
@@ -88,11 +88,11 @@ class FeedAdapter(
         item?.let { holder.bind(it) }
     }
 
-    class FeedPhotoComparator : DiffUtil.ItemCallback<FeedPhoto>() {
-        override fun areItemsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =
+    class FeedPhotoComparator : DiffUtil.ItemCallback<Photo>() {
+        override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: FeedPhoto, newItem: FeedPhoto): Boolean =
+        override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean =
             oldItem == newItem
     }
 }

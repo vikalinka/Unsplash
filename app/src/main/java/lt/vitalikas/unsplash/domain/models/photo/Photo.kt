@@ -1,10 +1,14 @@
-package lt.vitalikas.unsplash.domain.models
+package lt.vitalikas.unsplash.domain.models.photo
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import lt.vitalikas.unsplash.domain.models.base.Link
+import lt.vitalikas.unsplash.domain.models.base.Url
+import lt.vitalikas.unsplash.domain.models.UserCollection
+import lt.vitalikas.unsplash.domain.models.user.User
 
 @JsonClass(generateAdapter = true)
-data class FeedPhoto(
+data class Photo(
     @Json(name = "id") val id: String,
     @Json(name = "created_at") val createdAt: String,
     @Json(name = "updated_at") val updatedAt: String,
@@ -17,6 +21,6 @@ data class FeedPhoto(
     @Json(name = "description") val description: String?,
     @Json(name = "user") val user: User,
     @Json(name = "current_user_collections") val currentUserUserCollections: List<UserCollection>,
-    @Json(name = "urls") val url: FeedUrl,
-    @Json(name = "links") val link: FeedLink
+    @Json(name = "urls") val url: Url,
+    @Json(name = "links") val link: Link
 )

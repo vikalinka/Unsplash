@@ -2,7 +2,7 @@ package lt.vitalikas.unsplash.domain.models.search
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import lt.vitalikas.unsplash.domain.models.UserProfileImage
+import lt.vitalikas.unsplash.domain.models.user.UserProfileImage
 
 @JsonClass(generateAdapter = true)
 data class SearchUser(

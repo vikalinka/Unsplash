@@ -4,16 +4,16 @@ import android.net.Uri
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
-import lt.vitalikas.unsplash.domain.models.FeedPhoto
-import lt.vitalikas.unsplash.domain.models.FeedPhotoDetails
+import lt.vitalikas.unsplash.domain.models.photo.Photo
+import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 
 interface PhotosRepository {
-    suspend fun getFeedPhotos(): Flow<PagingData<FeedPhoto>>
-    suspend fun getFeedPhotoDetailsById(id: String): FeedPhotoDetails
+    suspend fun getFeedPhotos(): Flow<PagingData<Photo>>
+    suspend fun getFeedPhotoDetailsById(id: String): PhotoDetails
     suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
     suspend fun downloadPhoto(url: String, uri: Uri)
     suspend fun likePhoto(id: String)
