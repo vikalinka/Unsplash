@@ -131,7 +131,7 @@ class FeedViewModel @Inject constructor(
                         likedByUser = searchPhoto.likedByUser,
                         description = searchPhoto.description,
                         user = searchPhoto.user,
-                        currentUserUserCollections = searchPhoto.userCollections,
+                        currentUserCollections = searchPhoto.userCollections,
                         url = searchPhoto.urls,
                         link = searchPhoto.link
                     )

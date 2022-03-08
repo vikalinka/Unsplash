@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import lt.vitalikas.unsplash.domain.models.base.Link
 import lt.vitalikas.unsplash.domain.models.base.Url
-import lt.vitalikas.unsplash.domain.models.UserCollection
+import lt.vitalikas.unsplash.domain.models.base.UserCollection
 import lt.vitalikas.unsplash.domain.models.user.User
 
 @JsonClass(generateAdapter = true)
@@ -20,7 +20,7 @@ data class Photo(
     @Json(name = "liked_by_user") var likedByUser: Boolean,
     @Json(name = "description") val description: String?,
     @Json(name = "user") val user: User,
-    @Json(name = "current_user_collections") val currentUserUserCollections: List<UserCollection>,
+    @Json(name = "current_user_collections") val currentUserCollections: List<UserCollection>,
     @Json(name = "urls") val url: Url,
     @Json(name = "links") val link: Link
 )

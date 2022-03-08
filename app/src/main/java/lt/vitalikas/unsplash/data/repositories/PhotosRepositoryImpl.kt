@@ -13,9 +13,9 @@ import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
 import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionPhotosPagingSource
 import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionsPagingSource
 import lt.vitalikas.unsplash.data.repositories.paging_sources.SearchPagingSource
-import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.models.base.Link
 import lt.vitalikas.unsplash.domain.models.base.Url
+import lt.vitalikas.unsplash.domain.models.base.UserCollection
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
@@ -129,14 +129,14 @@ class PhotosRepositoryImpl @Inject constructor(
                     likedByUser = entity.likedByUser,
                     description = entity.description,
                     user = user,
-                    currentUserUserCollections = feedCollections.map { collection ->
+                    currentUserCollections = feedCollections.map { collection ->
                         UserCollection(
                             id = collection.id,
                             title = collection.title,
                             publishedAt = collection.publishedAt,
                             lastCollectedAt = collection.lastCollectedAt,
                             updatedAt = collection.updatedAt,
-                            coverPhoto = collection.coverPhoto,
+                            coverPhoto = null,
                             user = user
                         )
                     },

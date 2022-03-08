@@ -36,7 +36,7 @@ import lt.vitalikas.unsplash.data.db.contracts.UsersContract
 data class FeedCollectionEntity(
     @PrimaryKey
     @ColumnInfo(name = FeedCollectionsContract.Columns.ID)
-    val id: Int,
+    val id: String,
 
     // fk
     @ColumnInfo(name = FeedCollectionsContract.Columns.FEED_PHOTO_ID)

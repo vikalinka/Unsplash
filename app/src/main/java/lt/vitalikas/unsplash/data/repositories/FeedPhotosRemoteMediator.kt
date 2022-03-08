@@ -168,7 +168,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                     )
                     feedPhotos.add(feedPhoto)
 
-                    feedCollections = feed.currentUserUserCollections.map { collection ->
+                    feedCollections = feed.currentUserCollections.map { collection ->
                         FeedCollectionEntity(
                             id = collection.id,
                             feedPhotoId = feedPhoto.id,
@@ -177,7 +177,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                             lastCollectedAt = collection.lastCollectedAt,
                             updatedAt = collection.updatedAt,
                             userId = user.id,
-                            coverPhoto = collection.coverPhoto
+                            coverPhoto = null
                         )
                     }
                 }
