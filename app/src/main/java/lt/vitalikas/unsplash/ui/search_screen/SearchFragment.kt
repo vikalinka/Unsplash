@@ -38,6 +38,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val loadingProgress get() = binding.loadingProgressBar
     private val refreshLayout get() = binding.searchSwipeRefreshLayout
     private val toolbar get() = binding.searchToolbar
+    private val noResultsText get() = binding.noResultsTextView
 
     private val searchViewModel by viewModels<SearchViewModel>()
 
@@ -97,18 +98,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun observeNetworkConnection() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    searchViewModel.networkStatus.collect { status ->
-                        when (status) {
-                            NetworkStatus.Available -> {
-                                noConnectionText.isVisible = false
-                                // retry after connection re-established
-                                searchAdapter.retry()
-                            }
-                            NetworkStatus.Unavailable -> {
-                                noConnectionText.isVisible = true
-                                showInfo("No internet connection.")
-                            }
+                searchViewModel.networkStatus.collect { status ->
+                    when (status) {
+                        NetworkStatus.Available -> {
+                            noConnectionText.isVisible = false
+                            // retry after connection re-established
+                            searchAdapter.retry()
+                        }
+                        NetworkStatus.Unavailable -> {
+                            noConnectionText.isVisible = true
+                            showInfo("No internet connection.")
                         }
                     }
                 }
@@ -132,6 +131,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             with(searchItem.actionView as SearchView) {
                 requestFocus()
                 isIconified = false
+                noResultsText.isVisible = true
 
                 val queryFlow = this.onTextChangedFlow()
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -139,6 +139,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                         searchViewModel.getSearchData(queryFlow)
                             .collectLatest { data ->
                                 refreshLayout.isRefreshing = false
+                                if (searchAdapter.itemCount > 0) {
+                                    noResultsText.isVisible = false
+                                }
                                 searchAdapter.submitData(data)
                             }
                     }

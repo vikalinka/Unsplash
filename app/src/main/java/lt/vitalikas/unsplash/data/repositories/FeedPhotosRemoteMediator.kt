@@ -219,7 +219,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
     companion object {
         private const val ITEMS_PER_PAGE = 10
         private const val STARTING_PAGE_INDEX = 1
-        private const val ORDER_BY = "popular"
+        private const val ORDER_BY = "latest"
         private val CACHE_TIMEOUT = TimeUnit.MILLISECONDS.convert(4, TimeUnit.HOURS)
     }
 }
