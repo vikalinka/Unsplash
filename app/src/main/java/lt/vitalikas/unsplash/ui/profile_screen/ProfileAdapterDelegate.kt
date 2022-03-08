@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemPhotoBinding
-import lt.vitalikas.unsplash.domain.models.Profile
+import lt.vitalikas.unsplash.domain.models.profile.Profile
 
 class ProfileAdapterDelegate :
     AbsListItemAdapterDelegate<Profile.Photo, Profile.Photo, ProfileAdapterDelegate.PhotoViewHolder>() {

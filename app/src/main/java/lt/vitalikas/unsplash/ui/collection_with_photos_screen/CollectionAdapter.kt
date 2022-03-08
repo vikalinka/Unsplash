@@ -40,7 +40,7 @@ class CollectionAdapter(
             id = item.id
 
             Glide.with(itemView)
-                .load(item.urls.regular)
+                .load(item.url.regular)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
                 .into(binding.ivPhoto)

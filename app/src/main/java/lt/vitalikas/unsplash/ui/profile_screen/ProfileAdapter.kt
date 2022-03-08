@@ -2,7 +2,7 @@ package lt.vitalikas.unsplash.ui.profile_screen
 
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
-import lt.vitalikas.unsplash.domain.models.Profile
+import lt.vitalikas.unsplash.domain.models.profile.Profile
 
 class ProfileAdapter :
     AsyncListDifferDelegationAdapter<Profile.Photo>(PhotoItemDiffUtilCallback()) {

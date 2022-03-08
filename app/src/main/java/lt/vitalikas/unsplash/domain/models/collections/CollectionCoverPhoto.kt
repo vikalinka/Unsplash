@@ -2,6 +2,9 @@ package lt.vitalikas.unsplash.domain.models.collections
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import lt.vitalikas.unsplash.domain.models.base.Link
+import lt.vitalikas.unsplash.domain.models.base.Url
+import lt.vitalikas.unsplash.domain.models.user.User
 
 @JsonClass(generateAdapter = true)
 data class CollectionCoverPhoto(
@@ -13,7 +16,7 @@ data class CollectionCoverPhoto(
     @Json(name = "likes") val likes: Int,
     @Json(name = "liked_by_user") val likedByUser: Boolean,
     @Json(name = "description") val description: String?,
-    @Json(name = "user") val user: CollectionCoverPhotoUser,
-    @Json(name = "urls") val urls: CollectionCoverPhotoUrls,
-    @Json(name = "links") val links: CollectionCoverPhotoLinks
+    @Json(name = "user") val user: User,
+    @Json(name = "urls") val urls: Url,
+    @Json(name = "links") val links: Link
 )

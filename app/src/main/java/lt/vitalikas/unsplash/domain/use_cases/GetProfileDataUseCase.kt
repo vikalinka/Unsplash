@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.domain.use_cases
 
-import lt.vitalikas.unsplash.domain.models.Profile
+import lt.vitalikas.unsplash.domain.models.profile.Profile
 
 interface GetProfileDataUseCase {
     var profileData: Profile?

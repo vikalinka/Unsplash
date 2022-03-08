@@ -1,12 +1,12 @@
 package lt.vitalikas.unsplash.data.api
 
-import lt.vitalikas.unsplash.domain.models.*
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.domain.models.photo_download.Download
+import lt.vitalikas.unsplash.domain.models.profile.Profile
 import lt.vitalikas.unsplash.domain.models.search.SearchResponse
 import okhttp3.ResponseBody
 import retrofit2.http.*
