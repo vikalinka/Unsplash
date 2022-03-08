@@ -20,7 +20,6 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.databinding.FragmentCollectionsBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.showInfo
-import timber.log.Timber
 
 @AndroidEntryPoint
 class CollectionsFragment : Fragment(R.layout.fragment_collections) {
@@ -123,7 +122,7 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
         with(toolbar) {
             title = "COLLECTIONS"
 
-            inflateMenu(R.menu.toolbar_menu)
+            inflateMenu(R.menu.search_toolbar_menu)
         }
     }
 }

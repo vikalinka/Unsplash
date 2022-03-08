@@ -2,7 +2,6 @@ package lt.vitalikas.unsplash.ui.feed_screen
 
 import android.os.Bundle
 import android.view.View
-import android.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,7 +15,6 @@ import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
@@ -24,7 +22,6 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
 import lt.vitalikas.unsplash.utils.autoCleaned
-import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
 
@@ -157,22 +154,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
             inflateMenu(R.menu.feed_toolbar_menu)
 
-            val searchItem = menu.findItem(R.id.searchAction)
-            with(searchItem.actionView as SearchView) {
-                val queryFlow = this.onTextChangedFlow()
+            val findItem = menu.findItem(R.id.findAction)
+            findItem.setOnMenuItemClickListener {
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        feedViewModel.getSearchData(queryFlow)
-                            .collectLatest { data ->
-                                refreshLayout.isRefreshing = false
-                                feedAdapter.submitData(data)
-                            }
-                    }
-                }
+                val directions =
+                    FeedFragmentDirections.actionHomeToSearchFragment()
+                findNavController().navigate(directions)
 
-                // focus text input on search icon click
-                isIconified = false
+                return@setOnMenuItemClickListener true
             }
         }
     }

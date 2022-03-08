@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -117,26 +116,6 @@ class FeedViewModel @Inject constructor(
                 searchPhotosUseCase.invoke(query)
             }
             .cachedIn(viewModelScope)
-            .map { pagingData ->
-                pagingData.map { searchPhoto ->
-                    Photo(
-                        id = searchPhoto.id,
-                        createdAt = searchPhoto.createdAt,
-                        updatedAt = searchPhoto.updatedAt,
-                        width = searchPhoto.width,
-                        height = searchPhoto.height,
-                        color = searchPhoto.color,
-                        blurHash = searchPhoto.blurHash,
-                        likes = searchPhoto.likes,
-                        likedByUser = searchPhoto.likedByUser,
-                        description = searchPhoto.description,
-                        user = searchPhoto.user,
-                        currentUserCollections = searchPhoto.userCollections,
-                        url = searchPhoto.urls,
-                        link = searchPhoto.link
-                    )
-                }
-            }
             .catch { error ->
                 Timber.d(error)
                 _feedState.value = FeedState.Error(error)

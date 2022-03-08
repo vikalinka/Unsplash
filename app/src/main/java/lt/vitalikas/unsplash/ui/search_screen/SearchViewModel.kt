@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
 import javax.inject.Inject
@@ -26,7 +27,7 @@ class SearchViewModel @Inject constructor(
     val networkStatus = networkStatusTracker.networkStatus
 
     @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
-    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<SearchPhoto>> {
+    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> {
         return queryFlow
             .debounce(1000L)
             .distinctUntilChanged()

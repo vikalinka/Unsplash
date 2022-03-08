@@ -1,10 +1,8 @@
 package lt.vitalikas.unsplash.ui.search_screen
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,6 +23,7 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
+import lt.vitalikas.unsplash.ui.feed_screen.FeedAdapter
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
@@ -39,14 +38,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val loadingProgress get() = binding.loadingProgressBar
     private val refreshLayout get() = binding.searchSwipeRefreshLayout
     private val toolbar get() = binding.searchToolbar
-    private val search get() = binding.queryTextInput
 
     private val searchViewModel by viewModels<SearchViewModel>()
 
     private lateinit var id: String
 
     private val searchAdapter by autoCleaned {
-        SearchAdapter(
+        FeedAdapter(
             onItemClick = { id ->
                 val directions =
                     SearchFragmentDirections.actionSearchFragmentToFeedDetailsFragment(id)
@@ -70,7 +68,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         initSearchList()
         initAdapterRefresh()
         observeNetworkConnection()
-        observeSearchResults()
         setupToolbar()
         handleToolbarNavigation()
         observeLikingPhoto()
@@ -97,22 +94,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    private fun observeSearchResults() {
-        val query = search.onTextChangedFlow()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    searchViewModel.getSearchData(query)
-                        .collectLatest { data ->
-                            searchAdapter.submitData(data)
-                            refreshLayout.isRefreshing = false
-                        }
-                }
-            }
-        }
-    }
-
     private fun observeNetworkConnection() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -126,7 +107,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                             }
                             NetworkStatus.Unavailable -> {
                                 noConnectionText.isVisible = true
-                                showInfo("No internet connection. Cached data is shown.")
+                                showInfo("No internet connection.")
                             }
                         }
                     }
@@ -145,43 +126,24 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         with(toolbar) {
             title = "SEARCH"
 
-            inflateMenu(R.menu.feed_toolbar_menu)
+            inflateMenu(R.menu.search_toolbar_menu)
 
-//            setOnMenuItemClickListener { menuItem ->
-//                when (menuItem.itemId) {
-//                    R.id.toolbar_menu_search -> {
-//
-//                        menuItem.setOnActionExpandListener(object :
-//                            MenuItem.OnActionExpandListener {
-//                            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                                showToast("search expanded")
-//                                return true
-//                            }
-//
-//                            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-//                                showToast("search collapsed")
-//                                return true
-//                            }
-//                        })
-//
-//                        with(menuItem.actionView as SearchView) {
-//                            this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//                                override fun onQueryTextSubmit(p0: String?): Boolean {
-//                                    return true
-//                                }
-//
-//                                override fun onQueryTextChange(text: String?): Boolean {
-//                                    return true
-//                                }
-//                            })
-//                        }
-//
-//                        true
-//                    }
-//
-//                    else -> false
-//                }
-//            }
+            val searchItem = menu.findItem(R.id.searchAction)
+            with(searchItem.actionView as SearchView) {
+                requestFocus()
+                isIconified = false
+
+                val queryFlow = this.onTextChangedFlow()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        searchViewModel.getSearchData(queryFlow)
+                            .collectLatest { data ->
+                                refreshLayout.isRefreshing = false
+                                searchAdapter.submitData(data)
+                            }
+                    }
+                }
+            }
         }
     }
 
@@ -189,10 +151,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-    }
-
-    private fun showToast(text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     private fun observeLikingPhoto() {

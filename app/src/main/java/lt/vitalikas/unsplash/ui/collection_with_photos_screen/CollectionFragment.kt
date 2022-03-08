@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -193,7 +192,7 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
         with(toolbar) {
             title = "COLLECTION"
 
-            inflateMenu(R.menu.toolbar_menu)
+            inflateMenu(R.menu.search_toolbar_menu)
         }
     }
 

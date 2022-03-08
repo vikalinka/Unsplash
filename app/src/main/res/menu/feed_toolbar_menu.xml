@@ -3,17 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/searchAction"
-        android:icon="@drawable/ic_menu_search"
+        android:id="@+id/findAction"
+        android:icon="@drawable/ic_search"
         android:iconTint="@color/black"
-        android:title="@string/search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView"
-        tools:targetApi="o" />
-    <item
-        android:id="@+id/orderByLatestToolbarMenu"
         android:title="@string/latest"
-        app:showAsAction="collapseActionView"
+        app:showAsAction="ifRoom"
         tools:targetApi="o" />
     <item
         android:id="@+id/orderByOldestToolbarMenu"

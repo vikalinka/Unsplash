@@ -20,7 +20,6 @@ import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 import lt.vitalikas.unsplash.domain.models.photo.Photo
-import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.models.user.User
 import lt.vitalikas.unsplash.domain.models.user.UserLink
 import lt.vitalikas.unsplash.domain.models.user.UserProfileImage
@@ -174,7 +173,7 @@ class PhotosRepositoryImpl @Inject constructor(
             Database.instance.feedPhotosDao().updatePhoto(id, isLiked, likeCount)
         }
 
-    override fun getSearchResult(query: String): Flow<PagingData<SearchPhoto>> =
+    override fun getSearchResult(query: String): Flow<PagingData<Photo>> =
         Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
