@@ -24,6 +24,7 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
 import lt.vitalikas.unsplash.ui.feed_screen.FeedAdapter
+import lt.vitalikas.unsplash.ui.feed_screen.FeedState
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
@@ -69,6 +70,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         initSearchList()
         initAdapterRefresh()
         observeNetworkConnection()
+        observeDataFetching()
         setupToolbar()
         handleToolbarNavigation()
         observeLikingPhoto()
@@ -136,19 +138,49 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 val queryFlow = this.onTextChangedFlow()
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        searchViewModel.getSearchData(queryFlow)
-                            .collectLatest { data ->
-                                refreshLayout.isRefreshing = false
-                                if (searchAdapter.itemCount > 0) {
-                                    noResultsText.isVisible = false
-                                }
-                                searchAdapter.submitData(data)
-                            }
+//                        searchViewModel.getSearchData(queryFlow)
+//                            .collectLatest { data ->
+//                                refreshLayout.isRefreshing = false
+//                                if (searchAdapter.itemCount > 0) {
+//                                    noResultsText.isVisible = false
+//                                }
+//                                searchAdapter.submitData(data)
+//                            }
+                        searchViewModel.searchData(queryFlow)
                     }
                 }
             }
         }
     }
+
+    private fun observeDataFetching() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                searchViewModel.searchState.collectLatest { state ->
+                    when (state) {
+                        is SearchState.NotLoading -> noResultsText.isVisible = true
+                        is SearchState.Loading -> loadingProgress.isVisible = true
+                        is SearchState.Success -> {
+                            loadingProgress.isVisible = false
+                            refreshLayout.isRefreshing = false
+                            noResultsText.isVisible = false
+                            searchAdapter.submitData(state.data)
+                        }
+                        is SearchState.Error -> {
+                            refreshLayout.isRefreshing = false
+                            loadingProgress.isVisible = false
+                            noResultsText.isVisible = true
+                            state.error.message?.let {
+                                showInfo(it)
+                            }
+                            Timber.d("${state.error}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun handleToolbarNavigation() {
         toolbar.setNavigationOnClickListener {
