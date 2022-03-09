@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -24,7 +25,6 @@ import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
 import lt.vitalikas.unsplash.ui.feed_screen.FeedAdapter
-import lt.vitalikas.unsplash.ui.feed_screen.FeedState
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
@@ -69,12 +69,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         super.onViewCreated(view, savedInstanceState)
         initSearchList()
         initAdapterRefresh()
+        initToolbar()
         observeNetworkConnection()
         observeDataFetching()
-        setupToolbar()
-        handleToolbarNavigation()
         observeLikingPhoto()
         observeDislikingPhoto()
+        observeAdapterLoadingState()
     }
 
     private fun initSearchList() {
@@ -89,11 +89,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
             adapter = concatAdapter
 
-            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
             setHasFixedSize(true)
 
-            addItemDecoration(SearchOffsetDecoration(requireContext()))
+//            addItemDecoration(SearchOffsetDecoration(requireContext()))
         }
     }
 
@@ -123,68 +123,53 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    private fun setupToolbar() {
+    private fun observeAdapterLoadingState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            searchAdapter.loadStateFlow.collectLatest { loadStates ->
+
+                noResultsText.isVisible = loadStates.source.refresh is LoadState.NotLoading &&
+                        loadStates.source.append.endOfPaginationReached &&
+                        searchAdapter.itemCount < 1
+
+                loadingProgress.isVisible = loadStates.refresh is LoadState.Loading
+            }
+        }
+    }
+
+    private fun initToolbar() {
         with(toolbar) {
             title = "SEARCH"
 
             inflateMenu(R.menu.search_toolbar_menu)
 
-            val searchItem = menu.findItem(R.id.searchAction)
-            with(searchItem.actionView as SearchView) {
-                requestFocus()
-                isIconified = false
-                noResultsText.isVisible = true
-
-                val queryFlow = this.onTextChangedFlow()
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                        searchViewModel.getSearchData(queryFlow)
-//                            .collectLatest { data ->
-//                                refreshLayout.isRefreshing = false
-//                                if (searchAdapter.itemCount > 0) {
-//                                    noResultsText.isVisible = false
-//                                }
-//                                searchAdapter.submitData(data)
-//                            }
-                        searchViewModel.searchData(queryFlow)
-                    }
-                }
+            setNavigationOnClickListener {
+                findNavController().navigateUp()
             }
         }
     }
+
+//    private fun handleToolbarNavigation() {
+//        toolbar.setNavigationOnClickListener {
+//            findNavController().navigateUp()
+//        }
+//    }
 
     private fun observeDataFetching() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                searchViewModel.searchState.collectLatest { state ->
-                    when (state) {
-                        is SearchState.NotLoading -> noResultsText.isVisible = true
-                        is SearchState.Loading -> loadingProgress.isVisible = true
-                        is SearchState.Success -> {
-                            loadingProgress.isVisible = false
-                            refreshLayout.isRefreshing = false
-                            noResultsText.isVisible = false
-                            searchAdapter.submitData(state.data)
-                        }
-                        is SearchState.Error -> {
-                            refreshLayout.isRefreshing = false
-                            loadingProgress.isVisible = false
-                            noResultsText.isVisible = true
-                            state.error.message?.let {
-                                showInfo(it)
-                            }
-                            Timber.d("${state.error}")
-                        }
+        val searchItem = toolbar.menu.findItem(R.id.searchAction)
+        with(searchItem.actionView as SearchView) {
+            requestFocus()
+
+            isIconified = false
+
+            val queryFlow = this.onTextChangedFlow()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    searchViewModel.getSearchData(queryFlow).collectLatest { data ->
+                        refreshLayout.isRefreshing = false
+                        searchAdapter.submitData(data)
                     }
                 }
             }
-        }
-    }
-
-
-    private fun handleToolbarNavigation() {
-        toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
         }
     }
 

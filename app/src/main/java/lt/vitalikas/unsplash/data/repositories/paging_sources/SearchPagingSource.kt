@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.domain.models.photo.Photo
-import lt.vitalikas.unsplash.ui.search_screen.EmptyListException
 
 class SearchPagingSource(
     private val api: UnsplashApi,
@@ -38,14 +37,11 @@ class SearchPagingSource(
             )
             val photos = response.results
 
-            if (photos.isEmpty()) {
-                return LoadResult.Error(EmptyListException("empty"))
-            } else
-                LoadResult.Page(
-                    data = photos,
-                    prevKey = if (pageIndex > 1) pageIndex - 1 else null,
-                    nextKey = if (photos.isEmpty()) null else pageIndex + (params.loadSize / pageSize)
-                )
+            LoadResult.Page(
+                data = photos,
+                prevKey = if (pageIndex > 1) pageIndex - 1 else null,
+                nextKey = if (photos.isEmpty()) null else pageIndex + (params.loadSize / pageSize)
+            )
         } catch (t: Throwable) {
             LoadResult.Error(t)
         }

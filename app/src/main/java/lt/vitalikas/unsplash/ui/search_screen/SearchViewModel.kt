@@ -13,9 +13,7 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.models.photo.Photo
-import lt.vitalikas.unsplash.domain.models.search.SearchPhoto
 import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
-import lt.vitalikas.unsplash.ui.feed_screen.FeedState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,25 +24,6 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     val networkStatus = networkStatusTracker.networkStatus
-
-    private val _searchState =
-        MutableStateFlow<SearchState>(SearchState.NotLoading)
-    val searchState = _searchState.asStateFlow()
-
-    @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
-    fun searchData(queryFlow: Flow<String>) {
-        queryFlow
-            .debounce(1000L)
-            .distinctUntilChanged()
-            .flatMapLatest { query ->
-                searchPhotosUseCase.invoke(query)
-            }
-            .cachedIn(viewModelScope)
-            .onEach { pagingData ->
-                _searchState.value = SearchState.Success(pagingData)
-            }
-            .launchIn(viewModelScope)
-    }
 
     @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
     fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> {

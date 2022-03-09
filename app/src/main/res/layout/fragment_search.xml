@@ -71,7 +71,6 @@
         android:layout_height="wrap_content"
         android:text="@string/no_results_found"
         android:textSize="20sp"
-        android:visibility="gone"
         app:drawableBottomCompat="@drawable/search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
