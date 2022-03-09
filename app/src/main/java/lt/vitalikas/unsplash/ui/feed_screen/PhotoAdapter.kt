@@ -11,11 +11,11 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedBinding
 import lt.vitalikas.unsplash.domain.models.photo.Photo
 
-class FeedAdapter(
+class PhotoAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<Photo, FeedAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
+) : PagingDataAdapter<Photo, PhotoAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
 
     inner class FeedPhotoViewHolder(
         private val binding: ItemFeedBinding,

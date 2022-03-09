@@ -24,7 +24,8 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentSearchBinding
-import lt.vitalikas.unsplash.ui.feed_screen.FeedAdapter
+import lt.vitalikas.unsplash.ui.feed_screen.PhotoAdapter
+import lt.vitalikas.unsplash.ui.feed_screen.PhotoLoadStateAdapter
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.onTextChangedFlow
 import lt.vitalikas.unsplash.utils.showInfo
@@ -46,7 +47,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private lateinit var id: String
 
     private val searchAdapter by autoCleaned {
-        FeedAdapter(
+        PhotoAdapter(
             onItemClick = { id ->
                 val directions =
                     SearchFragmentDirections.actionSearchFragmentToFeedDetailsFragment(id)
@@ -79,7 +80,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun initSearchList() {
         with(searchList) {
-            val searchLoadStateAdapter = SearchLoadStateAdapter {
+            val searchLoadStateAdapter = PhotoLoadStateAdapter {
                 searchAdapter.retry()
             }
 

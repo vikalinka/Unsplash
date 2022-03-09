@@ -40,7 +40,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private lateinit var id: String
 
     private val feedAdapter by autoCleaned {
-        FeedAdapter(
+        PhotoAdapter(
             onItemClick = { id ->
                 val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
                 findNavController().navigate(directions)
@@ -72,7 +72,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun initPhotoList() {
         with(photoList) {
-            val feedLoadStateAdapter = FeedLoadStateAdapter {
+            val feedLoadStateAdapter = PhotoLoadStateAdapter {
                 feedAdapter.retry()
             }
 
@@ -86,7 +86,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
             setHasFixedSize(true)
 
-            addItemDecoration(FeedOffsetDecoration(requireContext()))
+            addItemDecoration(PhotoOffsetDecoration(requireContext()))
         }
     }
 
