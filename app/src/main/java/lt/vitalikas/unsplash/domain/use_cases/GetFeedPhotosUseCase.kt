@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import lt.vitalikas.unsplash.domain.models.photo.Photo
 
 interface GetFeedPhotosUseCase {
-    suspend operator fun invoke(): Flow<PagingData<Photo>>
+    suspend operator fun invoke(order: String): Flow<PagingData<Photo>>
 }

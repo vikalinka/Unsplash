@@ -73,7 +73,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         initAdapterRefresh()
         initToolbar()
         observeNetworkConnection()
-        observeDataFetching()
+        searchData()
         observeLikingPhoto()
         observeDislikingPhoto()
         observeAdapterLoadingState()
@@ -150,7 +150,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    private fun observeDataFetching() {
+    private fun searchData() {
         val searchItem = toolbar.menu.findItem(R.id.searchAction)
         with(searchItem.actionView as SearchView) {
             queryHint = "Search"
@@ -162,7 +162,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             val queryFlow = this.onTextChangedFlow()
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    searchViewModel.getSearchData(queryFlow).collectLatest { data ->
+                    searchViewModel.searchData(queryFlow).collectLatest { data ->
                         refreshLayout.isRefreshing = false
                         searchIcon.isVisible = false
                         searchAdapter.submitData(data)

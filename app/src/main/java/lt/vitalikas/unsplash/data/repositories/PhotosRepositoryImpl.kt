@@ -33,7 +33,7 @@ class PhotosRepositoryImpl @Inject constructor(
 ) : PhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getFeedPhotos(): Flow<PagingData<Photo>> {
+    override suspend fun getFeedPhotos(order: String): Flow<PagingData<Photo>> {
         val pagingSourceFactory = {
             Database.instance.feedPhotosDao().getPagingSource()
         }
@@ -42,7 +42,10 @@ class PhotosRepositoryImpl @Inject constructor(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            remoteMediator = FeedPhotosRemoteMediator(unsplashApi),
+            remoteMediator = FeedPhotosRemoteMediator(
+                api = unsplashApi,
+                order = order
+            ),
             pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
             pagingData.map { entity ->

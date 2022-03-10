@@ -10,6 +10,6 @@ import javax.inject.Inject
 class GetFeedPhotosUseCaseImpl @Inject constructor(
     private val photosRepository: PhotosRepository
 ) : GetFeedPhotosUseCase {
-    override suspend fun invoke(): Flow<PagingData<Photo>> =
-        photosRepository.getFeedPhotos()
+    override suspend fun invoke(order: String): Flow<PagingData<Photo>> =
+        photosRepository.getFeedPhotos(order)
 }

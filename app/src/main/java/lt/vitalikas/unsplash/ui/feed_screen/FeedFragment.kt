@@ -9,12 +9,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.*
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
@@ -60,12 +62,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initPhotoList()
-        getData()
-        observeDataFetching()
-        observeNetworkConnection()
-        initListRefresh()
         setupToolbar()
+        initPhotoList()
+        initListRefresh()
+        getData(ORDER_BY_LATEST)
+        observeData()
+        observeNetworkConnection()
+        observeAdapterLoadingState()
         observeLikingPhoto()
         observeDislikingPhoto()
     }
@@ -90,23 +93,29 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    private fun getData() {
+    private fun getData(order: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            feedViewModel.getFeedPhotos()
+            feedViewModel.getFeedPhotos(order)
         }
     }
 
-    private fun observeDataFetching() {
+    private fun observeAdapterLoadingState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            feedAdapter.loadStateFlow.collectLatest { loadStates ->
+
+                loadingProgress.isVisible = loadStates.refresh is LoadState.Loading
+            }
+        }
+    }
+
+    private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                feedViewModel.feedState.collect { state ->
+                feedViewModel.feedState.collectLatest { state ->
                     when (state) {
-                        is FeedState.Loading -> loadingProgress.isVisible = true
                         is FeedState.Success -> {
-                            loadingProgress.isVisible = false
                             refreshLayout.isRefreshing = false
                             feedAdapter.submitData(state.data)
-
                         }
                         is FeedState.Error -> {
                             refreshLayout.isRefreshing = false
@@ -154,15 +163,42 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
             inflateMenu(R.menu.feed_toolbar_menu)
 
-            val findItem = menu.findItem(R.id.findAction)
-            findItem.setOnMenuItemClickListener {
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.orderByLatestAction -> {
+                        feedAdapter.refresh()
+                        getData(ORDER_BY_LATEST)
+                        true
+                    }
+                    R.id.orderByOldestAction -> {
+                        feedAdapter.refresh()
+                        getData(ORDER_BY_OLDEST)
+                        true
+                    }
+                    R.id.orderByPopularAction -> {
+                        feedAdapter.refresh()
+                        getData(ORDER_BY_POPULAR)
+                        true
+                    }
+                    else -> {
+                        val directions =
+                            FeedFragmentDirections.actionHomeToSearchFragment()
+                        findNavController().navigate(directions)
 
-                val directions =
-                    FeedFragmentDirections.actionHomeToSearchFragment()
-                findNavController().navigate(directions)
-
-                return@setOnMenuItemClickListener true
+                        true
+                    }
+                }
             }
+
+//            val findItem = menu.findItem(R.id.findAction)
+//            findItem.setOnMenuItemClickListener {
+//
+//                val directions =
+//                    FeedFragmentDirections.actionHomeToSearchFragment()
+//                findNavController().navigate(directions)
+//
+//                return@setOnMenuItemClickListener true
+//            }
         }
     }
 
@@ -270,5 +306,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             // updating database data
             feedViewModel.updatePhotoInDatabase(it.id, false, it.likes)
         }
+    }
+
+    companion object {
+        private const val ORDER_BY_LATEST = "latest"
+        private const val ORDER_BY_OLDEST = "oldest"
+        private const val ORDER_BY_POPULAR = "popular"
     }
 }

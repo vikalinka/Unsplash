@@ -17,7 +17,8 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class FeedPhotosRemoteMediator @Inject constructor(
-    private val api: UnsplashApi
+    private val api: UnsplashApi,
+    private val order: String
 ) : RemoteMediator<Int, FeedPhotoEntity>() {
 
     private val feedPhotosDao = Database.instance.feedPhotosDao()
@@ -68,7 +69,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
             val photos = api.getFeedPhotos(
                 page,
                 ITEMS_PER_PAGE,
-                ORDER_BY
+                order
             )
             val endOfPaginationReached = photos.isEmpty()
 

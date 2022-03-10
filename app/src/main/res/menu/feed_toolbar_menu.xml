@@ -10,12 +10,17 @@
         app:showAsAction="ifRoom"
         tools:targetApi="o" />
     <item
-        android:id="@+id/orderByOldestToolbarMenu"
+        android:id="@+id/orderByLatestAction"
+        android:title="@string/latest"
+        app:showAsAction="collapseActionView"
+        tools:targetApi="o" />
+    <item
+        android:id="@+id/orderByOldestAction"
         android:title="@string/oldest"
         app:showAsAction="collapseActionView"
         tools:targetApi="o" />
     <item
-        android:id="@+id/orderByPopularToolbarMenu"
+        android:id="@+id/orderByPopularAction"
         android:title="@string/popular"
         app:showAsAction="collapseActionView"
         tools:targetApi="o" />

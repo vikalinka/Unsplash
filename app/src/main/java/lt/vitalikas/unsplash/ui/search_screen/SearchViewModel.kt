@@ -26,7 +26,7 @@ class SearchViewModel @Inject constructor(
     val networkStatus = networkStatusTracker.networkStatus
 
     @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
-    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> {
+    fun searchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> {
         return queryFlow
             .debounce(1000L)
             .distinctUntilChanged()
