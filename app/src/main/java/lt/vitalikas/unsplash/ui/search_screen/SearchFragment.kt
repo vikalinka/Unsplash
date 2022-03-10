@@ -41,6 +41,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val refreshLayout get() = binding.searchSwipeRefreshLayout
     private val toolbar get() = binding.searchToolbar
     private val noResultsText get() = binding.noResultsTextView
+    private val searchIcon get() = binding.searchImageView
 
     private val searchViewModel by viewModels<SearchViewModel>()
 
@@ -90,7 +91,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
             adapter = concatAdapter
 
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
 
             setHasFixedSize(true)
 
@@ -149,15 +150,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-//    private fun handleToolbarNavigation() {
-//        toolbar.setNavigationOnClickListener {
-//            findNavController().navigateUp()
-//        }
-//    }
-
     private fun observeDataFetching() {
         val searchItem = toolbar.menu.findItem(R.id.searchAction)
         with(searchItem.actionView as SearchView) {
+            queryHint = "Search"
+
             requestFocus()
 
             isIconified = false
@@ -167,6 +164,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     searchViewModel.getSearchData(queryFlow).collectLatest { data ->
                         refreshLayout.isRefreshing = false
+                        searchIcon.isVisible = false
                         searchAdapter.submitData(data)
                     }
                 }
