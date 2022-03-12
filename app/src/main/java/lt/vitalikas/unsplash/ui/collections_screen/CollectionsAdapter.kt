@@ -2,28 +2,23 @@ package lt.vitalikas.unsplash.ui.collections_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import lt.vitalikas.unsplash.R
-import lt.vitalikas.unsplash.databinding.ItemFeedBinding
+import lt.vitalikas.unsplash.databinding.ItemCollectionBinding
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 
 class CollectionsAdapter(
-    private val onItemClick: (id: String) -> Unit,
-    private val onLikeClick: (id: String) -> Unit,
-    private val onDislikeClick: (id: String) -> Unit
+    private val onItemClick: (id: String) -> Unit
 ) : PagingDataAdapter<CollectionResponse, CollectionsAdapter.CollectionResponseViewHolder>(
     CollectionResponseComparator()
 ) {
 
     inner class CollectionResponseViewHolder(
-        private val binding: ItemFeedBinding,
-        onItemClick: (id: String) -> Unit,
-        private val onLikeClick: (id: String) -> Unit,
-        private val onDislikeClick: (id: String) -> Unit
+        private val binding: ItemCollectionBinding,
+        onItemClick: (id: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var id: String
@@ -47,29 +42,13 @@ class CollectionsAdapter(
                 .load(item.user.profileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
-                .into(binding.ivAvatar)
+                .into(binding.userImageView)
 
-            binding.tvName.text = item.user.name
-            binding.tvUsername.text =
+            binding.nameTextView.text = item.user.name
+            binding.usernameTextView.text =
                 itemView.resources.getString(R.string.username, item.user.username)
-
-            with(binding.ivLove) {
-                if (item.coverPhoto.likedByUser) {
-                    setImageResource(R.drawable.ic_love_filled)
-                    setColorFilter(ContextCompat.getColor(context, R.color.red))
-                    setOnClickListener {
-                        onDislikeClick(item.id)
-                    }
-                } else {
-                    setImageResource(R.drawable.ic_love)
-                    setColorFilter(ContextCompat.getColor(context, R.color.red))
-                    setOnClickListener {
-                        onLikeClick(item.id)
-                    }
-                }
-
-                binding.tvLove.text = item.coverPhoto.likes.toString()
-            }
+            binding.collectionTitleTextView.text = item.title
+            binding.photoCountTextView.text = item.totalPhotos.toString()
         }
     }
 
@@ -78,14 +57,12 @@ class CollectionsAdapter(
         viewType: Int
     ): CollectionResponseViewHolder =
         CollectionResponseViewHolder(
-            binding = ItemFeedBinding.inflate(
+            binding = ItemCollectionBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             ),
-            onItemClick = onItemClick,
-            onLikeClick = onLikeClick,
-            onDislikeClick = onDislikeClick
+            onItemClick = onItemClick
         )
 
     override fun onBindViewHolder(holder: CollectionResponseViewHolder, position: Int) {

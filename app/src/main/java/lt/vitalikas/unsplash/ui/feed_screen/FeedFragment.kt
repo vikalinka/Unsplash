@@ -41,6 +41,8 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private lateinit var id: String
 
+    private lateinit var currentOrder: String
+
     private val feedAdapter by autoCleaned {
         PhotoAdapter(
             onItemClick = { id ->
@@ -62,10 +64,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        currentOrder = feedViewModel.currentOrder
+
         setupToolbar()
         initPhotoList()
         initListRefresh()
-        getData(ORDER_BY_LATEST)
+        getData(currentOrder)
         observeData()
         observeNetworkConnection()
         observeAdapterLoadingState()
@@ -166,18 +171,18 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.orderByLatestAction -> {
-                        feedAdapter.refresh()
                         getData(ORDER_BY_LATEST)
+                        currentOrder = ORDER_BY_LATEST
                         true
                     }
                     R.id.orderByOldestAction -> {
-                        feedAdapter.refresh()
                         getData(ORDER_BY_OLDEST)
+                        currentOrder = ORDER_BY_OLDEST
                         true
                     }
                     R.id.orderByPopularAction -> {
-                        feedAdapter.refresh()
                         getData(ORDER_BY_POPULAR)
+                        currentOrder = ORDER_BY_POPULAR
                         true
                     }
                     else -> {

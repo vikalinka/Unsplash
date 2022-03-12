@@ -34,8 +34,13 @@ class FeedViewModel @Inject constructor(
 
     val networkStatus = networkStatusTracker.networkStatus
 
+    var currentOrder = "latest"
+
     suspend fun getFeedPhotos(order: String) {
-        val dataFlow = getFeedPhotosUseCase(order)
+
+        val dataFlow = getFeedPhotosUseCase(order, currentOrder)
+
+        currentOrder = order
 
         dataFlow
             .cachedIn(viewModelScope)

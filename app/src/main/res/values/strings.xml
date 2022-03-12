@@ -65,9 +65,9 @@
     <string name="open">Open</string>
     <string name="back_button_navigation">back button navigation</string>
     <string name="oops_error_loading_data">Oops! Error loading data.</string>
-    <string name="latest">latest</string>
-    <string name="oldest">oldest</string>
-    <string name="popular">popular</string>
+    <string name="latest">Order by latest</string>
+    <string name="oldest">Order by oldest</string>
+    <string name="popular">Order by popular</string>
     <string name="no_results_icon">no results icon</string>
     <string name="no_results_found">No results found</string>
 </resources>

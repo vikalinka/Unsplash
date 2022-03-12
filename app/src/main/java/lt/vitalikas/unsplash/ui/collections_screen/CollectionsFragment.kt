@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -33,20 +33,12 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
     private val collectionsViewModel by viewModels<CollectionsViewModel>()
 
-    private lateinit var id: String
-
     private val collectionAdapter by autoCleaned {
         CollectionsAdapter(
             onItemClick = { id ->
                 val directions =
                     CollectionsFragmentDirections.actionCollectionsToCollectionFragment(id)
                 findNavController().navigate(directions)
-            },
-            onLikeClick = { id ->
-                //
-            },
-            onDislikeClick = { id ->
-                //
             }
         )
     }
@@ -72,11 +64,13 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
             adapter = concatAdapter
 
-            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
 
             setHasFixedSize(true)
-
-            addItemDecoration(CollectionsOffsetDecoration(requireContext()))
         }
     }
 
@@ -121,8 +115,6 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
     private fun setupToolbar() {
         with(toolbar) {
             title = "COLLECTIONS"
-
-            inflateMenu(R.menu.search_toolbar_menu)
         }
     }
 }
