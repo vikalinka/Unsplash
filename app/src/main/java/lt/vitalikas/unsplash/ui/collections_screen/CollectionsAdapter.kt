@@ -11,26 +11,28 @@ import lt.vitalikas.unsplash.databinding.ItemCollectionBinding
 import lt.vitalikas.unsplash.domain.models.collections.CollectionResponse
 
 class CollectionsAdapter(
-    private val onItemClick: (id: String) -> Unit
+    private val onItemClick: (id: String, title: String) -> Unit
 ) : PagingDataAdapter<CollectionResponse, CollectionsAdapter.CollectionResponseViewHolder>(
     CollectionResponseComparator()
 ) {
 
     inner class CollectionResponseViewHolder(
         private val binding: ItemCollectionBinding,
-        onItemClick: (id: String) -> Unit
+        onItemClick: (id: String, title: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var id: String
+        private lateinit var title: String
 
         init {
             binding.root.setOnClickListener {
-                onItemClick(id)
+                onItemClick(id, title)
             }
         }
 
         fun bind(item: CollectionResponse) {
             id = item.id
+            title = item.title
 
             Glide.with(itemView)
                 .load(item.coverPhoto.urls.regular)

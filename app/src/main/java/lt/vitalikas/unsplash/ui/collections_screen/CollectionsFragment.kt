@@ -35,9 +35,9 @@ class CollectionsFragment : Fragment(R.layout.fragment_collections) {
 
     private val collectionAdapter by autoCleaned {
         CollectionsAdapter(
-            onItemClick = { id ->
+            onItemClick = { id, title ->
                 val directions =
-                    CollectionsFragmentDirections.actionCollectionsToCollectionFragment(id)
+                    CollectionsFragmentDirections.actionCollectionsToCollectionFragment(id, title)
                 findNavController().navigate(directions)
             }
         )

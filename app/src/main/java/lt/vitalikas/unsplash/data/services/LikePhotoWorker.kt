@@ -28,7 +28,8 @@ class LikePhotoWorker @AssistedInject constructor(
 
     companion object {
         const val LIKE_PHOTO_ID = "like_photo_id"
-        const val LIKE_PHOTO_WORK_ID_FROM_DETAILS = "like_photo_work_id_from_details"
         const val LIKE_PHOTO_WORK_ID_FROM_FEED = "like_photo_work_id_from_feed"
+        const val LIKE_PHOTO_WORK_ID_FROM_DETAILS = "like_photo_work_id_from_details"
+        const val LIKE_PHOTO_WORK_ID_FROM_COLLECTION = "like_photo_work_id_from_collection"
     }
 }

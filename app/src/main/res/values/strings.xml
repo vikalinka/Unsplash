@@ -56,7 +56,7 @@
     <string name="tag">Tags: %1$s</string>
     <string name="search">Search</string>
     <string name="share">Share</string>
-    <string name="perm_all">All permissions are required for application to work</string>
+    <string name="perm_all">Permissions required to download file.</string>
     <string name="perm_settings">Change permissions in app settings</string>
     <string name="btn_ok">OK</string>
     <string name="btn_grant">Grant</string>

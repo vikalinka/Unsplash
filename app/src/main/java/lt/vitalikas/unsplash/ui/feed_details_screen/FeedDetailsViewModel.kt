@@ -12,17 +12,14 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
-import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedDetailsViewModel @Inject constructor(
     val context: Application,
     private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase,
-    networkStatusTracker: NetworkStatusTracker,
-    private val photosRepository: PhotosRepository
+    networkStatusTracker: NetworkStatusTracker
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -34,7 +31,6 @@ class FeedDetailsViewModel @Inject constructor(
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
     fun downloadPhoto(id: String, uri: Uri) {
-
         val workData = workDataOf(
             DownloadPhotoWorker.PHOTO_ID to id,
             DownloadPhotoWorker.PHOTO_URI to uri.toString()
@@ -59,7 +55,6 @@ class FeedDetailsViewModel @Inject constructor(
     }
 
     fun likePhoto(id: String) {
-
         val workData = workDataOf(
             LikePhotoWorker.LIKE_PHOTO_ID to id
         )
@@ -83,7 +78,6 @@ class FeedDetailsViewModel @Inject constructor(
     }
 
     fun dislikePhoto(id: String) {
-
         val workData = workDataOf(
             DislikePhotoWorker.DISLIKE_PHOTO_ID to id
         )
@@ -116,21 +110,4 @@ class FeedDetailsViewModel @Inject constructor(
             _feedDetailsState.value = FeedDetailsState.Error(t)
         }
     }
-
-    fun cancelScopeChildrenJobs() {
-        if (!scope.coroutineContext.job.children.none()) {
-            scope.coroutineContext.cancelChildren()
-            Timber.i("photo details fetching canceled")
-        }
-    }
-
-    fun updatePhotoInDatabase(id: String, isLiked: Boolean, likeCount: Int) =
-        viewModelScope.launch {
-            try {
-                photosRepository.updatePhoto(id, isLiked, likeCount)
-            } catch (t: Throwable) {
-                Timber.d(t)
-                _feedDetailsState.value = FeedDetailsState.Error(t)
-            }
-        }
 }

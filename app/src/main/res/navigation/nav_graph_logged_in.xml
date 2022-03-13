@@ -110,5 +110,8 @@
         <action
             android:id="@+id/action_collectionFragment_to_feedDetailsFragment"
             app:destination="@id/feedDetailsFragment" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
 </navigation>

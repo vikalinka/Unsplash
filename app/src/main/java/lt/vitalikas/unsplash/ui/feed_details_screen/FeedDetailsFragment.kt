@@ -115,11 +115,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         handleToolbarNavigation()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        feedDetailsViewModel.cancelScopeChildrenJobs()
-    }
-
     override fun onGrantButtonClick() {
         requestPermissions()
     }

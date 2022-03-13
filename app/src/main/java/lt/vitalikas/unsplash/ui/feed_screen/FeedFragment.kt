@@ -194,16 +194,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
                 }
             }
-
-//            val findItem = menu.findItem(R.id.findAction)
-//            findItem.setOnMenuItemClickListener {
-//
-//                val directions =
-//                    FeedFragmentDirections.actionHomeToSearchFragment()
-//                findNavController().navigate(directions)
-//
-//                return@setOnMenuItemClickListener true
-//            }
         }
     }
 
