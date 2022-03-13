@@ -22,7 +22,6 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.databinding.FragmentCollectionBinding
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.ui.collections_screen.CollectionsLoadStateAdapter
-import lt.vitalikas.unsplash.ui.collections_screen.CollectionsOffsetDecoration
 import lt.vitalikas.unsplash.utils.autoCleaned
 import lt.vitalikas.unsplash.utils.showInfo
 import timber.log.Timber
@@ -37,6 +36,7 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
     private val userName get() = binding.usernameTextView
     private val userUsername get() = binding.nameTextView
     private val collectionTitle get() = binding.collectionTitleTextView
+    private val collectionTags get() = binding.collectionTagsTextView
     private val collectionDescription get() = binding.collectionDescriptionTextView
     private val photoCount get() = binding.photoCountTextView
     private val photoList get() = binding.photosRecyclerView
@@ -139,6 +139,12 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
         userName.text = collection.user?.name
         userUsername.text = getString(R.string.username, collection.user?.username)
         collectionTitle.text = collection.title
+
+        collectionTags.text = collection.tags?.joinToString(
+            separator = " #",
+            prefix = "#"
+        ) { it.title }
+
         collectionDescription.text = collection.description
         photoCount.text = collection.totalPhotos.toString()
     }
@@ -157,13 +163,11 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
 
             layoutManager = LinearLayoutManager(
                 requireContext(),
-                LinearLayoutManager.HORIZONTAL,
+                LinearLayoutManager.VERTICAL,
                 false
             )
 
             setHasFixedSize(true)
-
-            addItemDecoration(CollectionsOffsetDecoration(requireContext()))
         }
     }
 

@@ -8,7 +8,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/ToolbarStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="?actionBarSize"
         android:title="@string/app_name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,15 +23,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.50" />
+        app:layout_constraintGuide_percent="0.30" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/collectionConstraintLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="6dp"
         app:layout_constraintBottom_toTopOf="@id/collectionGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,11 +41,51 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.75" />
 
+        <TextView
+            android:id="@+id/collectionTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Makers: Cat and Ben" />
+
+        <TextView
+            android:id="@+id/collectionTagsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/collectionTitleTextView"
+            tools:text="#cat #ben" />
+
+        <TextView
+            android:id="@+id/collectionDescriptionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/collectionTagsTextView"
+            tools:text="Description" />
+
         <ImageView
             android:id="@+id/coverPhotoImageView"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:adjustViewBounds="true"
+            android:alpha="0.4"
             android:contentDescription="@string/photo"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +96,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/collectionStatsConstraintLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
@@ -83,7 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toTopOf="@id/usernameTextView"
                 app:layout_constraintStart_toEndOf="@id/userImageView"
@@ -94,36 +131,12 @@
                 android:id="@+id/usernameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@id/userImageView"
                 app:layout_constraintStart_toStartOf="@id/nameTextView"
                 app:layout_constraintTop_toBottomOf="@id/nameTextView"
                 tools:text="\@vi_kalinka" />
-
-            <TextView
-                android:id="@+id/collectionTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@id/collectionDescriptionTextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Makers: Cat and Ben" />
-
-            <TextView
-                android:id="@+id/collectionDescriptionTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@id/photoCountImageView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/collectionTitleTextView"
-                tools:text="Makers: Cat and Ben" />
 
             <ImageView
                 android:id="@+id/photoCountImageView"
@@ -133,15 +146,15 @@
                 android:src="@drawable/ic_photo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/collectionDescriptionTextView"
-                app:tint="@color/white" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/black" />
 
             <TextView
                 android:id="@+id/photoCountTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="2dp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@id/photoCountImageView"
                 app:layout_constraintEnd_toStartOf="@id/photoCountImageView"
@@ -154,7 +167,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/photosConstraintLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -164,8 +177,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photosRecyclerView"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:padding="16dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

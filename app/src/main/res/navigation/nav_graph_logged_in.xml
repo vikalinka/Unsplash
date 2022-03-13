@@ -12,7 +12,9 @@
         tools:layout="@layout/fragment_feed">
         <action
             android:id="@+id/action_homeFragment_to_collectionsFragment"
-            app:destination="@id/collections" />
+            app:destination="@id/collections"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
         <action
             android:id="@+id/action_home_to_feedDetailsFragment"
             app:destination="@id/feedDetailsFragment"
@@ -29,10 +31,14 @@
         tools:layout="@layout/fragment_collections">
         <action
             android:id="@+id/action_collectionsFragment_to_profileFragment"
-            app:destination="@id/profile" />
+            app:destination="@id/profile"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
         <action
             android:id="@+id/action_collections_to_collectionFragment"
-            app:destination="@id/collectionFragment" />
+            app:destination="@id/collectionFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/profile"
@@ -52,7 +58,9 @@
             app:uri="https://unsplash.com/photos/{id}" />
         <action
             android:id="@+id/action_feedDetailsFragment_to_rationaleFragment"
-            app:destination="@id/rationaleFragment" />
+            app:destination="@id/rationaleFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
         <action
             android:id="@+id/action_feedDetailsFragment_to_home"
             app:destination="@id/home"
@@ -84,7 +92,9 @@
             app:destination="@id/home" />
         <action
             android:id="@+id/action_searchFragment_to_feedDetailsFragment"
-            app:destination="@id/feedDetailsFragment" />
+            app:destination="@id/feedDetailsFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/collectionFragment"

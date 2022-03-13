@@ -12,10 +12,8 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
-import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
-import lt.vitalikas.unsplash.domain.use_cases.SearchPhotosUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,7 +22,6 @@ class FeedViewModel @Inject constructor(
     private val context: Application,
     networkStatusTracker: NetworkStatusTracker,
     private val getFeedPhotosUseCase: GetFeedPhotosUseCase,
-    private val searchPhotosUseCase: SearchPhotosUseCase,
     private val photosRepository: PhotosRepository
 ) : ViewModel() {
 
@@ -34,10 +31,9 @@ class FeedViewModel @Inject constructor(
 
     val networkStatus = networkStatusTracker.networkStatus
 
-    var currentOrder = "latest"
+    var currentOrder = DEFAULT_ORDER_BY
 
     suspend fun getFeedPhotos(order: String) {
-
         val dataFlow = getFeedPhotosUseCase(order, currentOrder)
 
         currentOrder = order
@@ -110,17 +106,7 @@ class FeedViewModel @Inject constructor(
             }
         }
 
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    fun getSearchData(queryFlow: Flow<String>): Flow<PagingData<Photo>> =
-        queryFlow
-            .debounce(1000L)
-            .distinctUntilChanged()
-            .flatMapLatest { query ->
-                searchPhotosUseCase.invoke(query)
-            }
-            .cachedIn(viewModelScope)
-            .catch { error ->
-                Timber.d(error)
-                _feedState.value = FeedState.Error(error)
-            }
+    companion object {
+        private const val DEFAULT_ORDER_BY = "latest"
+    }
 }
