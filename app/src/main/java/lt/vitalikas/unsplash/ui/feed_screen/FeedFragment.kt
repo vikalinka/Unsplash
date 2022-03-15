@@ -46,7 +46,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val feedAdapter by autoCleaned {
         PhotoAdapter(
             onItemClick = { id ->
-                val directions = FeedFragmentDirections.actionHomeToFeedDetailsFragment(id)
+                val directions = FeedFragmentDirections.actionFeedToDetails1(id)
                 findNavController().navigate(directions)
             },
             onLikeClick = { id ->
@@ -187,7 +187,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
                     else -> {
                         val directions =
-                            FeedFragmentDirections.actionHomeToSearchFragment()
+                            FeedFragmentDirections.actionFeedToSearch()
                         findNavController().navigate(directions)
 
                         true

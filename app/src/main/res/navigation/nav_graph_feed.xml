@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_feed"
+    app:startDestination="@id/feed">
+
+    <fragment
+        android:id="@+id/feed"
+        android:name="lt.vitalikas.unsplash.ui.feed_screen.FeedFragment"
+        android:label="FeedFragment"
+        tools:layout="@layout/fragment_feed">
+        <action
+            android:id="@+id/action_feed_to_details1"
+            app:destination="@id/details1" />
+        <action
+            android:id="@+id/action_feed_to_search"
+            app:destination="@id/search" />
+    </fragment>
+    <fragment
+        android:id="@+id/details1"
+        android:name="lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment"
+        android:label="FeedDetailsFragment"
+        tools:layout="@layout/fragment_feed_details">
+        <action
+            android:id="@+id/action_details1_to_rationale1"
+            app:destination="@id/rationale1" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/rationale1"
+        android:name="lt.vitalikas.unsplash.ui.rationale_screen.RationaleFragment"
+        android:label="RationaleFragment" />
+    <fragment
+        android:id="@+id/search"
+        android:name="lt.vitalikas.unsplash.ui.search_screen.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_search_to_details1"
+            app:destination="@id/details1" />
+    </fragment>
+</navigation>

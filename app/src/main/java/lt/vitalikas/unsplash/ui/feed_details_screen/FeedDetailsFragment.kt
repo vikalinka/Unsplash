@@ -423,7 +423,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         )
 
     private fun showPermissionRationaleDialog() =
-        findNavController().navigate(FeedDetailsFragmentDirections.actionFeedDetailsFragmentToRationaleFragment())
+        findNavController().navigate(FeedDetailsFragmentDirections.actionDetails1ToRationale1())
 
     private companion object {
         val PERMISSIONS = listOfNotNull(

@@ -123,7 +123,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 override fun handleOnBackPressed() {
                     requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
                         ?.let { nav ->
-                            nav.selectedItemId = R.id.home
+                            nav.selectedItemId = R.id.feed
                         } ?: error("View not found")
                 }
             })

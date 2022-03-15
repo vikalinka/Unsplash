@@ -51,7 +51,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         PhotoAdapter(
             onItemClick = { id ->
                 val directions =
-                    SearchFragmentDirections.actionSearchFragmentToFeedDetailsFragment(id)
+                    SearchFragmentDirections.actionSearchToDetails1(id)
                 findNavController().navigate(directions)
             },
             onLikeClick = { id ->

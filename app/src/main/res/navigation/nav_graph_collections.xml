@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_collections"
+    app:startDestination="@id/collections">
+
+    <fragment
+        android:id="@+id/collections"
+        android:name="lt.vitalikas.unsplash.ui.collections_screen.CollectionsFragment"
+        android:label="CollectionsFragment"
+        tools:layout="@layout/fragment_collections">
+        <action
+            android:id="@+id/action_collections_to_collection"
+            app:destination="@id/collection" />
+    </fragment>
+    <fragment
+        android:id="@+id/collection"
+        android:name="lt.vitalikas.unsplash.ui.collection_with_photos_screen.CollectionFragment"
+        android:label="CollectionFragment"
+        tools:layout="@layout/fragment_collection">
+        <action
+            android:id="@+id/action_collections_to_details2"
+            app:destination="@id/details2" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/details2"
+        android:name="lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment"
+        android:label="FeedDetailsFragment"
+        tools:layout="@layout/fragment_feed_details">
+        <action
+            android:id="@+id/action_details_to_rationale2"
+            app:destination="@id/rationale2" />
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/rationale2"
+        android:name="lt.vitalikas.unsplash.ui.rationale_screen.RationaleFragment"
+        android:label="RationaleFragment" />
+</navigation>

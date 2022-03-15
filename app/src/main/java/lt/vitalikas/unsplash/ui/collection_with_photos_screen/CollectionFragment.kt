@@ -56,7 +56,7 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
         CollectionAdapter(
             onItemClick = { id ->
                 val directions =
-                    CollectionFragmentDirections.actionCollectionFragmentToFeedDetailsFragment(id)
+                    CollectionFragmentDirections.actionCollectionsToDetails2(id)
                 findNavController().navigate(directions)
             },
             onLikeClick = { id ->
