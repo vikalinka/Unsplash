@@ -56,4 +56,6 @@
         android:name="lt.vitalikas.unsplash.ui.host_screen.HostFragment"
         android:label="HostFragment"
         tools:layout="@layout/fragment_host" />
+
+    <include app:graph="@navigation/nav_graph_logged" />
 </navigation>
