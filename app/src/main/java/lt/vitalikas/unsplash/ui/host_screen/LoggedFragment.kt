@@ -8,11 +8,11 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import lt.vitalikas.unsplash.R
-import lt.vitalikas.unsplash.databinding.FragmentHostBinding
+import lt.vitalikas.unsplash.databinding.FragmentLoggedBinding
 
-class HostFragment : Fragment(R.layout.fragment_host) {
+class LoggedFragment : Fragment(R.layout.fragment_logged) {
 
-    private val binding by viewBinding(FragmentHostBinding::bind)
+    private val binding by viewBinding(FragmentLoggedBinding::bind)
     private val bottomNav get() = binding.bottomNavigation
 
     private val navController by lazy {
