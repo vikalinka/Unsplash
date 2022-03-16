@@ -60,53 +60,57 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bindAuthViewModel()
+        openLoginPage()
+        observeAuthIntent()
+        observeAuth()
         bindData()
     }
 
-    private fun bindAuthViewModel() {
+    private fun openLoginPage() {
         signin.setOnClickListener {
             authViewModel.openLoginPage()
         }
+    }
 
+    private fun observeAuthIntent() {
+        authViewModel.authPageIntent.observe(viewLifecycleOwner) { authIntent ->
+            launcher.launch(authIntent)
+        }
+    }
+
+    private fun observeAuth() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    authViewModel.authState.collect { state ->
-                        when (state) {
-                            is AuthState.Loading -> {
-                                loading.isVisible = true
-                                listOf(image, text, signin).forEach { view ->
-                                    view.isVisible = false
-                                }
+                authViewModel.authState.collect { state ->
+                    when (state) {
+                        is AuthState.Loading -> {
+                            loading.isVisible = true
+                            listOf(image, text, signin).forEach { view ->
+                                view.isVisible = false
                             }
-                            is AuthState.LoggedIn -> {
-                                loading.isVisible = false
-                                listOf(image, text, signin).forEach { view ->
-                                    view.isVisible = false
-                                }
-                                Timber.d("Authorization succeed")
-                                findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
+                        }
+                        is AuthState.LoggedIn -> {
+                            loading.isVisible = false
+                            listOf(image, text, signin).forEach { view ->
+                                view.isVisible = false
                             }
-                            is AuthState.Error -> {
-                                loading.isVisible = false
-                                listOf(image, text, signin).forEach { view ->
-                                    view.isVisible = true
-                                }
-                                showSnackbar(state.id)
-                                Timber.d("Authorization failed")
+                            Timber.d("Authorization succeed")
+                            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
+                        }
+                        is AuthState.Error -> {
+                            loading.isVisible = false
+                            listOf(image, text, signin).forEach { view ->
+                                view.isVisible = true
                             }
-                            is AuthState.NotLoggedIn -> {
-                                Timber.d("Not logged in")
-                            }
+                            showSnackbar(state.id)
+                            Timber.d("Authorization failed")
+                        }
+                        is AuthState.NotLoggedIn -> {
+                            Timber.d("Not logged in")
                         }
                     }
                 }
             }
-        }
-
-        authViewModel.authPageIntent.observe(viewLifecycleOwner) { authIntent ->
-            launcher.launch(authIntent)
         }
     }
 

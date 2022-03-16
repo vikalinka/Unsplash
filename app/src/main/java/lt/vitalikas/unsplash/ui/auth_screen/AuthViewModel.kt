@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.ui.auth_screen
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import lt.vitalikas.unsplash.R
@@ -21,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context
+    private val context: Application
 ) : ViewModel() {
 
     private val authService: AuthorizationService = AuthorizationService(context)

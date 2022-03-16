@@ -26,16 +26,14 @@ class HostFragment : Fragment(R.layout.fragment_host) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupNavigation()
-        setListener()
     }
 
     private fun setupNavigation() {
-        bottomNav.setupWithNavController(navController)
-    }
-
-    private fun setListener() {
-        bottomNav.setOnItemSelectedListener { item ->
-            item.onNavDestinationSelected(navController)
+        with(bottomNav) {
+            setupWithNavController(navController)
+            setOnItemSelectedListener { item ->
+                item.onNavDestinationSelected(navController)
+            }
         }
     }
 }
