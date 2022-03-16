@@ -182,10 +182,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             .into(userPhoto)
 
         userName.text = details.user.name
-
         userUsername.text = getString(R.string.username, details.user.username)
-
         userTotalLikes.text = details.likes.toString()
+
         likeCount = details.likes
 
         with(likedByUser) {
@@ -306,8 +305,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     private fun updateDataOnFeedLike() {
-        likedByUser.setImageResource(R.drawable.ic_love_filled)
-        userTotalLikes.text = (likeCount + 1).toString()
+        with(likedByUser) {
+            likedByUser.setImageResource(R.drawable.ic_love_filled)
+            setOnClickListener { feedDetailsViewModel.dislikePhoto(args.id) }
+        }
+
+        likeCount++
+
+        userTotalLikes.text = likeCount.toString()
     }
 
     private fun observeDislikingPhoto() {
@@ -345,8 +350,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     private fun updateDataOnFeedDislike() {
-        likedByUser.setImageResource(R.drawable.ic_love)
-        userTotalLikes.text = (likeCount - 1).toString()
+        with(likedByUser) {
+            likedByUser.setImageResource(R.drawable.ic_love)
+            setOnClickListener { feedDetailsViewModel.likePhoto(args.id) }
+        }
+
+        likeCount--
+
+        userTotalLikes.text = likeCount.toString()
     }
 
     private fun observeDownload() {
