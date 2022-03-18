@@ -54,7 +54,7 @@ class CollectionViewModel @Inject constructor(
 
     fun likePhoto(id: String) {
         val workData = workDataOf(
-            LikePhotoWorker.LIKE_PHOTO_ID to id
+            LikePhotoWorker.PHOTO_ID_KEY to id
         )
 
         val workConstraints = Constraints.Builder()

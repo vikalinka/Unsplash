@@ -11,8 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class NetworkStatusTracker(context: Context) {
 
-    private val cm =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val networkStatus = callbackFlow<NetworkStatus> {
@@ -37,8 +36,11 @@ class NetworkStatusTracker(context: Context) {
 
         cm.registerNetworkCallback(request, networkStatusCallback)
 
-        // callbackFlow is using channel underneath
-        // awaitClose {} is called when channel is either closed or cancelled
+        /**
+         * callbackFlow is using channel underneath.
+         * awaitClose { ... } suspends the current coroutine until the channel is either closed or cancelled
+         * and invokes the given block
+         */
         awaitClose {
             cm.unregisterNetworkCallback(networkStatusCallback)
         }

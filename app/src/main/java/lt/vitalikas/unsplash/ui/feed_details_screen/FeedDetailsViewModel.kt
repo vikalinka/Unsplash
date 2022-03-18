@@ -55,28 +55,13 @@ class FeedDetailsViewModel @Inject constructor(
             )
     }
 
-    fun likePhoto(id: String) {
-        val workData = workDataOf(
-            LikePhotoWorker.LIKE_PHOTO_ID to id
-        )
-
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(false)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<LikePhotoWorker>()
-            .setInputData(workData)
-            .setConstraints(workConstraints)
-            .build()
-
+    fun likePhoto(id: String) =
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS,
                 ExistingWorkPolicy.REPLACE,
-                workRequest
+                LikePhotoWorker.makeRequest(id)
             )
-    }
 
     fun dislikePhoto(id: String) {
         val workData = workDataOf(
