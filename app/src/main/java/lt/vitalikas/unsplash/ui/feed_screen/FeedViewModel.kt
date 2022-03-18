@@ -34,6 +34,7 @@ class FeedViewModel @Inject constructor(
     var currentOrder = DEFAULT_ORDER_BY
 
     suspend fun getFeedPhotos(order: String) {
+
         val dataFlow = getFeedPhotosUseCase(order, currentOrder)
 
         currentOrder = order
@@ -50,51 +51,19 @@ class FeedViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun likePhoto(id: String) {
-        val workData = workDataOf(
-            LikePhotoWorker.PHOTO_ID_KEY to id
+    fun likePhoto(photoId: String) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            LikePhotoWorker.LIKE_PHOTO_WORK_ID_FEED,
+            ExistingWorkPolicy.REPLACE,
+            LikePhotoWorker.likePhotoRequest(photoId)
         )
 
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(false)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<LikePhotoWorker>()
-            .setInputData(workData)
-            .setConstraints(workConstraints)
-            .build()
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_FEED,
-                ExistingWorkPolicy.REPLACE,
-                workRequest
-            )
-    }
-
-    fun dislikePhoto(id: String) {
-        val workData = workDataOf(
-            DislikePhotoWorker.DISLIKE_PHOTO_ID to id
+    fun dislikePhoto(photoId: String) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FEED,
+            ExistingWorkPolicy.REPLACE,
+            DislikePhotoWorker.dislikePhotoRequest(photoId)
         )
-
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(false)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<DislikePhotoWorker>()
-            .setInputData(workData)
-            .setConstraints(workConstraints)
-            .build()
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_FEED,
-                ExistingWorkPolicy.REPLACE,
-                workRequest
-            )
-    }
 
     fun updatePhotoInDatabase(id: String, isLiked: Boolean, likeCount: Int) =
         viewModelScope.launch {

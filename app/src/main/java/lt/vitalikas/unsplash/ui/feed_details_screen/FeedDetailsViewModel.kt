@@ -31,60 +31,26 @@ class FeedDetailsViewModel @Inject constructor(
         MutableStateFlow<FeedDetailsState>(FeedDetailsState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
-    fun downloadPhoto(id: String, uri: Uri) {
-        val workData = workDataOf(
-            DownloadPhotoWorker.PHOTO_ID to id,
-            DownloadPhotoWorker.PHOTO_URI to uri.toString()
+    fun downloadPhoto(photoId: String, fetchingLocationUri: Uri) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID,
+            ExistingWorkPolicy.REPLACE,
+            DownloadPhotoWorker.downloadPhotoRequest(photoId, fetchingLocationUri)
         )
 
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(true)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<DownloadPhotoWorker>()
-            .setInputData(workData)
-            .setConstraints(workConstraints)
-            .build()
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID,
-                ExistingWorkPolicy.REPLACE,
-                workRequest
-            )
-    }
-
-    fun likePhoto(id: String) =
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS,
-                ExistingWorkPolicy.REPLACE,
-                LikePhotoWorker.makeRequest(id)
-            )
-
-    fun dislikePhoto(id: String) {
-        val workData = workDataOf(
-            DislikePhotoWorker.DISLIKE_PHOTO_ID to id
+    fun likePhoto(id: String) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
+            ExistingWorkPolicy.REPLACE,
+            LikePhotoWorker.likePhotoRequest(id)
         )
 
-        val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(false)
-            .build()
-
-        val workRequest = OneTimeWorkRequestBuilder<DislikePhotoWorker>()
-            .setInputData(workData)
-            .setConstraints(workConstraints)
-            .build()
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_DETAILS,
-                ExistingWorkPolicy.REPLACE,
-                workRequest
-            )
-    }
+    fun dislikePhoto(photoId: String) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS,
+            ExistingWorkPolicy.REPLACE,
+            DislikePhotoWorker.dislikePhotoRequest(photoId)
+        )
 
     suspend fun getFeedPhotoDetails(id: String) {
         try {

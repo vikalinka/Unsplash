@@ -15,7 +15,8 @@ class LikePhotoWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val id = inputData.getString(PHOTO_ID_KEY).orEmpty()
+
+        val id = inputData.getString(PHOTO_ID).orEmpty()
 
         return try {
             likePhotoUseCase(id)
@@ -26,21 +27,15 @@ class LikePhotoWorker @AssistedInject constructor(
     }
 
     companion object {
-        const val PHOTO_ID_KEY = "photo_id_key"
-        const val LIKE_PHOTO_WORK_ID_FROM_FEED = "like_photo_work_id_from_feed"
-        const val LIKE_PHOTO_WORK_ID_FROM_DETAILS = "like_photo_work_id_from_details"
-        const val LIKE_PHOTO_WORK_ID_FROM_COLLECTION = "like_photo_work_id_from_collection"
 
-        private val workConstraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresStorageNotLow(false)
-            .build()
+        const val PHOTO_ID = "photo_id"
+        const val LIKE_PHOTO_WORK_ID_FEED = "like_photo_work_id_feed"
+        const val LIKE_PHOTO_WORK_ID_DETAILS = "like_photo_work_id_details"
+        const val LIKE_PHOTO_WORK_ID_COLLECTION = "like_photo_work_id_collection"
 
-        fun makeRequest(id: String) = OneTimeWorkRequestBuilder<LikePhotoWorker>()
-            .setInputData(
-                workDataOf(PHOTO_ID_KEY to id)
-            )
-            .setConstraints(workConstraints)
+        fun likePhotoRequest(photoId: String) = OneTimeWorkRequestBuilder<LikePhotoWorker>()
+            .setInputData(workDataOf(PHOTO_ID to photoId))
+            .setConstraints(PhotoOperationsConstraints.ReactionConstraints.constraints)
             .build()
     }
 }

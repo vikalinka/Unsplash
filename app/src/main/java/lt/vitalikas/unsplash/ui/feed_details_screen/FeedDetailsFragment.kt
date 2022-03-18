@@ -272,7 +272,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private fun observeLikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_DETAILS)
+            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe
@@ -317,7 +317,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     private fun observeDislikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_DETAILS)
+            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe

@@ -216,7 +216,7 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
 
     private fun observeLikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_COLLECTION)
+            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_COLLECTION)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe
@@ -266,7 +266,7 @@ class CollectionFragment : Fragment(R.layout.fragment_collection) {
 
     private fun observeDislikingPhoto() {
         WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_COLLECTION)
+            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_COLLECTION)
             .observe(viewLifecycleOwner) { workInfos ->
                 if (workInfos.isNullOrEmpty()) {
                     return@observe

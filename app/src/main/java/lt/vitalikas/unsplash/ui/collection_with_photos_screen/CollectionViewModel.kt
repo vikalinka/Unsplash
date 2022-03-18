@@ -54,7 +54,7 @@ class CollectionViewModel @Inject constructor(
 
     fun likePhoto(id: String) {
         val workData = workDataOf(
-            LikePhotoWorker.PHOTO_ID_KEY to id
+            LikePhotoWorker.PHOTO_ID to id
         )
 
         val workConstraints = Constraints.Builder()
@@ -69,7 +69,7 @@ class CollectionViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_COLLECTION,
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_COLLECTION,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )
@@ -77,7 +77,7 @@ class CollectionViewModel @Inject constructor(
 
     fun dislikePhoto(id: String) {
         val workData = workDataOf(
-            DislikePhotoWorker.DISLIKE_PHOTO_ID to id
+            DislikePhotoWorker.PHOTO_ID to id
         )
 
         val workConstraints = Constraints.Builder()
@@ -92,7 +92,7 @@ class CollectionViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_COLLECTION,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_COLLECTION,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )

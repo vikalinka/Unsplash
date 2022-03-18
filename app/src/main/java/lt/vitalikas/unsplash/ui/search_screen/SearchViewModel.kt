@@ -39,7 +39,7 @@ class SearchViewModel @Inject constructor(
     fun likePhoto(id: String) {
 
         val workData = workDataOf(
-            LikePhotoWorker.PHOTO_ID_KEY to id
+            LikePhotoWorker.PHOTO_ID to id
         )
 
         val workConstraints = Constraints.Builder()
@@ -54,7 +54,7 @@ class SearchViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FROM_FEED,
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FEED,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )
@@ -63,7 +63,7 @@ class SearchViewModel @Inject constructor(
     fun dislikePhoto(id: String) {
 
         val workData = workDataOf(
-            DislikePhotoWorker.DISLIKE_PHOTO_ID to id
+            DislikePhotoWorker.PHOTO_ID to id
         )
 
         val workConstraints = Constraints.Builder()
@@ -78,7 +78,7 @@ class SearchViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FROM_FEED,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FEED,
                 ExistingWorkPolicy.REPLACE,
                 workRequest
             )
