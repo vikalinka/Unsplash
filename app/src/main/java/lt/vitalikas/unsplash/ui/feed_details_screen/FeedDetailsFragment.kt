@@ -313,6 +313,12 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         likeCount++
 
         userTotalLikes.text = likeCount.toString()
+
+        feedDetailsViewModel.updatePhotoInDatabase(
+            id = args.id,
+            isLiked = true,
+            likeCount = likeCount
+        )
     }
 
     private fun observeDislikingPhoto() {
@@ -358,6 +364,12 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         likeCount--
 
         userTotalLikes.text = likeCount.toString()
+
+        feedDetailsViewModel.updatePhotoInDatabase(
+            id = args.id,
+            isLiked = false,
+            likeCount = likeCount
+        )
     }
 
     private fun observeDownload() {
