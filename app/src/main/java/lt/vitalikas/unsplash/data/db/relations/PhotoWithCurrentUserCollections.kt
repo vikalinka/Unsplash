@@ -3,15 +3,15 @@ package lt.vitalikas.unsplash.data.db.relations
 import androidx.room.Embedded
 import androidx.room.Relation
 import lt.vitalikas.unsplash.data.db.entities.FeedCollectionEntity
-import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
+import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.data.db.contracts.FeedCollectionsContract
-import lt.vitalikas.unsplash.data.db.contracts.FeedPhotosContract
+import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
 
-data class FeedPhotoWithFeedCollections(
+data class PhotoWithCurrentUserCollections(
     @Embedded
-    val feedPhoto: FeedPhotoEntity,
+    val photo: PhotoEntity,
     @Relation(
-        parentColumn = FeedPhotosContract.Columns.ID,
+        parentColumn = PhotoContract.Columns.ID,
         entityColumn = FeedCollectionsContract.Columns.FEED_PHOTO_ID
     )
     val collections: List<FeedCollectionEntity>

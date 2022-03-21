@@ -31,13 +31,13 @@ class FeedViewModel @Inject constructor(
 
     val networkStatus = networkStatusTracker.networkStatus
 
-    var currentOrder = DEFAULT_ORDER_BY
+    var prevOrderBy = DEFAULT_ORDER_BY
+        private set
 
     suspend fun getFeedPhotos(order: String) {
+        val dataFlow = getFeedPhotosUseCase(order, prevOrderBy)
 
-        val dataFlow = getFeedPhotosUseCase(order, currentOrder)
-
-        currentOrder = order
+        prevOrderBy = order
 
         dataFlow
             .cachedIn(viewModelScope)

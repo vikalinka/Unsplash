@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -45,15 +44,27 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     Launcher {
 
     private val binding by viewBinding(FragmentFeedDetailsBinding::bind)
-    private val photo get() = binding.ivPhoto
-    private val userPhoto get() = binding.ivAvatar
-    private val userName get() = binding.tvName
-    private val userUsername get() = binding.tvUsername
-    private val userTotalLikes get() = binding.tvLikeCount
-    private val likedByUser get() = binding.ivLove
-    private val photoDetails get() = binding.rvDetails
-    private val loadingProgress get() = binding.pbLoading
-    private val noConnectionText get() = binding.tvNoConnection
+    private val photo get() = binding.photoImageView
+    private val avatar get() = binding.avatarShapeableImageView
+    private val name get() = binding.nameTextView
+    private val username get() = binding.usernameTextView
+    private val totalLikes get() = binding.likeCountTextView
+    private val liked get() = binding.loveImageView
+    private val locationIcon get() = binding.locationImageView
+    private val locationInfo get() = binding.locationTextView
+    private val tag get() = binding.tagTextView
+    private val madeWith get() = binding.madeWithTextView
+    private val model get() = binding.modelTextView
+    private val exposure get() = binding.exposureTextView
+    private val aperture get() = binding.apertureTextView
+    private val focalLength get() = binding.focalLengthTextView
+    private val iso get() = binding.isoTextView
+    private val about get() = binding.aboutTextView
+    private val download get() = binding.downloadTextView
+    private val downloadCount get() = binding.downloadCountTextView
+    private val downloadIcon get() = binding.downloadCountImageView
+    private val loadingProgress get() = binding.loadingProgressBar
+    private val noConnectionText get() = binding.noConnectionTextView
     private val toolbar get() = binding.toolbar
 
     private val feedDetailsViewModel by viewModels<FeedDetailsViewModel>()
@@ -63,11 +74,6 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private lateinit var photoShareLink: String
 
     private var likeCount by Delegates.notNull<Int>()
-
-    private val feedPhotoDetailsAdapter
-        get() = requireNotNull(photoDetails.adapter as FeedDetailsAdapter) {
-            error("Adapter not initialized")
-        }
 
     private lateinit var photoDownloadUrl: String
     private lateinit var photoUri: Uri
@@ -99,12 +105,13 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initPhotoDetails()
+
         /**
          * DeepLink
          * https://unsplash.com/photos/4oovIxttThA
          * Implicit DeepLink uses args parameter for automatic parsing
          */
+
         getFeedPhotoDetails(args.id)
         setupToolbar()
         observeDataFetching()
@@ -135,9 +142,11 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                         }
                         is FeedDetailsState.Success -> {
                             loadingProgress.isVisible = false
-                            feedPhotoDetailsAdapter.items = listOf(state.data)
+                            locationIcon.isVisible = true
+                            download.isVisible = true
+                            downloadIcon.isVisible = true
+
                             bindFetchedData(state.data)
-                            photoShareLink = state.data.link.html
                         }
                         is FeedDetailsState.Error -> {
                             loadingProgress.isVisible = false
@@ -179,15 +188,16 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             .load(details.user.profileImage.medium)
             .placeholder(R.drawable.picture)
             .error(R.drawable.picture)
-            .into(userPhoto)
+            .into(avatar)
 
-        userName.text = details.user.name
-        userUsername.text = getString(R.string.username, details.user.username)
-        userTotalLikes.text = details.likes.toString()
+        name.text = details.user.name
+        username.text = getString(R.string.username, details.user.username)
+        details.likes.also {
+            likeCount = it
+            totalLikes.text = it.toString()
+        }
 
-        likeCount = details.likes
-
-        with(likedByUser) {
+        with(liked) {
             if (details.likedByUser) {
                 setImageResource(R.drawable.ic_love_filled)
                 setColorFilter(ContextCompat.getColor(context, R.color.red))
@@ -202,23 +212,51 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                 }
             }
         }
-    }
 
-    private fun initPhotoDetails() {
-        with(photoDetails) {
-            adapter = FeedDetailsAdapter(
-                onLocationClick = { lat, lng ->
-                    val locationUri = Uri.parse("geo: $lat,$lng")
-                    showLocationInMap(locationUri)
-                },
-                onDownloadClick = { url ->
-                    photoDownloadUrl = url
-                    checkPermissions()
-                }
-            )
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
+        val onLocationClick: (lat: Double, lng: Double) -> Unit = { lat, lng ->
+            val locationUri = Uri.parse("geo: $lat,$lng")
+            showLocationInMap(locationUri)
         }
+
+        val onDownloadClick: () -> Unit = { checkPermissions() }
+
+        val lat = details.location.position.latitude
+        val lng = details.location.position.longitude
+
+        locationIcon.setOnClickListener {
+            if (lat != null && lng != null) {
+                onLocationClick(lat, lng)
+            }
+        }
+
+        locationInfo.text = getString(
+            R.string.location,
+            details.location.country ?: "N/A", details.location.city ?: "N/A"
+        )
+
+        tag.text = getString(R.string.tag, details.tags.joinToString { tag ->
+            "#${tag.title}"
+        })
+
+        madeWith.text = getString(R.string.made_with, details.exif.make)
+        model.text = getString(R.string.model, details.exif.model)
+        exposure.text = getString(R.string.exposure, details.exif.exposureTime)
+        aperture.text = getString(R.string.aperture, details.exif.aperture)
+        focalLength.text = getString(R.string.focal_length, details.exif.focalLength.toString())
+        iso.text = getString(R.string.iso, details.exif.iso.toString())
+        about.text = getString(
+            R.string.about,
+            details.user.username,
+            details.user.bio ?: "N/A"
+        )
+
+        download.setOnClickListener {
+            onDownloadClick()
+        }
+        downloadCount.text = details.downloads.toString()
+
+        photoShareLink = details.link.html
+        photoDownloadUrl = details.link.downloadLocation
     }
 
     private fun showLocationInMap(location: Uri) {
@@ -259,7 +297,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         startActivity(shareIntent)
     }
 
-    private fun openPhotoUri(uri: Uri) {
+    private fun sharePhoto(uri: Uri) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -305,14 +343,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     private fun updateDataOnFeedLike() {
-        with(likedByUser) {
-            likedByUser.setImageResource(R.drawable.ic_love_filled)
+        with(liked) {
+            liked.setImageResource(R.drawable.ic_love_filled)
             setOnClickListener { feedDetailsViewModel.dislikePhoto(args.id) }
         }
 
         likeCount++
 
-        userTotalLikes.text = likeCount.toString()
+        totalLikes.text = likeCount.toString()
 
         feedDetailsViewModel.updatePhotoInDatabase(
             id = args.id,
@@ -356,14 +394,14 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     }
 
     private fun updateDataOnFeedDislike() {
-        with(likedByUser) {
-            likedByUser.setImageResource(R.drawable.ic_love)
+        with(liked) {
+            liked.setImageResource(R.drawable.ic_love)
             setOnClickListener { feedDetailsViewModel.likePhoto(args.id) }
         }
 
         likeCount--
 
-        userTotalLikes.text = likeCount.toString()
+        totalLikes.text = likeCount.toString()
 
         feedDetailsViewModel.updatePhotoInDatabase(
             id = args.id,
@@ -397,7 +435,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
                             R.string.download_succeeded,
                             R.string.open
                         ) {
-                            openPhotoUri(photoUri)
+                            sharePhoto(photoUri)
                         }
                     }
                     WorkInfo.State.CANCELLED -> {

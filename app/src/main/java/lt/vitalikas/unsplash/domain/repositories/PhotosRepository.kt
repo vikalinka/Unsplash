@@ -3,7 +3,7 @@ package lt.vitalikas.unsplash.domain.repositories
 import android.net.Uri
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
+import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.domain.models.collections.Collection
 import lt.vitalikas.unsplash.domain.models.collections.CollectionPhoto
@@ -13,7 +13,7 @@ import lt.vitalikas.unsplash.domain.models.photo.Photo
 interface PhotosRepository {
     suspend fun getFeedPhotos(order: String, currentOrder: String): Flow<PagingData<Photo>>
     suspend fun getFeedPhotoDetailsById(id: String): PhotoDetails
-    suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
+    suspend fun insertFeedPhotos(photos: List<PhotoEntity>)
     suspend fun downloadPhoto(url: String, uri: Uri)
     suspend fun likePhoto(id: String)
     suspend fun dislikePhoto(id: String)

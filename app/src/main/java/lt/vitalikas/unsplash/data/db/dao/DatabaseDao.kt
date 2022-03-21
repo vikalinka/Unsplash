@@ -6,12 +6,12 @@ import lt.vitalikas.unsplash.data.db.entities.*
 
 @Database(
     entities = [
-        FeedPhotoEntity::class,
+        PhotoEntity::class,
         UserEntity::class,
         UserProfileImageEntity::class,
         UserLinkEntity::class,
-        FeedUrlEntity::class,
-        FeedLinkEntity::class,
+        UrlEntity::class,
+        LinkEntity::class,
         FeedCollectionEntity::class,
         RemoteKey::class
     ],

@@ -41,8 +41,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private lateinit var id: String
 
-    private lateinit var currentOrder: String
-
     private val feedAdapter by autoCleaned {
         PhotoAdapter(
             onItemClick = { id ->
@@ -64,13 +62,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        currentOrder = feedViewModel.currentOrder
-
         setupToolbar()
         initPhotoList()
         initListRefresh()
-        getData(currentOrder)
+        getData(feedViewModel.prevOrderBy)
         observeData()
         observeNetworkConnection()
         observeAdapterLoadingState()
@@ -80,9 +75,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun initPhotoList() {
         with(photoList) {
-            val feedLoadStateAdapter = PhotoLoadStateAdapter {
-                feedAdapter.retry()
-            }
+            val feedLoadStateAdapter = PhotoLoadStateAdapter(
+                onRetryButtonClick = { feedAdapter.retry() }
+            )
 
             val concatAdapter = feedAdapter.withLoadStateFooter(
                 footer = feedLoadStateAdapter
@@ -172,24 +167,20 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 when (it.itemId) {
                     R.id.orderByLatestAction -> {
                         getData(ORDER_BY_LATEST)
-                        currentOrder = ORDER_BY_LATEST
                         true
                     }
                     R.id.orderByOldestAction -> {
                         getData(ORDER_BY_OLDEST)
-                        currentOrder = ORDER_BY_OLDEST
                         true
                     }
                     R.id.orderByPopularAction -> {
                         getData(ORDER_BY_POPULAR)
-                        currentOrder = ORDER_BY_POPULAR
                         true
                     }
                     else -> {
                         val directions =
                             FeedFragmentDirections.actionFeedToSearch()
                         findNavController().navigate(directions)
-
                         true
                     }
                 }
@@ -233,11 +224,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun updateDataOnFeedLike() {
         // getting data from paging adapter`s snapshot
-        val snapshotItem = feedAdapter.snapshot().firstOrNull { snapshotItem ->
+        val photo = feedAdapter.snapshot().firstOrNull { snapshotItem ->
             snapshotItem?.id == this.id
         }
 
-        snapshotItem?.let {
+        photo?.let {
             // updating snapshot data
             it.likedByUser = true
             it.likes += 1

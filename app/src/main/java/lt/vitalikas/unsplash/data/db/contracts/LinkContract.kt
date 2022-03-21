@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.data.db.contracts
 
-object FeedLinksContract {
+object LinkContract {
 
     const val TABLE_NAME = "feed_links"
 

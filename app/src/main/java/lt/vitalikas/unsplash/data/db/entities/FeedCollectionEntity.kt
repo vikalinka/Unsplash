@@ -5,16 +5,16 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import lt.vitalikas.unsplash.data.db.contracts.FeedCollectionsContract
-import lt.vitalikas.unsplash.data.db.contracts.FeedPhotosContract
-import lt.vitalikas.unsplash.data.db.contracts.UsersContract
+import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
+import lt.vitalikas.unsplash.data.db.contracts.UserContract
 
 @Entity(
     tableName = FeedCollectionsContract.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
-            entity = FeedPhotoEntity::class,
+            entity = PhotoEntity::class,
             parentColumns = [
-                FeedPhotosContract.Columns.ID
+                PhotoContract.Columns.ID
             ],
             childColumns = [
                 FeedCollectionsContract.Columns.FEED_PHOTO_ID
@@ -24,7 +24,7 @@ import lt.vitalikas.unsplash.data.db.contracts.UsersContract
         ForeignKey(
             entity = UserEntity::class,
             parentColumns = [
-                UsersContract.Columns.ID
+                UserContract.Columns.ID
             ],
             childColumns = [
                 FeedCollectionsContract.Columns.USER_ID

@@ -5,36 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/ToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?actionBarSize"
+        android:title="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/ToolbarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:title="@string/app_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:navigationIcon="@drawable/ic_back"
-            app:titleTextColor="@color/black" />
-    </com.google.android.material.appbar.AppBarLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_back"
+        app:titleTextColor="@color/black" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clPhoto"
-        android:layout_width="match_parent"
+        android:id="@+id/photoConstraintLayout"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -44,7 +35,7 @@
             app:layout_constraintGuide_percent="0.50" />
 
         <ImageView
-            android:id="@+id/ivPhoto"
+            android:id="@+id/photoImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@string/feed_photo_content"
@@ -56,17 +47,17 @@
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clPhotoStats"
-            android:layout_width="match_parent"
+            android:id="@+id/photoStatsConstraintLayout"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="@id/ivPhoto"
+            app:layout_constraintBottom_toBottomOf="@id/photoImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivAvatar"
+                android:id="@+id/avatarShapeableImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -76,30 +67,30 @@
                 tools:src="@tools:sample/avatars" />
 
             <TextView
-                android:id="@+id/tvName"
+                android:id="@+id/nameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@id/tvUsername"
-                app:layout_constraintStart_toEndOf="@id/ivAvatar"
-                app:layout_constraintTop_toTopOf="@id/ivAvatar"
+                app:layout_constraintBottom_toTopOf="@id/usernameTextView"
+                app:layout_constraintStart_toEndOf="@id/avatarShapeableImageView"
+                app:layout_constraintTop_toTopOf="@id/avatarShapeableImageView"
                 tools:text="Vitalikas Kolinko " />
 
             <TextView
-                android:id="@+id/tvUsername"
+                android:id="@+id/usernameTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
-                app:layout_constraintStart_toStartOf="@id/tvName"
-                app:layout_constraintTop_toBottomOf="@id/tvName"
+                app:layout_constraintBottom_toBottomOf="@id/avatarShapeableImageView"
+                app:layout_constraintStart_toStartOf="@id/nameTextView"
+                app:layout_constraintTop_toBottomOf="@id/nameTextView"
                 tools:text="\@vi_kalinka" />
 
             <ImageView
-                android:id="@+id/ivLove"
+                android:id="@+id/loveImageView"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:contentDescription="@string/love_icon"
@@ -108,34 +99,185 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvLikeCount"
+                android:id="@+id/likeCountTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="2dp"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/ivLove"
+                app:layout_constraintEnd_toStartOf="@id/loveImageView"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="241" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvDetails"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/photoDetailsConstraintLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline"
-            tools:itemCount="1"
-            tools:listitem="@layout/item_feed_photo_details" />
+            app:layout_constraintTop_toBottomOf="@id/guideline">
+
+            <ImageView
+                android:id="@+id/locationImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/location_icon"
+                android:src="@drawable/ic_round_location_on_24"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/locationTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toEndOf="@id/locationImageView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Lithuania, Vilnius" />
+
+            <TextView
+                android:id="@+id/tagTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                app:layout_constraintBottom_toTopOf="@id/photoDetailsLeftConstraintLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationImageView"
+                tools:text="Tags: #movie" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/photoDetailsLeftConstraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toTopOf="@id/downloadTextView"
+                app:layout_constraintEnd_toStartOf="@id/photoDetailsRightConstraintLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tagTextView">
+
+                <TextView
+                    android:id="@+id/madeWithTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/made_with" />
+
+                <TextView
+                    android:id="@+id/modelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/madeWithTextView"
+                    tools:text="@string/model" />
+
+                <TextView
+                    android:id="@+id/exposureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/modelTextView"
+                    tools:text="@string/exposure" />
+
+                <TextView
+                    android:id="@+id/apertureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/exposureTextView"
+                    tools:text="@string/aperture" />
+
+                <TextView
+                    android:id="@+id/focalLengthTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/apertureTextView"
+                    tools:text="@string/focal_length" />
+
+                <TextView
+                    android:id="@+id/isoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/focalLengthTextView"
+                    tools:text="@string/iso" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/photoDetailsRightConstraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/photoDetailsLeftConstraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/photoDetailsLeftConstraintLayout"
+                app:layout_constraintTop_toTopOf="@id/photoDetailsLeftConstraintLayout">
+
+                <TextView
+                    android:id="@+id/aboutTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="@string/about" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/downloadTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/download"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/downloadCountTextView" />
+
+            <TextView
+                android:id="@+id/downloadCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/downloadCountImageView"
+                tools:text="23" />
+
+            <ImageView
+                android:id="@+id/downloadCountImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/download_count_icon"
+                android:src="@drawable/ic_download"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tvNoConnection"
+        android:id="@+id/noConnectionTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -144,10 +286,10 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/clPhoto" />
+        app:layout_constraintTop_toTopOf="@id/photoConstraintLayout" />
 
     <ProgressBar
-        android:id="@+id/pbLoading"
+        android:id="@+id/loadingProgressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
-import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
+import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionPhotosPagingSource
 import lt.vitalikas.unsplash.data.repositories.paging_sources.CollectionsPagingSource
 import lt.vitalikas.unsplash.data.repositories.paging_sources.SearchPagingSource
@@ -88,16 +88,16 @@ class PhotosRepositoryImpl @Inject constructor(
                     totalLikes = feedUser.user.totalLikes,
                     totalPhotos = feedUser.user.totalPhotos,
                     totalCollections = feedUser.user.totalCollections,
-                    instagramUsername = feedUser.user.instagram,
-                    twitterUsername = feedUser.user.twitter,
+                    instagramUsername = feedUser.user.instagramUsername,
+                    twitterUsername = feedUser.user.twitterUsername,
                     profileImage = userProfileImage,
                     link = userLink,
                     firstName = feedUser.user.firstName,
                     lastName = feedUser.user.lastName
                 )
 
-                val feedCollections = Database.instance.feedCollectionDao().getAllFeedCollections()
-                    ?: error("collections not found")
+//                val feedCollections = Database.instance.feedCollectionDao().getAllFeedCollections()
+//                    ?: error("collections not found")
 
                 val feedUrl = Database.instance.feedUrlDao()
                     .getFeedUrlAndFeedPhotoWithFeedUrlId(entity.feedUrlId)
@@ -132,17 +132,17 @@ class PhotosRepositoryImpl @Inject constructor(
                     likedByUser = entity.likedByUser,
                     description = entity.description,
                     user = user,
-                    currentUserCollections = feedCollections.map { collection ->
-                        UserCollection(
-                            id = collection.id,
-                            title = collection.title,
-                            publishedAt = collection.publishedAt,
-                            lastCollectedAt = collection.lastCollectedAt,
-                            updatedAt = collection.updatedAt,
-                            coverPhoto = null,
-                            user = user
-                        )
-                    },
+//                    currentUserCollections = feedCollections.map { collection ->
+//                        UserCollection(
+//                            id = collection.id,
+//                            title = collection.title,
+//                            publishedAt = collection.publishedAt,
+//                            lastCollectedAt = collection.lastCollectedAt,
+//                            updatedAt = collection.updatedAt,
+//                            coverPhoto = null,
+//                            user = user
+//                        )
+//                    },
                     url = url,
                     link = link
                 )
@@ -153,9 +153,9 @@ class PhotosRepositoryImpl @Inject constructor(
     override suspend fun getFeedPhotoDetailsById(id: String) =
         unsplashApi.getFeedPhotoDetails(id)
 
-    override suspend fun insertFeedPhotos(feedPhotos: List<FeedPhotoEntity>) =
+    override suspend fun insertFeedPhotos(photos: List<PhotoEntity>) =
         withContext(dispatcherIo) {
-            Database.instance.feedPhotosDao().insertAllFeedPhotos(feedPhotos)
+            Database.instance.feedPhotosDao().insertAllFeedPhotos(photos)
         }
 
     override suspend fun downloadPhoto(url: String, uri: Uri) {

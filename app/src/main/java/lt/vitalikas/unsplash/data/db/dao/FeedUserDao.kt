@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.db.entities.UserEntity
-import lt.vitalikas.unsplash.data.db.relations.UserAndFeedPhoto
-import lt.vitalikas.unsplash.data.db.contracts.UsersContract
+import lt.vitalikas.unsplash.data.db.relations.UserAndPhoto
+import lt.vitalikas.unsplash.data.db.contracts.UserContract
 
 @Dao
 interface FeedUserDao {
@@ -17,6 +17,6 @@ interface FeedUserDao {
     )
     suspend fun insertFeedUser(feedUser: UserEntity)
 
-    @Query("SELECT * FROM ${UsersContract.TABLE_NAME} WHERE ${UsersContract.Columns.ID} = :id")
-    suspend fun getUserAndFeedPhotoWithUserId(id: String): UserAndFeedPhoto?
+    @Query("SELECT * FROM ${UserContract.TABLE_NAME} WHERE ${UserContract.Columns.ID} = :id")
+    suspend fun getUserAndFeedPhotoWithUserId(id: String): UserAndPhoto?
 }

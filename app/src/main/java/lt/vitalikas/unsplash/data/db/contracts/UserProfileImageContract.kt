@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.data.db.contracts
 
-object UserProfileImagesContract {
+object UserProfileImageContract {
 
     const val TABLE_NAME = "user_profile_images"
 

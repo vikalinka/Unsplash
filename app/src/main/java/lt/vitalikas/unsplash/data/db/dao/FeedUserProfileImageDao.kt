@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.db.entities.UserProfileImageEntity
 import lt.vitalikas.unsplash.data.db.relations.UserProfileImageAndUser
-import lt.vitalikas.unsplash.data.db.contracts.UserProfileImagesContract
+import lt.vitalikas.unsplash.data.db.contracts.UserProfileImageContract
 
 @Dao
 interface FeedUserProfileImageDao {
@@ -17,6 +17,6 @@ interface FeedUserProfileImageDao {
     )
     suspend fun insertFeedUserProfileImage(image: UserProfileImageEntity)
 
-    @Query("SELECT * FROM ${UserProfileImagesContract.TABLE_NAME} WHERE ${UserProfileImagesContract.Columns.ID} = :id")
+    @Query("SELECT * FROM ${UserProfileImageContract.TABLE_NAME} WHERE ${UserProfileImageContract.Columns.ID} = :id")
     suspend fun getFeedUserProfileImageAndUserWithFeedUserProfileImageId(id: String): UserProfileImageAndUser?
 }

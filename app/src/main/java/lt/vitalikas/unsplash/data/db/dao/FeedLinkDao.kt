@@ -4,19 +4,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import lt.vitalikas.unsplash.data.db.entities.FeedLinkEntity
-import lt.vitalikas.unsplash.data.db.relations.FeedLinkAndFeedPhoto
-import lt.vitalikas.unsplash.data.db.contracts.FeedLinksContract
+import lt.vitalikas.unsplash.data.db.entities.LinkEntity
+import lt.vitalikas.unsplash.data.db.relations.LinkAndPhoto
+import lt.vitalikas.unsplash.data.db.contracts.LinkContract
 
 @Dao
 interface FeedLinkDao {
 
     @Insert(
-        entity = FeedLinkEntity::class,
+        entity = LinkEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
-    suspend fun insertFeedLink(feedLink: FeedLinkEntity)
+    suspend fun insertFeedLink(link: LinkEntity)
 
-    @Query("SELECT * FROM ${FeedLinksContract.TABLE_NAME} WHERE ${FeedLinksContract.Columns.ID} = :id")
-    suspend fun getFeedLinkAndFeedPhotoWithFeedLinkId(id: String): FeedLinkAndFeedPhoto?
+    @Query("SELECT * FROM ${LinkContract.TABLE_NAME} WHERE ${LinkContract.Columns.ID} = :id")
+    suspend fun getFeedLinkAndFeedPhotoWithFeedLinkId(id: String): LinkAndPhoto?
 }

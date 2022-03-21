@@ -15,9 +15,9 @@ class PhotoAdapter(
     private val onItemClick: (id: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
-) : PagingDataAdapter<Photo, PhotoAdapter.FeedPhotoViewHolder>(FeedPhotoComparator()) {
+) : PagingDataAdapter<Photo, PhotoAdapter.PhotoViewHolder>(PhotoComparator()) {
 
-    inner class FeedPhotoViewHolder(
+    inner class PhotoViewHolder(
         private val binding: ItemFeedBinding,
         onItemClick: (id: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
@@ -71,8 +71,8 @@ class PhotoAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedPhotoViewHolder =
-        FeedPhotoViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder =
+        PhotoViewHolder(
             binding = ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -83,12 +83,12 @@ class PhotoAdapter(
             onDislikeClick = onDislikeClick
         )
 
-    override fun onBindViewHolder(holder: FeedPhotoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         val item = getItem(position)
         item?.let { holder.bind(it) }
     }
 
-    class FeedPhotoComparator : DiffUtil.ItemCallback<Photo>() {
+    class PhotoComparator : DiffUtil.ItemCallback<Photo>() {
         override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean =
             oldItem.id == newItem.id
 

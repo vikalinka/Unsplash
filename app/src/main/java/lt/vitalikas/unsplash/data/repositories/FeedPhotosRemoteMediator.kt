@@ -20,7 +20,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val api: UnsplashApi,
     private val order: String,
     private val currentOrder: String
-) : RemoteMediator<Int, FeedPhotoEntity>() {
+) : RemoteMediator<Int, PhotoEntity>() {
 
     private val feedPhotosDao = Database.instance.feedPhotosDao()
     private val feedUserDao = Database.instance.feedUserDao()
@@ -47,7 +47,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, FeedPhotoEntity>
+        state: PagingState<Int, PhotoEntity>
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
@@ -94,99 +94,84 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 }
                 remoteKeysDao.insertAllKeys(keys)
 
-                val feedPhotos = mutableListOf<FeedPhotoEntity>()
-                var feedCollections: List<FeedCollectionEntity> = listOf()
-                photos.map { feed ->
+                val feedPhotos = mutableListOf<PhotoEntity>()
 
-                    val userProfileImage = UserProfileImageEntity(
-                        id = feed.user.id,
-                        small = feed.user.profileImage.small,
-                        medium = feed.user.profileImage.medium,
-                        large = feed.user.profileImage.large
-                    )
-                    feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
-
-                    val userLink = UserLinkEntity(
-                        id = feed.user.id,
-                        self = feed.user.link.self,
-                        html = feed.user.link.html,
-                        photos = feed.user.link.photos,
-                        likes = feed.user.link.likes,
-                        portfolio = feed.user.link.portfolio,
-                    )
-                    feedUserLinkDao.insertFeedUserLink(userLink)
-
-                    val user = UserEntity(
-                        id = feed.user.id,
-                        userProfileImageId = feed.user.id,
-                        userLinkId = feed.user.id,
-                        username = feed.user.username,
-                        name = feed.user.name,
-                        firstName = feed.user.firstName,
-                        lastName = feed.user.lastName ?: "N/A",
-                        portfolioUrl = feed.user.portfolioUrl,
-                        bio = feed.user.bio,
-                        location = feed.user.location,
-                        totalLikes = feed.user.totalLikes,
-                        totalPhotos = feed.user.totalPhotos,
-                        totalCollections = feed.user.totalCollections,
-                        instagram = feed.user.instagramUsername,
-                        twitter = feed.user.twitterUsername
-                    )
-                    feedUserDao.insertFeedUser(user)
-
-                    val feedUrl = FeedUrlEntity(
-                        id = feed.user.id,
-                        raw = feed.url.raw,
-                        full = feed.url.full,
-                        regular = feed.url.regular,
-                        small = feed.url.small,
-                        thumb = feed.url.thumb
-                    )
-                    feedUrlDao.insertFeedUrl(feedUrl)
-
-                    val feedLink = FeedLinkEntity(
-                        id = feed.user.id,
-                        self = feed.link.self,
-                        html = feed.link.html,
-                        download = feed.link.download,
-                        downloadLocation = feed.link.downloadLocation
-                    )
-                    feedLinkDao.insertFeedLink(feedLink)
-
-                    val feedPhoto = FeedPhotoEntity(
-                        id = feed.id,
-                        userId = user.id,
-                        feedUrlId = feed.user.id,
-                        feedLinkId = feed.user.id,
-                        createdAt = feed.createdAt,
-                        updatedAt = feed.updatedAt,
-                        width = feed.width,
-                        height = feed.height,
-                        color = feed.color,
-                        blurHash = feed.blurHash,
-                        likes = feed.likes,
-                        likedByUser = feed.likedByUser,
-                        description = feed.description,
+                photos.map { photo ->
+                    val feedPhoto = PhotoEntity(
+                        id = photo.id,
+                        userId = photo.user.id,
+                        feedUrlId = photo.user.id,
+                        feedLinkId = photo.user.id,
+                        createdAt = photo.createdAt,
+                        updatedAt = photo.updatedAt,
+                        width = photo.width,
+                        height = photo.height,
+                        color = photo.color,
+                        blurHash = photo.blurHash,
+                        likes = photo.likes,
+                        likedByUser = photo.likedByUser,
+                        description = photo.description,
                         lastUpdatedAt = Calendar.getInstance()
                     )
                     feedPhotos.add(feedPhoto)
 
-                    feedCollections = feed.currentUserCollections.map { collection ->
-                        FeedCollectionEntity(
-                            id = collection.id,
-                            feedPhotoId = feedPhoto.id,
-                            title = collection.title,
-                            publishedAt = collection.publishedAt,
-                            lastCollectedAt = collection.lastCollectedAt,
-                            updatedAt = collection.updatedAt,
-                            userId = user.id,
-                            coverPhoto = null
-                        )
-                    }
+                    val feedUser = UserEntity(
+                        id = photo.user.id,
+                        userProfileImageId = photo.user.id,
+                        userLinkId = photo.user.id,
+                        username = photo.user.username,
+                        name = photo.user.name,
+                        firstName = photo.user.firstName,
+                        lastName = photo.user.lastName ?: "N/A",
+                        portfolioUrl = photo.user.portfolioUrl,
+                        bio = photo.user.bio,
+                        location = photo.user.location,
+                        totalLikes = photo.user.totalLikes,
+                        totalPhotos = photo.user.totalPhotos,
+                        totalCollections = photo.user.totalCollections,
+                        instagramUsername = photo.user.instagramUsername,
+                        twitterUsername = photo.user.twitterUsername
+                    )
+                    feedUserDao.insertFeedUser(feedUser)
+
+                    val userProfileImage = UserProfileImageEntity(
+                        id = photo.user.id,
+                        small = photo.user.profileImage.small,
+                        medium = photo.user.profileImage.medium,
+                        large = photo.user.profileImage.large
+                    )
+                    feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
+
+                    val userLink = UserLinkEntity(
+                        id = photo.user.id,
+                        self = photo.user.link.self,
+                        html = photo.user.link.html,
+                        photos = photo.user.link.photos,
+                        likes = photo.user.link.likes,
+                        portfolio = photo.user.link.portfolio,
+                    )
+                    feedUserLinkDao.insertFeedUserLink(userLink)
+
+                    val feedUrl = UrlEntity(
+                        id = photo.user.id,
+                        raw = photo.url.raw,
+                        full = photo.url.full,
+                        regular = photo.url.regular,
+                        small = photo.url.small,
+                        thumb = photo.url.thumb
+                    )
+                    feedUrlDao.insertFeedUrl(feedUrl)
+
+                    val feedLink = LinkEntity(
+                        id = photo.user.id,
+                        self = photo.link.self,
+                        html = photo.link.html,
+                        download = photo.link.download,
+                        downloadLocation = photo.link.downloadLocation
+                    )
+                    feedLinkDao.insertFeedLink(feedLink)
                 }
                 feedPhotosDao.insertAllFeedPhotos(feedPhotos)
-                feedCollectionDao.insertAllFeedCollections(feedCollections)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
@@ -197,7 +182,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
     }
 
     // LoadType.PREPEND
-    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, PhotoEntity>): RemoteKey? =
         state.pages.firstOrNull { page ->
             page.data.isNotEmpty()
         }?.data?.firstOrNull()?.let { feedPhoto ->
@@ -205,7 +190,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
         }
 
     // LoadType.APPEND
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, PhotoEntity>): RemoteKey? =
         state.pages.lastOrNull { page ->
             page.data.isNotEmpty()
         }?.data?.lastOrNull()?.let { feedPhoto ->
@@ -213,7 +198,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
         }
 
     // LoadType.REFRESH
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, FeedPhotoEntity>): RemoteKey? =
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, PhotoEntity>): RemoteKey? =
         state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { id ->
                 remoteKeysDao.getRemoteKeyByFeedPhotoId(id)

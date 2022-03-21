@@ -2,38 +2,38 @@ package lt.vitalikas.unsplash.data.db.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import lt.vitalikas.unsplash.data.db.entities.FeedPhotoEntity
-import lt.vitalikas.unsplash.data.db.contracts.FeedPhotosContract
+import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
+import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
 
 @Dao
 interface FeedPhotosDao {
 
     @Insert(
-        entity = FeedPhotoEntity::class,
+        entity = PhotoEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
-    suspend fun insertAllFeedPhotos(feedPhotos: List<FeedPhotoEntity>)
+    suspend fun insertAllFeedPhotos(photos: List<PhotoEntity>)
 
-    @Query("SELECT * FROM ${FeedPhotosContract.TABLE_NAME}")
-    fun getPagingSource(): PagingSource<Int, FeedPhotoEntity>
+    @Query("SELECT * FROM ${PhotoContract.TABLE_NAME}")
+    fun getPagingSource(): PagingSource<Int, PhotoEntity>
 
-    @Query("DELETE FROM ${FeedPhotosContract.TABLE_NAME}")
+    @Query("DELETE FROM ${PhotoContract.TABLE_NAME}")
     suspend fun deleteAllFeedPhotos()
 
     @Query(
-        "UPDATE ${FeedPhotosContract.TABLE_NAME} " +
-                "SET ${FeedPhotosContract.Columns.LIKED_BY_USER} = :liked, " +
-                "${FeedPhotosContract.Columns.LIKES} = :count " +
-                "WHERE ${FeedPhotosContract.Columns.ID} = :id"
+        "UPDATE ${PhotoContract.TABLE_NAME} " +
+                "SET ${PhotoContract.Columns.LIKED_BY_USER} = :liked, " +
+                "${PhotoContract.Columns.LIKES} = :count " +
+                "WHERE ${PhotoContract.Columns.ID} = :id"
     )
     suspend fun updatePhoto(id: String, liked: Boolean, count: Int)
 
-    @Query("SELECT COUNT(*) FROM ${FeedPhotosContract.TABLE_NAME}")
+    @Query("SELECT COUNT(*) FROM ${PhotoContract.TABLE_NAME}")
     suspend fun getFeedPhotoCount(): Int
 
     @Query(
-        "SELECT EXISTS (SELECT 1 FROM ${FeedPhotosContract.TABLE_NAME} " +
-                "WHERE ${FeedPhotosContract.Columns.LAST_UPDATED_AT} <= :timestamp - :cacheTimeout)"
+        "SELECT EXISTS (SELECT 1 FROM ${PhotoContract.TABLE_NAME} " +
+                "WHERE ${PhotoContract.Columns.LAST_UPDATED_AT} <= :timestamp - :cacheTimeout)"
     )
     suspend fun outdated(timestamp: Long, cacheTimeout: Long): Boolean
 }
