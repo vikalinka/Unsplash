@@ -4,7 +4,7 @@ import lt.vitalikas.unsplash.data.db.entities.UserEntity
 import lt.vitalikas.unsplash.domain.models.user.User
 
 class UserToUserEntityMapper : Mapper<User, UserEntity> {
-    override fun mapPojoToEntity(from: User): UserEntity =
+    override fun map(from: User): UserEntity =
         UserEntity(
             id = from.id,
             userProfileImageId = from.id,

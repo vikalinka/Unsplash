@@ -9,6 +9,7 @@ import androidx.room.withTransaction
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.*
+import lt.vitalikas.unsplash.data.db.mappers.PhotoToPhotoEntityMapper
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
@@ -22,12 +23,12 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val currentOrder: String
 ) : RemoteMediator<Int, PhotoEntity>() {
 
-    private val feedPhotosDao = Database.instance.feedPhotosDao()
-    private val feedUserDao = Database.instance.feedUserDao()
-    private val feedUserProfileImageDao = Database.instance.feedUserProfileImageDao()
-    private val feedUserLinkDao = Database.instance.feedUserLinkDao()
-    private val feedUrlDao = Database.instance.feedUrlDao()
-    private val feedLinkDao = Database.instance.feedLinkDao()
+    private val feedPhotosDao = Database.instance.photosDao()
+    private val feedUserDao = Database.instance.userDao()
+    private val feedUserProfileImageDao = Database.instance.userProfileImageDao()
+    private val feedUserLinkDao = Database.instance.userLinkDao()
+    private val feedUrlDao = Database.instance.urlDao()
+    private val feedLinkDao = Database.instance.linkDao()
     private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
 
@@ -97,23 +98,9 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 val feedPhotos = mutableListOf<PhotoEntity>()
 
                 photos.map { photo ->
-                    val feedPhoto = PhotoEntity(
-                        id = photo.id,
-                        userId = photo.user.id,
-                        feedUrlId = photo.user.id,
-                        feedLinkId = photo.user.id,
-                        createdAt = photo.createdAt,
-                        updatedAt = photo.updatedAt,
-                        width = photo.width,
-                        height = photo.height,
-                        color = photo.color,
-                        blurHash = photo.blurHash,
-                        likes = photo.likes,
-                        likedByUser = photo.likedByUser,
-                        description = photo.description,
-                        lastUpdatedAt = Calendar.getInstance()
-                    )
-                    feedPhotos.add(feedPhoto)
+
+                    val photoEntity = PhotoToPhotoEntityMapper().map(photo)
+                    feedPhotos.add(photoEntity)
 
                     val feedUser = UserEntity(
                         id = photo.user.id,
@@ -132,7 +119,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         instagramUsername = photo.user.instagramUsername,
                         twitterUsername = photo.user.twitterUsername
                     )
-                    feedUserDao.insertFeedUser(feedUser)
+                    feedUserDao.insertUser(feedUser)
 
                     val userProfileImage = UserProfileImageEntity(
                         id = photo.user.id,
@@ -140,7 +127,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         medium = photo.user.profileImage.medium,
                         large = photo.user.profileImage.large
                     )
-                    feedUserProfileImageDao.insertFeedUserProfileImage(userProfileImage)
+                    feedUserProfileImageDao.insertUserProfileImage(userProfileImage)
 
                     val userLink = UserLinkEntity(
                         id = photo.user.id,
@@ -150,7 +137,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         likes = photo.user.link.likes,
                         portfolio = photo.user.link.portfolio,
                     )
-                    feedUserLinkDao.insertFeedUserLink(userLink)
+                    feedUserLinkDao.insertUserLink(userLink)
 
                     val feedUrl = UrlEntity(
                         id = photo.user.id,

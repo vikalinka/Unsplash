@@ -9,13 +9,16 @@ import lt.vitalikas.unsplash.data.db.relations.UrlAndPhoto
 import lt.vitalikas.unsplash.data.db.contracts.UrlContract
 
 @Dao
-interface FeedUrlDao {
+interface UrlDao {
 
     @Insert(
         entity = UrlEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
     suspend fun insertFeedUrl(url: UrlEntity)
+
+    @Query("SELECT * FROM ${UrlContract.TABLE_NAME} WHERE ${UrlContract.Columns.ID} = :id")
+    suspend fun getUrlWithId(id: String): UrlEntity?
 
     @Query("SELECT * FROM ${UrlContract.TABLE_NAME} WHERE ${UrlContract.Columns.ID} = :id")
     suspend fun getFeedUrlAndFeedPhotoWithFeedUrlId(id: String): UrlAndPhoto?

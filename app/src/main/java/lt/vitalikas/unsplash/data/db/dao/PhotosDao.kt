@@ -6,7 +6,7 @@ import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
 
 @Dao
-interface FeedPhotosDao {
+interface PhotosDao {
 
     @Insert(
         entity = PhotoEntity::class,

@@ -20,12 +20,12 @@ import lt.vitalikas.unsplash.data.db.entities.*
 
 abstract class DatabaseDao : RoomDatabase() {
 
-    abstract fun feedPhotosDao(): FeedPhotosDao
-    abstract fun feedUserDao(): FeedUserDao
-    abstract fun feedUserProfileImageDao(): FeedUserProfileImageDao
-    abstract fun feedUserLinkDao(): FeedUserLinkDao
-    abstract fun feedUrlDao(): FeedUrlDao
-    abstract fun feedLinkDao(): FeedLinkDao
+    abstract fun photosDao(): PhotosDao
+    abstract fun userDao(): UserDao
+    abstract fun userProfileImageDao(): UserProfileImageDao
+    abstract fun userLinkDao(): UserLinkDao
+    abstract fun urlDao(): UrlDao
+    abstract fun linkDao(): LinkDao
     abstract fun feedCollectionDao(): FeedCollectionDao
     abstract fun remoteKeysDao(): RemoteKeysDao
 

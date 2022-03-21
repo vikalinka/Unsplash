@@ -7,7 +7,7 @@ import lt.vitalikas.unsplash.data.db.entities.UserEntity
 import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
 import lt.vitalikas.unsplash.data.db.contracts.UserContract
 
-data class UserAndPhoto(
+data class UserAndPhotoEntity(
     @Embedded
     val user: UserEntity,
     @Relation(

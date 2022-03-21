@@ -5,8 +5,6 @@ object UrlContract {
     const val TABLE_NAME = "feed_urls"
 
     object Columns {
-        const val FEED_PHOTO_ID = "feed_photo_id"
-
         const val ID = "id"
         const val RAW = "raw"
         const val FULL = "full"

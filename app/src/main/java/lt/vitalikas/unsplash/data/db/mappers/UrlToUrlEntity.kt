@@ -5,7 +5,7 @@ import lt.vitalikas.unsplash.domain.models.photo.Photo
 import lt.vitalikas.unsplash.domain.models.user.User
 
 class UrlToUrlEntity : Mapper<Photo, UrlEntity> {
-    override fun mapPojoToEntity(from: Photo): UrlEntity =
+    override fun map(from: Photo): UrlEntity =
         UrlEntity(
             id = from.id,
             raw = from.url.raw,

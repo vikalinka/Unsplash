@@ -9,14 +9,17 @@ import lt.vitalikas.unsplash.data.db.relations.UserProfileImageAndUser
 import lt.vitalikas.unsplash.data.db.contracts.UserProfileImageContract
 
 @Dao
-interface FeedUserProfileImageDao {
+interface UserProfileImageDao {
 
     @Insert(
         entity = UserProfileImageEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
-    suspend fun insertFeedUserProfileImage(image: UserProfileImageEntity)
+    suspend fun insertUserProfileImage(image: UserProfileImageEntity)
 
     @Query("SELECT * FROM ${UserProfileImageContract.TABLE_NAME} WHERE ${UserProfileImageContract.Columns.ID} = :id")
-    suspend fun getFeedUserProfileImageAndUserWithFeedUserProfileImageId(id: String): UserProfileImageAndUser?
+    suspend fun getUserProfileImageWithId(id: String): UserProfileImageEntity?
+
+    @Query("SELECT * FROM ${UserProfileImageContract.TABLE_NAME} WHERE ${UserProfileImageContract.Columns.ID} = :id")
+    suspend fun getUserProfileImageAndUserWithUserProfileImageId(id: String): UserProfileImageAndUser?
 }

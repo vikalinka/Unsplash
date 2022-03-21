@@ -5,7 +5,7 @@ import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.domain.models.photo.Photo
 
 class PhotoToPhotoEntityMapper : Mapper<Photo, PhotoEntity> {
-    override fun mapPojoToEntity(from: Photo): PhotoEntity =
+    override fun map(from: Photo): PhotoEntity =
         PhotoEntity(
             id = from.id,
             userId = from.user.id,
