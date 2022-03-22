@@ -2,7 +2,7 @@ package lt.vitalikas.unsplash.data.db.contracts
 
 object UserContract {
 
-    const val TABLE_NAME = "feed_users"
+    const val TABLE_NAME = "users"
 
     object Columns {
         const val USER_PROFILE_IMAGE_ID = "user_profile_image_id"
@@ -21,7 +21,5 @@ object UserContract {
         const val TOTAL_COLLECTIONS = "total_collections"
         const val INSTAGRAM_USERNAME = "instagram_username"
         const val TWITTER_USERNAME = "twitter_username"
-
-        const val LINKS = "links"
     }
 }

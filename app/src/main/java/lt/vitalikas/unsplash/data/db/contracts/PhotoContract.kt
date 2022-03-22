@@ -2,12 +2,12 @@ package lt.vitalikas.unsplash.data.db.contracts
 
 object PhotoContract {
 
-    const val TABLE_NAME = "feed_photos"
+    const val TABLE_NAME = "photos"
 
     object Columns {
         const val USER_ID = "user_id"
-        const val URL_ID = "feed_url_id"
-        const val LINK_ID = "feed_link_id"
+        const val URL_ID = "url_id"
+        const val LINK_ID = "link_id"
 
         const val ID = "id"
         const val CREATED_AT = "created_at"

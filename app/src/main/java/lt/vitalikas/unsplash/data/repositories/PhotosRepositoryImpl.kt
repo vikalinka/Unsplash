@@ -103,16 +103,16 @@ class PhotosRepositoryImpl @Inject constructor(
                  * getting photo url from database and mapping to POJO
                  */
                 val urlEntity = Database.instance.urlDao()
-                    .getUrlWithId(entity.feedUrlId)
-                    ?: error("url with id = ${entity.feedUrlId} not found")
+                    .getUrlWithId(entity.id)
+                    ?: error("url with id = ${entity.id} not found")
                 val url = UrlEntityToUrlMapper().map(urlEntity)
 
                 /**
                  * getting photo link from database and mapping to POJO
                  */
                 val linkEntity = Database.instance.linkDao()
-                    .getLinkWithId(entity.feedLinkId)
-                    ?: error("link with id = ${entity.feedLinkId} not found")
+                    .getLinkWithId(entity.id)
+                    ?: error("link with id = ${entity.id} not found")
                 val link = LinkEntityToLinkMapper().map(linkEntity)
 
                 /**
@@ -142,7 +142,7 @@ class PhotosRepositoryImpl @Inject constructor(
 
     override suspend fun insertFeedPhotos(photos: List<PhotoEntity>) =
         withContext(dispatcherIo) {
-            Database.instance.photosDao().insertAllFeedPhotos(photos)
+            Database.instance.photosDao().insertAllPhotos(photos)
         }
 
     override suspend fun downloadPhoto(url: String, uri: Uri) {

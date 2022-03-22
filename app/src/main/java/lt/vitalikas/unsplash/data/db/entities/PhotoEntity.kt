@@ -2,39 +2,42 @@ package lt.vitalikas.unsplash.data.db.entities
 
 import android.icu.util.Calendar
 import androidx.room.*
+import lt.vitalikas.unsplash.data.db.contracts.LinkContract
 import lt.vitalikas.unsplash.data.db.contracts.PhotoContract
+import lt.vitalikas.unsplash.data.db.contracts.UrlContract
+import lt.vitalikas.unsplash.data.db.contracts.UserContract
 import lt.vitalikas.unsplash.data.db.converters.CalendarConverter
 
 @Entity(
-    tableName = PhotoContract.TABLE_NAME
+    tableName = PhotoContract.TABLE_NAME,
 //    foreignKeys = [
 //        ForeignKey(
 //            entity = UserEntity::class,
 //            parentColumns = [
-//                UsersContract.Columns.ID
+//                UserContract.Columns.ID
 //            ],
 //            childColumns = [
-//                FeedPhotosContract.Columns.USER_ID
+//                PhotoContract.Columns.USER_ID
 //            ],
 //            onDelete = ForeignKey.CASCADE
 //        ),
 //        ForeignKey(
-//            entity = FeedUrlEntity::class,
+//            entity = UrlEntity::class,
 //            parentColumns = [
-//                FeedUrlsContract.Columns.ID
+//                UrlContract.Columns.ID
 //            ],
 //            childColumns = [
-//                FeedPhotosContract.Columns.FEED_URL_ID
+//                PhotoContract.Columns.URL_ID
 //            ],
 //            onDelete = ForeignKey.CASCADE
 //        ),
 //        ForeignKey(
-//            entity = FeedLinkEntity::class,
+//            entity = LinkEntity::class,
 //            parentColumns = [
-//                FeedLinksContract.Columns.ID
+//                LinkContract.Columns.ID
 //            ],
 //            childColumns = [
-//                FeedPhotosContract.Columns.FEED_LINK_ID
+//                PhotoContract.Columns.LINK_ID
 //            ],
 //            onDelete = ForeignKey.CASCADE
 //        )
@@ -44,14 +47,6 @@ import lt.vitalikas.unsplash.data.db.converters.CalendarConverter
 data class PhotoEntity(
     @PrimaryKey
     @ColumnInfo(name = PhotoContract.Columns.ID) val id: String,
-
-    // fk
-    @ColumnInfo(name = PhotoContract.Columns.USER_ID) val userId: String,
-    // fk
-    @ColumnInfo(name = PhotoContract.Columns.URL_ID) val feedUrlId: String,
-    // fk
-    @ColumnInfo(name = PhotoContract.Columns.LINK_ID) val feedLinkId: String,
-
     @ColumnInfo(name = PhotoContract.Columns.CREATED_AT) val createdAt: String,
     @ColumnInfo(name = PhotoContract.Columns.UPDATED_AT) val updatedAt: String,
     @ColumnInfo(name = PhotoContract.Columns.WIDTH) val width: Int,
@@ -61,5 +56,11 @@ data class PhotoEntity(
     @ColumnInfo(name = PhotoContract.Columns.LIKES) val likes: Int,
     @ColumnInfo(name = PhotoContract.Columns.LIKED_BY_USER) val likedByUser: Boolean,
     @ColumnInfo(name = PhotoContract.Columns.DESCRIPTION) val description: String?,
+    // foreign key
+    @ColumnInfo(name = PhotoContract.Columns.USER_ID) val userId: String,
+    // foreign key
+    @ColumnInfo(name = PhotoContract.Columns.URL_ID) val urlId: String,
+    // foreign key
+    @ColumnInfo(name = PhotoContract.Columns.LINK_ID) val linkId: String,
     @ColumnInfo(name = PhotoContract.Columns.LAST_UPDATED_AT) val lastUpdatedAt: Calendar
 )

@@ -14,5 +14,5 @@ data class UserAndPhotoEntity(
         parentColumn = UserContract.Columns.ID,
         entityColumn = PhotoContract.Columns.USER_ID
     )
-    val photo: PhotoEntity?
+    val photo: PhotoEntity
 )

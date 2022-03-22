@@ -2,7 +2,7 @@ package lt.vitalikas.unsplash.data.db.contracts
 
 object UrlContract {
 
-    const val TABLE_NAME = "feed_urls"
+    const val TABLE_NAME = "urls"
 
     object Columns {
         const val ID = "id"

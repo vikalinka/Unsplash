@@ -14,5 +14,5 @@ data class UrlAndPhoto(
         parentColumn = UrlContract.Columns.ID,
         entityColumn = PhotoContract.Columns.URL_ID
     )
-    val photo: PhotoEntity?
+    val photo: PhotoEntity
 )

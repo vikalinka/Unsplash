@@ -12,7 +12,7 @@ interface PhotosDao {
         entity = PhotoEntity::class,
         onConflict = OnConflictStrategy.REPLACE
     )
-    suspend fun insertAllFeedPhotos(photos: List<PhotoEntity>)
+    suspend fun insertAllPhotos(photos: List<PhotoEntity>)
 
     @Query("SELECT * FROM ${PhotoContract.TABLE_NAME}")
     fun getPagingSource(): PagingSource<Int, PhotoEntity>

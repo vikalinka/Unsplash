@@ -10,6 +10,7 @@ import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.*
 import lt.vitalikas.unsplash.data.db.mappers.PhotoToPhotoEntityMapper
+import lt.vitalikas.unsplash.data.db.mappers.UserToUserEntityMapper
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
@@ -23,19 +24,19 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val currentOrder: String
 ) : RemoteMediator<Int, PhotoEntity>() {
 
-    private val feedPhotosDao = Database.instance.photosDao()
-    private val feedUserDao = Database.instance.userDao()
-    private val feedUserProfileImageDao = Database.instance.userProfileImageDao()
-    private val feedUserLinkDao = Database.instance.userLinkDao()
-    private val feedUrlDao = Database.instance.urlDao()
-    private val feedLinkDao = Database.instance.linkDao()
+    private val photosDao = Database.instance.photosDao()
+    private val userDao = Database.instance.userDao()
+    private val userProfileImageDao = Database.instance.userProfileImageDao()
+    private val userLinkDao = Database.instance.userLinkDao()
+    private val urlDao = Database.instance.urlDao()
+    private val linkDao = Database.instance.linkDao()
     private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
 
     override suspend fun initialize(): InitializeAction =
-        if (feedPhotosDao.getFeedPhotoCount() > 0) {
+        if (photosDao.getFeedPhotoCount() > 0) {
             val timestamp = Calendar.getInstance().time.time
-            val outdated = feedPhotosDao.outdated(timestamp, CACHE_TIMEOUT)
+            val outdated = photosDao.outdated(timestamp, CACHE_TIMEOUT)
             Timber.d("OUTDATED DATA = $outdated")
             Timber.d("ORDER = $order")
             Timber.d("CURRENT ORDER = $currentOrder")
@@ -81,7 +82,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     remoteKeysDao.deleteAllRemoteKeys()
-                    feedPhotosDao.deleteAllFeedPhotos()
+                    photosDao.deleteAllFeedPhotos()
                 }
 
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
@@ -95,70 +96,81 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 }
                 remoteKeysDao.insertAllKeys(keys)
 
-                val feedPhotos = mutableListOf<PhotoEntity>()
+                val photoEntities = mutableListOf<PhotoEntity>()
 
                 photos.map { photo ->
 
+                    /**
+                     * Mapping photo to entity and adding to list.
+                     */
                     val photoEntity = PhotoToPhotoEntityMapper().map(photo)
-                    feedPhotos.add(photoEntity)
+                    photoEntities.add(photoEntity)
 
-                    val feedUser = UserEntity(
-                        id = photo.user.id,
-                        userProfileImageId = photo.user.id,
-                        userLinkId = photo.user.id,
-                        username = photo.user.username,
-                        name = photo.user.name,
-                        firstName = photo.user.firstName,
-                        lastName = photo.user.lastName ?: "N/A",
-                        portfolioUrl = photo.user.portfolioUrl,
-                        bio = photo.user.bio,
-                        location = photo.user.location,
-                        totalLikes = photo.user.totalLikes,
-                        totalPhotos = photo.user.totalPhotos,
-                        totalCollections = photo.user.totalCollections,
-                        instagramUsername = photo.user.instagramUsername,
-                        twitterUsername = photo.user.twitterUsername
+                    /**
+                     * Getting user.
+                     */
+                    val user = photo.user
+
+                    /**
+                     * Getting user profile image. Mapping it to entity for saving in database.
+                     */
+                    val userProfileImage = user.profileImage
+                    val userProfileImageEntity = UserProfileImageEntity(
+                        id = user.id,
+                        small = userProfileImage.small,
+                        medium = userProfileImage.medium,
+                        large = userProfileImage.large
                     )
-                    feedUserDao.insertUser(feedUser)
+                    userProfileImageDao.insertUserProfileImage(userProfileImageEntity)
 
-                    val userProfileImage = UserProfileImageEntity(
-                        id = photo.user.id,
-                        small = photo.user.profileImage.small,
-                        medium = photo.user.profileImage.medium,
-                        large = photo.user.profileImage.large
+                    /**
+                     * Getting user link. Mapping it to entity for saving in database.
+                     */
+                    val userLink = user.link
+                    val userLinkEntity = UserLinkEntity(
+                        id = user.id,
+                        self = userLink.self,
+                        html = userLink.html,
+                        photos = userLink.photos,
+                        likes = userLink.likes,
+                        portfolio = userLink.portfolio,
                     )
-                    feedUserProfileImageDao.insertUserProfileImage(userProfileImage)
+                    userLinkDao.insertUserLink(userLinkEntity)
 
-                    val userLink = UserLinkEntity(
-                        id = photo.user.id,
-                        self = photo.user.link.self,
-                        html = photo.user.link.html,
-                        photos = photo.user.link.photos,
-                        likes = photo.user.link.likes,
-                        portfolio = photo.user.link.portfolio,
+                    /**
+                     * user mapping to entity and saving in database
+                     */
+                    val userEntity = UserToUserEntityMapper().map(user)
+                    userDao.insertUser(userEntity)
+
+                    /**
+                     * Getting photo url. Mapping it to entity for saving in database.
+                     */
+                    val photoUrl = photo.url
+                    val photoUrlEntity = UrlEntity(
+                        id = photo.id,
+                        raw = photoUrl.raw,
+                        full = photoUrl.full,
+                        regular = photoUrl.regular,
+                        small = photoUrl.small,
+                        thumb = photoUrl.thumb
                     )
-                    feedUserLinkDao.insertUserLink(userLink)
+                    urlDao.insertFeedUrl(photoUrlEntity)
 
-                    val feedUrl = UrlEntity(
-                        id = photo.user.id,
-                        raw = photo.url.raw,
-                        full = photo.url.full,
-                        regular = photo.url.regular,
-                        small = photo.url.small,
-                        thumb = photo.url.thumb
-                    )
-                    feedUrlDao.insertFeedUrl(feedUrl)
-
+                    /**
+                     * Getting photo link. Mapping it to entity for saving in database.
+                     */
+                    val photoLink = photo.link
                     val feedLink = LinkEntity(
-                        id = photo.user.id,
-                        self = photo.link.self,
-                        html = photo.link.html,
-                        download = photo.link.download,
-                        downloadLocation = photo.link.downloadLocation
+                        id = photo.id,
+                        self = photoLink.self,
+                        html = photoLink.html,
+                        download = photoLink.download,
+                        downloadLocation = photoLink.downloadLocation
                     )
-                    feedLinkDao.insertFeedLink(feedLink)
+                    linkDao.insertFeedLink(feedLink)
                 }
-                feedPhotosDao.insertAllFeedPhotos(feedPhotos)
+                photosDao.insertAllPhotos(photoEntities)
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {

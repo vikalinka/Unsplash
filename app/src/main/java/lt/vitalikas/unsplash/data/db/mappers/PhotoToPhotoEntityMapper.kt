@@ -9,8 +9,8 @@ class PhotoToPhotoEntityMapper : Mapper<Photo, PhotoEntity> {
         PhotoEntity(
             id = from.id,
             userId = from.user.id,
-            feedUrlId = from.user.id,
-            feedLinkId = from.user.id,
+            urlId = from.user.id,
+            linkId = from.user.id,
             createdAt = from.createdAt,
             updatedAt = from.updatedAt,
             width = from.width,

@@ -14,5 +14,5 @@ data class LinkAndPhoto(
         parentColumn = LinkContract.Columns.ID,
         entityColumn = PhotoContract.Columns.LINK_ID
     )
-    val photo: PhotoEntity?
+    val photo: PhotoEntity
 )
