@@ -59,10 +59,12 @@ class PhotosRepositoryImpl @Inject constructor(
                 val userAndPhotoEntity = Database.instance.userDao()
                     .getUserAndPhotoWithUserId(entity.userId)
                     ?: error("user with id = ${entity.userId} not found")
+
                 /**
                  * getting user
                  */
                 val userEntity = userAndPhotoEntity.user
+
                 /**
                  * getting user profile image from database and mapping to POJO
                  */
@@ -71,6 +73,7 @@ class PhotosRepositoryImpl @Inject constructor(
                     ?: error("user profile image with id = ${entity.userId} not found")
                 val userProfileImage =
                     UserProfileImageEntityToUserProfileImageMapper().map(userProfileImageEntity)
+
                 /**
                  * getting user link from database and mapping to POJO
                  */
@@ -78,6 +81,7 @@ class PhotosRepositoryImpl @Inject constructor(
                     .getUserLinkWithId(userEntity.userLinkId)
                     ?: error("user link with id = ${entity.userId} not found")
                 val userLink = UserLinkEntityToUserLinkMapper().map(userLinkEntity)
+
                 /**
                  * mapping user to POJO
                  */
@@ -140,7 +144,7 @@ class PhotosRepositoryImpl @Inject constructor(
     override suspend fun getFeedPhotoDetailsById(id: String) =
         unsplashApi.getFeedPhotoDetails(id)
 
-    override suspend fun insertFeedPhotos(photos: List<PhotoEntity>) =
+    override suspend fun insertAllPhotos(photos: List<PhotoEntity>) =
         withContext(dispatcherIo) {
             Database.instance.photosDao().insertAllPhotos(photos)
         }

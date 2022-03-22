@@ -18,7 +18,7 @@ interface PhotosDao {
     fun getPagingSource(): PagingSource<Int, PhotoEntity>
 
     @Query("DELETE FROM ${PhotoContract.TABLE_NAME}")
-    suspend fun deleteAllFeedPhotos()
+    suspend fun deleteAllPhotos()
 
     @Query(
         "UPDATE ${PhotoContract.TABLE_NAME} " +
@@ -29,11 +29,11 @@ interface PhotosDao {
     suspend fun updatePhoto(id: String, liked: Boolean, count: Int)
 
     @Query("SELECT COUNT(*) FROM ${PhotoContract.TABLE_NAME}")
-    suspend fun getFeedPhotoCount(): Int
+    suspend fun getPhotoCount(): Int
 
     @Query(
         "SELECT EXISTS (SELECT 1 FROM ${PhotoContract.TABLE_NAME} " +
                 "WHERE ${PhotoContract.Columns.LAST_UPDATED_AT} <= :timestamp - :cacheTimeout)"
     )
-    suspend fun outdated(timestamp: Long, cacheTimeout: Long): Boolean
+    suspend fun isAnyPhotoOutdated(timestamp: Long, cacheTimeout: Long): Boolean
 }

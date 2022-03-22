@@ -9,7 +9,6 @@ import androidx.room.withTransaction
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
 import lt.vitalikas.unsplash.data.db.entities.*
-import lt.vitalikas.unsplash.data.db.mappers.PhotoToPhotoEntityMapper
 import lt.vitalikas.unsplash.data.db.mappers.UserToUserEntityMapper
 import okio.IOException
 import retrofit2.HttpException
@@ -30,13 +29,12 @@ class FeedPhotosRemoteMediator @Inject constructor(
     private val userLinkDao = Database.instance.userLinkDao()
     private val urlDao = Database.instance.urlDao()
     private val linkDao = Database.instance.linkDao()
-    private val feedCollectionDao = Database.instance.feedCollectionDao()
     private val remoteKeysDao = Database.instance.remoteKeysDao()
 
     override suspend fun initialize(): InitializeAction =
-        if (photosDao.getFeedPhotoCount() > 0) {
+        if (photosDao.getPhotoCount() > 0) {
             val timestamp = Calendar.getInstance().time.time
-            val outdated = photosDao.outdated(timestamp, CACHE_TIMEOUT)
+            val outdated = photosDao.isAnyPhotoOutdated(timestamp, CACHE_TIMEOUT)
             Timber.d("OUTDATED DATA = $outdated")
             Timber.d("ORDER = $order")
             Timber.d("CURRENT ORDER = $currentOrder")
@@ -82,7 +80,7 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     remoteKeysDao.deleteAllRemoteKeys()
-                    photosDao.deleteAllFeedPhotos()
+                    photosDao.deleteAllPhotos()
                 }
 
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
@@ -99,13 +97,6 @@ class FeedPhotosRemoteMediator @Inject constructor(
                 val photoEntities = mutableListOf<PhotoEntity>()
 
                 photos.map { photo ->
-
-                    /**
-                     * Mapping photo to entity and adding to list.
-                     */
-                    val photoEntity = PhotoToPhotoEntityMapper().map(photo)
-                    photoEntities.add(photoEntity)
-
                     /**
                      * Getting user.
                      */
@@ -146,14 +137,14 @@ class FeedPhotosRemoteMediator @Inject constructor(
                     /**
                      * Getting photo url. Mapping it to entity for saving in database.
                      */
-                    val photoUrl = photo.url
+                    val url = photo.url
                     val photoUrlEntity = UrlEntity(
                         id = photo.id,
-                        raw = photoUrl.raw,
-                        full = photoUrl.full,
-                        regular = photoUrl.regular,
-                        small = photoUrl.small,
-                        thumb = photoUrl.thumb
+                        raw = url.raw,
+                        full = url.full,
+                        regular = url.regular,
+                        small = url.small,
+                        thumb = url.thumb
                     )
                     urlDao.insertFeedUrl(photoUrlEntity)
 
@@ -169,6 +160,27 @@ class FeedPhotosRemoteMediator @Inject constructor(
                         downloadLocation = photoLink.downloadLocation
                     )
                     linkDao.insertFeedLink(feedLink)
+
+                    /**
+                     * Mapping photo to entity and adding to list.
+                     */
+                    val photoEntity = PhotoEntity(
+                        id = photo.id,
+                        createdAt = photo.createdAt,
+                        updatedAt = photo.updatedAt,
+                        width = photo.width,
+                        height = photo.height,
+                        color = photo.color,
+                        blurHash = photo.blurHash,
+                        likes = photo.likes,
+                        likedByUser = photo.likedByUser,
+                        description = photo.description,
+                        userId = user.id,
+                        urlId = photo.id,
+                        linkId = photo.id,
+                        lastUpdatedAt = Calendar.getInstance()
+                    )
+                    photoEntities.add(photoEntity)
                 }
                 photosDao.insertAllPhotos(photoEntities)
             }

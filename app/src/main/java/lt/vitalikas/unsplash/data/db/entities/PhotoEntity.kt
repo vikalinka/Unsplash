@@ -10,38 +10,38 @@ import lt.vitalikas.unsplash.data.db.converters.CalendarConverter
 
 @Entity(
     tableName = PhotoContract.TABLE_NAME,
-//    foreignKeys = [
-//        ForeignKey(
-//            entity = UserEntity::class,
-//            parentColumns = [
-//                UserContract.Columns.ID
-//            ],
-//            childColumns = [
-//                PhotoContract.Columns.USER_ID
-//            ],
-//            onDelete = ForeignKey.CASCADE
-//        ),
-//        ForeignKey(
-//            entity = UrlEntity::class,
-//            parentColumns = [
-//                UrlContract.Columns.ID
-//            ],
-//            childColumns = [
-//                PhotoContract.Columns.URL_ID
-//            ],
-//            onDelete = ForeignKey.CASCADE
-//        ),
-//        ForeignKey(
-//            entity = LinkEntity::class,
-//            parentColumns = [
-//                LinkContract.Columns.ID
-//            ],
-//            childColumns = [
-//                PhotoContract.Columns.LINK_ID
-//            ],
-//            onDelete = ForeignKey.CASCADE
-//        )
-//    ]
+    foreignKeys = [
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = [
+                UserContract.Columns.ID
+            ],
+            childColumns = [
+                PhotoContract.Columns.USER_ID
+            ],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = UrlEntity::class,
+            parentColumns = [
+                UrlContract.Columns.ID
+            ],
+            childColumns = [
+                PhotoContract.Columns.URL_ID
+            ],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LinkEntity::class,
+            parentColumns = [
+                LinkContract.Columns.ID
+            ],
+            childColumns = [
+                PhotoContract.Columns.LINK_ID
+            ],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 @TypeConverters(CalendarConverter::class)
 data class PhotoEntity(
