@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_details_screen
+package lt.vitalikas.unsplash.ui.photo_details_screen
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,11 +8,11 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.ItemFeedPhotoDetailsBinding
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 
-class FeedDetailsAdapterDelegate(
+class PhotoDetailsAdapterDelegate(
     private val onLocationClick: (lat: Double, lng: Double) -> Unit,
     private val onDownloadClick: (url: String) -> Unit
 ) :
-    AbsListItemAdapterDelegate<PhotoDetails, PhotoDetails, FeedDetailsAdapterDelegate.FeedPhotoDetailsViewHolder>() {
+    AbsListItemAdapterDelegate<PhotoDetails, PhotoDetails, PhotoDetailsAdapterDelegate.FeedPhotoDetailsViewHolder>() {
 
     class FeedPhotoDetailsViewHolder(
         private val binding: ItemFeedPhotoDetailsBinding,

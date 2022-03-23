@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/details2"
-        android:name="lt.vitalikas.unsplash.ui.feed_details_screen.FeedDetailsFragment"
+        android:name="lt.vitalikas.unsplash.ui.photo_details_screen.PhotoDetailsFragment"
         android:label="FeedDetailsFragment"
         tools:layout="@layout/fragment_feed_details">
         <action

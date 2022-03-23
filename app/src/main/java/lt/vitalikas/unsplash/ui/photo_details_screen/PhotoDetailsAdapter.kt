@@ -1,17 +1,17 @@
-package lt.vitalikas.unsplash.ui.feed_details_screen
+package lt.vitalikas.unsplash.ui.photo_details_screen
 
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 
-class FeedDetailsAdapter(
+class PhotoDetailsAdapter(
     onLocationClick: (lat: Double, lng: Double) -> Unit,
     onDownloadClick: (url: String) -> Unit
 ) : AsyncListDifferDelegationAdapter<PhotoDetails>(FeedPhotoDetailsDiffUtilItemCallback()) {
 
     init {
         delegatesManager.addDelegate(
-            FeedDetailsAdapterDelegate(
+            PhotoDetailsAdapterDelegate(
                 onLocationClick = onLocationClick,
                 onDownloadClick = onDownloadClick
             )

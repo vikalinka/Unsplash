@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_details_screen
+package lt.vitalikas.unsplash.ui.photo_details_screen
 
 import android.Manifest
 import android.content.Intent
@@ -40,7 +40,7 @@ import timber.log.Timber
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
-class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
+class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
     Launcher {
 
     private val binding by viewBinding(FragmentFeedDetailsBinding::bind)
@@ -67,9 +67,9 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private val noConnectionText get() = binding.noConnectionTextView
     private val toolbar get() = binding.toolbar
 
-    private val feedDetailsViewModel by viewModels<FeedDetailsViewModel>()
+    private val feedDetailsViewModel by viewModels<PhotoDetailsViewModel>()
 
-    private val args by navArgs<FeedDetailsFragmentArgs>()
+    private val args by navArgs<PhotoDetailsFragmentArgs>()
 
     private lateinit var photoShareLink: String
 
@@ -137,10 +137,10 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 feedDetailsViewModel.feedDetailsState.collect { state ->
                     when (state) {
-                        is FeedDetailsState.Loading -> {
+                        is PhotoDetailsFetchingState.Loading -> {
                             loadingProgress.isVisible = true
                         }
-                        is FeedDetailsState.Success -> {
+                        is PhotoDetailsFetchingState.Success -> {
                             loadingProgress.isVisible = false
                             locationIcon.isVisible = true
                             download.isVisible = true
@@ -148,7 +148,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
                             bindFetchedData(state.data)
                         }
-                        is FeedDetailsState.Error -> {
+                        is PhotoDetailsFetchingState.Error -> {
                             loadingProgress.isVisible = false
                             state.error.message?.let { showInfo(it) }
                             Timber.d("${state.error}")
@@ -235,7 +235,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         )
 
         tag.text = getString(R.string.tag, details.tags.joinToString { tag ->
-            "#${tag.title}"
+            "#${tag.title ?: "N/A"}"
         })
 
         madeWith.text = getString(R.string.made_with, details.exif.make)
@@ -484,7 +484,7 @@ class FeedDetailsFragment : Fragment(R.layout.fragment_feed_details),
         )
 
     private fun showPermissionRationaleDialog() =
-        findNavController().navigate(FeedDetailsFragmentDirections.actionDetails1ToRationale1())
+        findNavController().navigate(PhotoDetailsFragmentDirections.actionDetails1ToRationale1())
 
     private companion object {
         val PERMISSIONS = listOfNotNull(

@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.ui.feed_details_screen
+package lt.vitalikas.unsplash.ui.photo_details_screen
 
 import android.app.Application
 import android.net.Uri
@@ -19,7 +19,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedDetailsViewModel @Inject constructor(
+class PhotoDetailsViewModel @Inject constructor(
     val context: Application,
     private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase,
     networkStatusTracker: NetworkStatusTracker,
@@ -31,7 +31,7 @@ class FeedDetailsViewModel @Inject constructor(
     val networkStatus = networkStatusTracker.networkStatus
 
     private val _feedDetailsState =
-        MutableStateFlow<FeedDetailsState>(FeedDetailsState.Loading)
+        MutableStateFlow<PhotoDetailsFetchingState>(PhotoDetailsFetchingState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
     fun downloadPhoto(photoId: String, fetchingLocationUri: Uri) = WorkManager.getInstance(context)
@@ -59,10 +59,10 @@ class FeedDetailsViewModel @Inject constructor(
         try {
             scope.launch {
                 val details = getFeedPhotoDetailsUseCase(id)
-                _feedDetailsState.value = FeedDetailsState.Success(details)
+                _feedDetailsState.value = PhotoDetailsFetchingState.Success(details)
             }
         } catch (t: Throwable) {
-            _feedDetailsState.value = FeedDetailsState.Error(t)
+            _feedDetailsState.value = PhotoDetailsFetchingState.Error(t)
         }
     }
 
@@ -72,7 +72,7 @@ class FeedDetailsViewModel @Inject constructor(
                 photosRepository.updatePhoto(id, isLiked, likeCount)
             } catch (t: Throwable) {
                 Timber.d(t)
-                _feedDetailsState.value = FeedDetailsState.Error(t)
+                _feedDetailsState.value = PhotoDetailsFetchingState.Error(t)
             }
         }
 }
