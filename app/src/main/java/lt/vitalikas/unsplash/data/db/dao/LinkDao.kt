@@ -7,7 +7,6 @@ import androidx.room.Query
 import lt.vitalikas.unsplash.data.db.entities.LinkEntity
 import lt.vitalikas.unsplash.data.db.relations.LinkAndPhoto
 import lt.vitalikas.unsplash.data.db.contracts.LinkContract
-import lt.vitalikas.unsplash.domain.models.base.Link
 
 @Dao
 interface LinkDao {

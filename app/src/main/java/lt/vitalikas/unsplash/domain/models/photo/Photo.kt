@@ -2,8 +2,6 @@ package lt.vitalikas.unsplash.domain.models.photo
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import lt.vitalikas.unsplash.domain.models.base.Link
-import lt.vitalikas.unsplash.domain.models.base.Url
 import lt.vitalikas.unsplash.domain.models.user.User
 
 @JsonClass(generateAdapter = true)

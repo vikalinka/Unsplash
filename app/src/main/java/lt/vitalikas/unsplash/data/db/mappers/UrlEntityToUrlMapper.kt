@@ -1,7 +1,7 @@
 package lt.vitalikas.unsplash.data.db.mappers
 
 import lt.vitalikas.unsplash.data.db.entities.UrlEntity
-import lt.vitalikas.unsplash.domain.models.base.Url
+import lt.vitalikas.unsplash.domain.models.photo.Url
 
 class UrlEntityToUrlMapper : Mapper<UrlEntity, Url> {
     override fun map(from: UrlEntity): Url =
