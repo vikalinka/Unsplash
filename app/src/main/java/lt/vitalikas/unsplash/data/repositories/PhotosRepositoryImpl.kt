@@ -44,102 +44,107 @@ class PhotosRepositoryImpl @Inject constructor(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            remoteMediator = FeedPhotosRemoteMediator(
+            remoteMediator = PhotosRemoteMediator(
                 api = unsplashApi,
                 order = order,
                 currentOrder = currentOrder
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
-            pagingData.map { entity ->
-
-                /**
-                 * getting photo and user relation from database
-                 */
-                val userAndPhotoEntity = Database.instance.userDao()
-                    .getUserAndPhotoWithUserId(entity.userId)
-                    ?: error("user with id = ${entity.userId} not found")
-
-                /**
-                 * getting user
-                 */
-                val userEntity = userAndPhotoEntity.user
-
-                /**
-                 * getting user profile image from database and mapping to POJO
-                 */
-                val userProfileImageEntity = Database.instance.userProfileImageDao()
-                    .getUserProfileImageWithId(userEntity.userProfileImageId)
-                    ?: error("user profile image with id = ${entity.userId} not found")
-                val userProfileImage =
-                    UserProfileImageEntityToUserProfileImageMapper().map(userProfileImageEntity)
-
-                /**
-                 * getting user link from database and mapping to POJO
-                 */
-                val userLinkEntity = Database.instance.userLinkDao()
-                    .getUserLinkWithId(userEntity.userLinkId)
-                    ?: error("user link with id = ${entity.userId} not found")
-                val userLink = UserLinkEntityToUserLinkMapper().map(userLinkEntity)
-
-                /**
-                 * mapping user to POJO
-                 */
-                val user = User(
-                    id = userEntity.id,
-                    username = userEntity.username,
-                    name = userEntity.name,
-                    firstName = userEntity.firstName,
-                    lastName = userEntity.lastName,
-                    instagramUsername = userEntity.instagramUsername,
-                    twitterUsername = userEntity.twitterUsername,
-                    portfolioUrl = userEntity.portfolioUrl,
-                    bio = userEntity.bio,
-                    location = userEntity.location,
-                    totalLikes = userEntity.totalLikes,
-                    totalPhotos = userEntity.totalPhotos,
-                    totalCollections = userEntity.totalCollections,
-                    profileImage = userProfileImage,
-                    link = userLink
-                )
-
-                /**
-                 * getting photo url from database and mapping to POJO
-                 */
-                val urlEntity = Database.instance.urlDao()
-                    .getUrlWithId(entity.id)
-                    ?: error("url with id = ${entity.id} not found")
-                val url = UrlEntityToUrlMapper().map(urlEntity)
-
-                /**
-                 * getting photo link from database and mapping to POJO
-                 */
-                val linkEntity = Database.instance.linkDao()
-                    .getLinkWithId(entity.id)
-                    ?: error("link with id = ${entity.id} not found")
-                val link = LinkEntityToLinkMapper().map(linkEntity)
-
-                /**
-                 * mapping photo to POJO
-                 */
-                Photo(
-                    id = entity.id,
-                    createdAt = entity.createdAt,
-                    updatedAt = entity.updatedAt,
-                    width = entity.width,
-                    height = entity.height,
-                    color = entity.color,
-                    blurHash = entity.blurHash,
-                    likes = entity.likes,
-                    likedByUser = entity.likedByUser,
-                    description = entity.description,
-                    user = user,
-                    url = url,
-                    link = link
-                )
-            }
+            mapPagingData(pagingData)
         }
     }
+
+    private fun mapPagingData(pagingData: PagingData<PhotoEntity>) =
+        pagingData.map { photoEntity ->
+
+            /**
+             * Getting photo and user relation from database.
+             */
+            val userAndPhotoEntity = Database.instance.userDao()
+                .getUserAndPhotoWithUserId(photoEntity.userId)
+                ?: error("user with id = ${photoEntity.userId} not found")
+
+            /**
+             * Getting user.
+             */
+            val userEntity = userAndPhotoEntity.user
+
+            /**
+             * Getting user profile image from database and mapping to POJO.
+             */
+            val userProfileImageEntity = Database.instance.userProfileImageDao()
+                .getUserProfileImageWithId(userEntity.userProfileImageId)
+                ?: error("user profile image with id = ${photoEntity.userId} not found")
+            val userProfileImage =
+                UserProfileImageEntityToUserProfileImageMapper().map(userProfileImageEntity)
+
+            /**
+             * Getting user link from database and mapping to POJO.
+             */
+            val userLinkEntity = Database.instance.userLinkDao()
+                .getUserLinkWithId(userEntity.userLinkId)
+                ?: error("user link with id = ${photoEntity.userId} not found")
+            val userLink = UserLinkEntityToUserLinkMapper().map(userLinkEntity)
+
+            /**
+             * Mapping user to POJO.
+             */
+            val user = User(
+                id = userEntity.id,
+                username = userEntity.username,
+                name = userEntity.name,
+                firstName = userEntity.firstName,
+                lastName = userEntity.lastName,
+                instagramUsername = userEntity.instagramUsername,
+                twitterUsername = userEntity.twitterUsername,
+                portfolioUrl = userEntity.portfolioUrl,
+                bio = userEntity.bio,
+                location = userEntity.location,
+                totalLikes = userEntity.totalLikes,
+                totalPhotos = userEntity.totalPhotos,
+                totalCollections = userEntity.totalCollections,
+                profileImage = userProfileImage,
+                link = userLink
+            )
+
+            /**
+             * Getting photo url from database and mapping to POJO.
+             * Url id is the same as photo id.
+             */
+            val urlEntity = Database.instance.urlDao()
+                .getUrlWithId(photoEntity.id)
+                ?: error("url with id = ${photoEntity.id} not found")
+            val url = UrlEntityToUrlMapper().map(urlEntity)
+
+            /**
+             * Getting photo link from database and mapping to POJO.
+             * Link id is the same as photo id.
+             */
+            val linkEntity = Database.instance.linkDao()
+                .getLinkWithId(photoEntity.id)
+                ?: error("link with id = ${photoEntity.id} not found")
+            val link = LinkEntityToLinkMapper().map(linkEntity)
+
+            /**
+             * Finally mapping photo to POJO for later pass it to paging adapter.
+             */
+            Photo(
+                id = photoEntity.id,
+                createdAt = photoEntity.createdAt,
+                updatedAt = photoEntity.updatedAt,
+                width = photoEntity.width,
+                height = photoEntity.height,
+                color = photoEntity.color,
+                blurHash = photoEntity.blurHash,
+                likes = photoEntity.likes,
+                likedByUser = photoEntity.likedByUser,
+                description = photoEntity.description,
+                user = user,
+                url = url,
+                link = link
+            )
+        }
 
     override suspend fun getFeedPhotoDetailsById(id: String) =
         unsplashApi.getFeedPhotoDetails(id)

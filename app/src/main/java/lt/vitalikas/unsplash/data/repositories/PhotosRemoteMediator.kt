@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class FeedPhotosRemoteMediator @Inject constructor(
+class PhotosRemoteMediator @Inject constructor(
     private val api: UnsplashApi,
     private val order: String,
     private val currentOrder: String
