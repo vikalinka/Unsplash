@@ -50,9 +50,10 @@ class PhotosRepositoryImpl @Inject constructor(
                 currentOrder = currentOrder
             ),
             pagingSourceFactory = pagingSourceFactory
-        ).flow.map { pagingData ->
-            mapPagingData(pagingData)
-        }
+        ).flow
+            .map { pagingData ->
+                mapPagingData(pagingData)
+            }
     }
 
     private fun mapPagingData(pagingData: PagingData<PhotoEntity>) =

@@ -12,8 +12,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -32,6 +34,7 @@ import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
+import lt.vitalikas.unsplash.ui.feed_screen.FeedViewModel
 import lt.vitalikas.unsplash.ui.rationale_screen.Launcher
 import lt.vitalikas.unsplash.utils.hasQ
 import lt.vitalikas.unsplash.utils.showInfo
@@ -68,6 +71,8 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private val toolbar get() = binding.toolbar
 
     private val feedDetailsViewModel by viewModels<PhotoDetailsViewModel>()
+
+    private val photoViewModel by activityViewModels<FeedViewModel>()
 
     private val args by navArgs<PhotoDetailsFragmentArgs>()
 
@@ -348,15 +353,27 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
             setOnClickListener { feedDetailsViewModel.dislikePhoto(args.id) }
         }
 
-        likeCount++
+        val totalLikeCount = likeCount + 1
 
-        totalLikes.text = likeCount.toString()
+        totalLikes.text = totalLikeCount.toString()
 
-        feedDetailsViewModel.updatePhotoInDatabase(
+//        feedDetailsViewModel.updatePhotoInDatabase(
+//            id = args.id,
+//            isLiked = true,
+//            likeCount = likeCount
+//        )
+
+        photoViewModel.updateLocalChanges(
             id = args.id,
             isLiked = true,
-            likeCount = likeCount
+            likeCount = totalLikeCount
         )
+
+//        feedDetailsViewModel.updateLocalChanges(
+//            id = args.id,
+//            isLiked = true,
+//            likeCount = totalLikeCount
+//        )
     }
 
     private fun observeDislikingPhoto() {

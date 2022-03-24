@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -37,7 +37,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val refreshLayout get() = binding.srl
     private val toolbar get() = binding.toolbar
 
-    private val feedViewModel by viewModels<FeedViewModel>()
+    private val feedViewModel by activityViewModels<FeedViewModel>()
 
     private lateinit var id: String
 
@@ -209,7 +209,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("LIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedLike()
+                        updateDataOnPhotoReaction(true)
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("LIKING PHOTO CANCELED")
@@ -220,25 +220,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     }
                 }
             }
-    }
-
-    private fun updateDataOnFeedLike() {
-        // getting data from paging adapter`s snapshot
-        val photo = feedAdapter.snapshot().firstOrNull { snapshotItem ->
-            snapshotItem?.id == this.id
-        }
-
-        photo?.let {
-            // updating snapshot data
-            it.likedByUser = true
-            it.likes += 1
-
-            // updating paging data adapter
-            feedAdapter.notifyDataSetChanged()
-
-            // updating database data
-            feedViewModel.updatePhotoInDatabase(it.id, true, it.likes)
-        }
     }
 
     private fun observeDislikingPhoto() {
@@ -262,7 +243,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DISLIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedDislike()
+                        updateDataOnPhotoReaction(false)
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DISLIKING PHOTO CANCELED")
@@ -275,22 +256,42 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
             }
     }
 
-    private fun updateDataOnFeedDislike() {
+    private fun updateDataOnPhotoReaction(reaction: Boolean) {
+
         // getting data from paging adapter`s snapshot
-        val snapshotItem = feedAdapter.snapshot().firstOrNull { snapshotItem ->
+        val photo = feedAdapter.snapshot().firstOrNull { snapshotItem ->
             snapshotItem?.id == this.id
         }
 
-        snapshotItem?.let {
-            // updating snapshot data
-            it.likedByUser = false
-            it.likes -= 1
+        photo?.let {
+            /**
+             * Updating single item in list using its snapshot.
+             * Not recommended.
+             */
 
-            // updating paging data adapter
-            feedAdapter.notifyDataSetChanged()
+//            // updating snapshot data
+//            it.likedByUser = true
+//            it.likes += 1
+//            // updating paging data adapter
+//            feedAdapter.notifyDataSetChanged()
+
+            val id = it.id
+
+            val totalLikes = if (reaction) {
+                it.likes + 1
+            } else {
+                it.likes - 1
+            }
+
+            /**
+             * Updating single item using Flow combine method.
+             * Combining paging data flow with local changes flow.
+             */
+            // updating local changes
+            feedViewModel.updateLocalChanges(id, reaction, totalLikes)
 
             // updating database data
-            feedViewModel.updatePhotoInDatabase(it.id, false, it.likes)
+            feedViewModel.updatePhotoInDatabase(id, reaction, totalLikes)
         }
     }
 
