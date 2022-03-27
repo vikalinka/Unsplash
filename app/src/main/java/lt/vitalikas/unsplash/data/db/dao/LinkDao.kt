@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.db.entities.LinkEntity
-import lt.vitalikas.unsplash.data.db.relations.LinkAndPhoto
 import lt.vitalikas.unsplash.data.db.contracts.LinkContract
 
 @Dao
@@ -19,7 +18,4 @@ interface LinkDao {
 
     @Query("SELECT * FROM ${LinkContract.TABLE_NAME} WHERE ${LinkContract.Columns.ID} = :id")
     suspend fun getLinkWithId(id: String): LinkEntity?
-
-    @Query("SELECT * FROM ${LinkContract.TABLE_NAME} WHERE ${LinkContract.Columns.ID} = :id")
-    suspend fun getFeedLinkAndFeedPhotoWithFeedLinkId(id: String): LinkAndPhoto?
 }

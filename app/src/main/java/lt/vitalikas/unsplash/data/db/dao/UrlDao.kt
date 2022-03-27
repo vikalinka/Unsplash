@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import lt.vitalikas.unsplash.data.db.entities.UrlEntity
-import lt.vitalikas.unsplash.data.db.relations.UrlAndPhoto
 import lt.vitalikas.unsplash.data.db.contracts.UrlContract
 
 @Dao
@@ -19,7 +18,4 @@ interface UrlDao {
 
     @Query("SELECT * FROM ${UrlContract.TABLE_NAME} WHERE ${UrlContract.Columns.ID} = :id")
     suspend fun getUrlWithId(id: String): UrlEntity?
-
-    @Query("SELECT * FROM ${UrlContract.TABLE_NAME} WHERE ${UrlContract.Columns.ID} = :id")
-    suspend fun getFeedUrlAndFeedPhotoWithFeedUrlId(id: String): UrlAndPhoto?
 }

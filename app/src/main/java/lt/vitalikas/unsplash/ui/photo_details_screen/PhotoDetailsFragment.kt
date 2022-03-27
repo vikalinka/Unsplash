@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -334,7 +333,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("LIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedLike()
+                        updateDataOnPhotoReaction(true)
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("LIKING PHOTO CANCELED")
@@ -345,35 +344,6 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
-    }
-
-    private fun updateDataOnFeedLike() {
-        with(liked) {
-            liked.setImageResource(R.drawable.ic_love_filled)
-            setOnClickListener { feedDetailsViewModel.dislikePhoto(args.id) }
-        }
-
-        val totalLikeCount = likeCount + 1
-
-        totalLikes.text = totalLikeCount.toString()
-
-//        feedDetailsViewModel.updatePhotoInDatabase(
-//            id = args.id,
-//            isLiked = true,
-//            likeCount = likeCount
-//        )
-
-        photoViewModel.updateLocalChanges(
-            id = args.id,
-            isLiked = true,
-            likeCount = totalLikeCount
-        )
-
-//        feedDetailsViewModel.updateLocalChanges(
-//            id = args.id,
-//            isLiked = true,
-//            likeCount = totalLikeCount
-//        )
     }
 
     private fun observeDislikingPhoto() {
@@ -397,7 +367,7 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     WorkInfo.State.SUCCEEDED -> {
                         Timber.d("DISLIKING PHOTO SUCCEEDED")
                         WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnFeedDislike()
+                        updateDataOnPhotoReaction(false)
                     }
                     WorkInfo.State.CANCELLED -> {
                         Timber.d("DISLIKING PHOTO CANCELED")
@@ -408,23 +378,6 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
-    }
-
-    private fun updateDataOnFeedDislike() {
-        with(liked) {
-            liked.setImageResource(R.drawable.ic_love)
-            setOnClickListener { feedDetailsViewModel.likePhoto(args.id) }
-        }
-
-        likeCount--
-
-        totalLikes.text = likeCount.toString()
-
-        feedDetailsViewModel.updatePhotoInDatabase(
-            id = args.id,
-            isLiked = false,
-            likeCount = likeCount
-        )
     }
 
     private fun observeDownload() {
@@ -464,6 +417,39 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
                     }
                 }
             }
+    }
+
+    private fun updateDataOnPhotoReaction(reaction: Boolean) {
+        val id = args.id
+        val newLikeCount = if (reaction) {
+            likeCount + 1
+        } else {
+            likeCount - 1
+        }
+
+        totalLikes.text = newLikeCount.toString()
+
+        with(liked) {
+            if (reaction) {
+                liked.setImageResource(R.drawable.ic_love_filled)
+                setOnClickListener { feedDetailsViewModel.dislikePhoto(args.id) }
+            } else {
+                liked.setImageResource(R.drawable.ic_love)
+                setOnClickListener { feedDetailsViewModel.likePhoto(args.id) }
+            }
+        }
+
+        photoViewModel.updateLocalChanges(
+            id = id,
+            isLiked = reaction,
+            likeCount = newLikeCount
+        )
+
+        photoViewModel.updatePhotoInDatabase(
+            id = id,
+            isLiked = reaction,
+            likeCount = newLikeCount
+        )
     }
 
     private fun handleToolbarNavigation() {

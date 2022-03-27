@@ -42,7 +42,7 @@ class FeedViewModel @Inject constructor(
         private set
 
     suspend fun getFeedPhotos(order: String) {
-        val dataFlow = getFeedPhotosUseCase(order, prevOrderBy)
+        val dataFlow = getFeedPhotosUseCase(order, prevOrderBy).cachedIn(viewModelScope)
 
         dataFlow.combine(localChangesFlow) { pagingData, localChanges ->
             pagingData.map { photo ->
@@ -60,11 +60,6 @@ class FeedViewModel @Inject constructor(
                 photoWithLocalChanges
             }
         }
-
-        prevOrderBy = order
-
-        dataFlow
-            .cachedIn(viewModelScope)
             .onEach { pagingData ->
                 _feedState.value = FeedState.Success(pagingData)
             }
@@ -73,6 +68,8 @@ class FeedViewModel @Inject constructor(
                 _feedState.value = FeedState.Error(t)
             }
             .launchIn(viewModelScope)
+
+        prevOrderBy = order
     }
 
     fun likePhoto(photoId: String) = WorkManager.getInstance(context)
@@ -103,7 +100,6 @@ class FeedViewModel @Inject constructor(
         localChanges.reactionFlags[id] = isLiked
         localChanges.reactionTotalCounts[id] = likeCount
         localChangesFlow.value = OnChange(localChanges)
-        Timber.d("ID = $id, REACTION = $isLiked, LIKE_COUNT = $likeCount")
     }
 
     companion object {

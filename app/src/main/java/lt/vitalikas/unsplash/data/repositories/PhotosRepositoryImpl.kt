@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.UnsplashApi
-import lt.vitalikas.unsplash.data.db.Database
+import lt.vitalikas.unsplash.data.db.dao.DatabaseDao
 import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.data.db.mappers.LinkEntityToLinkMapper
 import lt.vitalikas.unsplash.data.db.mappers.UrlEntityToUrlMapper
@@ -27,6 +27,7 @@ import javax.inject.Inject
 
 class PhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
+    private val db: DatabaseDao,
     private val context: Context,
     private val dispatcherIo: CoroutineDispatcher
 ) : PhotosRepository {
@@ -37,7 +38,7 @@ class PhotosRepositoryImpl @Inject constructor(
         currentOrder: String
     ): Flow<PagingData<Photo>> {
         val pagingSourceFactory = {
-            Database.instance.photosDao().getPagingSource()
+            db.photosDao().getPagingSource()
         }
         return Pager(
             config = PagingConfig(
@@ -47,7 +48,8 @@ class PhotosRepositoryImpl @Inject constructor(
             remoteMediator = PhotosRemoteMediator(
                 api = unsplashApi,
                 order = order,
-                currentOrder = currentOrder
+                currentOrder = currentOrder,
+                db = db
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
@@ -62,7 +64,7 @@ class PhotosRepositoryImpl @Inject constructor(
             /**
              * Getting photo and user relation from database.
              */
-            val userAndPhotoEntity = Database.instance.userDao()
+            val userAndPhotoEntity = db.userDao()
                 .getUserAndPhotoWithUserId(photoEntity.userId)
                 ?: error("user with id = ${photoEntity.userId} not found")
 
@@ -74,7 +76,7 @@ class PhotosRepositoryImpl @Inject constructor(
             /**
              * Getting user profile image from database and mapping to POJO.
              */
-            val userProfileImageEntity = Database.instance.userProfileImageDao()
+            val userProfileImageEntity = db.userProfileImageDao()
                 .getUserProfileImageWithId(userEntity.userProfileImageId)
                 ?: error("user profile image with id = ${photoEntity.userId} not found")
             val userProfileImage =
@@ -83,7 +85,7 @@ class PhotosRepositoryImpl @Inject constructor(
             /**
              * Getting user link from database and mapping to POJO.
              */
-            val userLinkEntity = Database.instance.userLinkDao()
+            val userLinkEntity = db.userLinkDao()
                 .getUserLinkWithId(userEntity.userLinkId)
                 ?: error("user link with id = ${photoEntity.userId} not found")
             val userLink = UserLinkEntityToUserLinkMapper().map(userLinkEntity)
@@ -113,7 +115,7 @@ class PhotosRepositoryImpl @Inject constructor(
              * Getting photo url from database and mapping to POJO.
              * Url id is the same as photo id.
              */
-            val urlEntity = Database.instance.urlDao()
+            val urlEntity = db.urlDao()
                 .getUrlWithId(photoEntity.id)
                 ?: error("url with id = ${photoEntity.id} not found")
             val url = UrlEntityToUrlMapper().map(urlEntity)
@@ -122,7 +124,7 @@ class PhotosRepositoryImpl @Inject constructor(
              * Getting photo link from database and mapping to POJO.
              * Link id is the same as photo id.
              */
-            val linkEntity = Database.instance.linkDao()
+            val linkEntity = db.linkDao()
                 .getLinkWithId(photoEntity.id)
                 ?: error("link with id = ${photoEntity.id} not found")
             val link = LinkEntityToLinkMapper().map(linkEntity)
@@ -152,7 +154,7 @@ class PhotosRepositoryImpl @Inject constructor(
 
     override suspend fun insertAllPhotos(photos: List<PhotoEntity>) =
         withContext(dispatcherIo) {
-            Database.instance.photosDao().insertAllPhotos(photos)
+            db.photosDao().insertAllPhotos(photos)
         }
 
     override suspend fun downloadPhoto(url: String, uri: Uri) {
@@ -171,7 +173,7 @@ class PhotosRepositoryImpl @Inject constructor(
 
     override suspend fun updatePhoto(id: String, isLiked: Boolean, likeCount: Int) =
         withContext(dispatcherIo) {
-            Database.instance.photosDao().updatePhoto(id, isLiked, likeCount)
+            db.photosDao().updatePhoto(id, isLiked, likeCount)
         }
 
     override fun getSearchResult(query: String): Flow<PagingData<Photo>> =

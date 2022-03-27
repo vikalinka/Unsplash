@@ -57,7 +57,14 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
                 feedViewModel.dislikePhoto(id)
             }
-        )
+        ).apply {
+            /**
+             * After updating photo data in database and navigating up from detailed screen RV scrolls to the top.
+             * To avoid this, need to use stateRestorationPolicy.
+             */
+            this.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

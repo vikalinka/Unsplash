@@ -8,28 +8,24 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import lt.vitalikas.unsplash.data.api.UnsplashApi
 import lt.vitalikas.unsplash.data.db.Database
+import lt.vitalikas.unsplash.data.db.dao.DatabaseDao
 import lt.vitalikas.unsplash.data.db.entities.*
 import lt.vitalikas.unsplash.data.db.mappers.UserToUserEntityMapper
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class PhotosRemoteMediator @Inject constructor(
+class PhotosRemoteMediator(
     private val api: UnsplashApi,
     private val order: String,
-    private val currentOrder: String
+    private val currentOrder: String,
+    private val db: DatabaseDao
 ) : RemoteMediator<Int, PhotoEntity>() {
 
-    private val photosDao = Database.instance.photosDao()
-    private val userDao = Database.instance.userDao()
-    private val userProfileImageDao = Database.instance.userProfileImageDao()
-    private val userLinkDao = Database.instance.userLinkDao()
-    private val urlDao = Database.instance.urlDao()
-    private val linkDao = Database.instance.linkDao()
-    private val remoteKeysDao = Database.instance.remoteKeysDao()
+    private val photosDao = db.photosDao()
+    private val remoteKeysDao = db.remoteKeysDao()
 
     override suspend fun initialize(): InitializeAction =
         if (photosDao.getPhotoCount() > 0) {
@@ -52,7 +48,8 @@ class PhotosRemoteMediator @Inject constructor(
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKey = getRemoteKeyClosestToCurrentPosition(state)
-                remoteKey?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
+                val key = remoteKey?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
+                key
             }
             LoadType.PREPEND -> {
                 val remoteKey = getRemoteKeyForFirstItem(state)
@@ -112,7 +109,7 @@ class PhotosRemoteMediator @Inject constructor(
                         medium = userProfileImage.medium,
                         large = userProfileImage.large
                     )
-                    userProfileImageDao.insertUserProfileImage(userProfileImageEntity)
+                    db.userProfileImageDao().insertUserProfileImage(userProfileImageEntity)
 
                     /**
                      * Getting user link. Mapping it to entity for saving in database.
@@ -126,13 +123,13 @@ class PhotosRemoteMediator @Inject constructor(
                         likes = userLink.likes,
                         portfolio = userLink.portfolio,
                     )
-                    userLinkDao.insertUserLink(userLinkEntity)
+                    db.userLinkDao().insertUserLink(userLinkEntity)
 
                     /**
                      * user mapping to entity and saving in database
                      */
                     val userEntity = UserToUserEntityMapper().map(user)
-                    userDao.insertUser(userEntity)
+                    db.userDao().insertUser(userEntity)
 
                     /**
                      * Getting photo url. Mapping it to entity for saving in database.
@@ -146,7 +143,7 @@ class PhotosRemoteMediator @Inject constructor(
                         small = url.small,
                         thumb = url.thumb
                     )
-                    urlDao.insertFeedUrl(photoUrlEntity)
+                    db.urlDao().insertFeedUrl(photoUrlEntity)
 
                     /**
                      * Getting photo link. Mapping it to entity for saving in database.
@@ -159,7 +156,7 @@ class PhotosRemoteMediator @Inject constructor(
                         download = photoLink.download,
                         downloadLocation = photoLink.downloadLocation
                     )
-                    linkDao.insertFeedLink(feedLink)
+                    db.linkDao().insertFeedLink(feedLink)
 
                     /**
                      * Mapping photo to entity and adding to list.
