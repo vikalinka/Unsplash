@@ -6,7 +6,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -17,12 +18,10 @@ import lt.vitalikas.unsplash.databinding.FragmentOnboardingBinding
 class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private val binding by viewBinding(FragmentOnboardingBinding::bind)
-    private val viewPager get() = binding.viewPager
+    private val viewPager get() = binding.onboardingViewPager
     private val dotsIndicator get() = binding.dotsIndicator
 
     private val onboardingViewModel by viewModels<OnboardingViewModel>()
-
-    private val scope = lifecycleScope
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,34 +33,9 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         with(viewPager) {
             adapter = OnboardingAdapter(
                 onboardingViewModel.screens,
-                onActionGetStartedClick = {
-                    scope.launch {
-                        onboardingViewModel.updateStatus(
-                            getString(R.string.onboarding_finished),
-                            true
-                        )
-                    }
-                    findNavController().navigate(
-                        OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
-                    )
-                },
-                onActionSkipClick = {
-                    scope.launch {
-                        onboardingViewModel.updateStatus(
-                            getString(R.string.onboarding_finished),
-                            true
-                        )
-                    }
-                    findNavController().navigate(
-                        OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
-                    )
-                },
-                onActionNextClick = {
-                    val screens = onboardingViewModel.screens
-                    if (this.currentItem != screens.indexOf(screens.last())) {
-                        this.currentItem += 1
-                    }
-                }
+                onActionGetStartedClick = finishOnboarding(),
+                onActionSkipClick = finishOnboarding(),
+                onActionNextClick = showNextOnboardingScreen(this)
             )
 
             offscreenPageLimit = 1
@@ -70,6 +44,26 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         }
 
         dotsIndicator.setViewPager2(viewPager)
+    }
+
+    private fun showNextOnboardingScreen(viewPager: ViewPager2): () -> Unit = {
+        val screens = onboardingViewModel.screens
+        if (viewPager.currentItem != screens.indexOf(screens.last())) {
+            viewPager.currentItem += 1
+        }
+    }
+
+    private fun finishOnboarding(): () -> Unit = {
+        lifecycleScope.launch {
+            onboardingViewModel.updateStatus(
+                getString(R.string.onboarding_finished),
+                true
+            )
+        }
+
+        findNavController().navigate(
+            OnboardingFragmentDirections.actionOnboardingFragmentToAuthFragment()
+        )
     }
 
     private fun initBackButtonNav() {

@@ -21,10 +21,10 @@ import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     private val binding by viewBinding(FragmentSplashBinding::bind)
-    private val startImage get() = binding.ivStartImage
-    private val startTitle get() = binding.tvStartTitle
-    private val loadingText get() = binding.tvLoadingText
-    private val progress get() = binding.progressBar
+    private val welcomeImage get() = binding.welcomeImageView
+    private val welcomeText get() = binding.welcomeTextView
+    private val progressText get() = binding.progressTextView
+    private val progress get() = binding.loadingProgressBar
 
     private val splashViewModel by viewModels<SplashViewModel>()
 
@@ -34,29 +34,26 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
     }
 
     private fun bindData() {
-        startTitle.text = getString(R.string.start_text)
+        welcomeText.text = getString(R.string.welcome_text)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-                launch {
-                    splashViewModel.timerStateFlow
-                        .collect { step ->
-                            when (step) {
-                                0, 1, 2 -> {
-                                    progress.progress = step * 33
-                                    loadingText.text = getString(R.string.progress, step * 33)
-                                    loadImageByStep(step + 1)
-                                }
-                                3 -> {
-                                    progress.progress = step * 33
-                                    loadingText.text = getString(R.string.progress, step * 33)
-                                    val onboardingStatus = splashViewModel.onboardingStatus
-                                    navigateOnStatus(onboardingStatus)
-                                }
+                splashViewModel.timerStateFlow
+                    .collect { step ->
+                        when (step) {
+                            0, 1, 2 -> {
+                                progress.progress = step * 33
+                                progressText.text = getString(R.string.progress, step * 33)
+                                loadImageByStep(step + 1)
+                            }
+                            3 -> {
+                                progress.progress = step * 33
+                                progressText.text = getString(R.string.progress, step * 33)
+                                val onboardingStatus = splashViewModel.onboardingStatus
+                                navigateOnStatus(onboardingStatus)
                             }
                         }
-                }
+                    }
             }
         }
     }
@@ -66,7 +63,7 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         val imageRes = resources.getIdentifier(imageUri, "drawable", context?.packageName)
         Glide.with(this)
             .load(imageRes)
-            .into(startImage)
+            .into(welcomeImage)
     }
 
     private fun navigateOnStatus(status: OnboardingStatus) {

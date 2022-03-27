@@ -10,8 +10,7 @@ class OnboardingViewModel @Inject constructor(
     private val repository: OnboardingRepository
 ) : ViewModel() {
 
-    private val _screens = repository.createOnboardingItems()
-    val screens get() = _screens
+    val screens = repository.createOnboardingItems()
 
     suspend fun updateStatus(key: String, value: Boolean) =
         repository.updateOnboardingStatus(key, value)
