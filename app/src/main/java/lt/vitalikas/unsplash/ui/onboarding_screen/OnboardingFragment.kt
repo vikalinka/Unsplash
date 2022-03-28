@@ -32,7 +32,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
     private fun initOnboardingScreens() {
         with(viewPager) {
             adapter = OnboardingAdapter(
-                onboardingViewModel.screens,
+                items = onboardingViewModel.screens,
                 onActionGetStartedClick = finishOnboarding(),
                 onActionSkipClick = finishOnboarding(),
                 onActionNextClick = showNextOnboardingScreen(this)

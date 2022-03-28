@@ -42,22 +42,22 @@ class OnboardingAdapter(
         fun bind(item: OnboardingItem) {
             Glide.with(itemView)
                 .load(item.image)
-                .into(binding.ivOnboardingImage)
+                .into(binding.onboardingImageView)
 
-            binding.tvOnboardingTitle.text = itemView.resources.getText(item.title)
-            binding.tvOnboardingText.text = itemView.resources.getText(item.text)
+            binding.onboardingTitleTextView.text = itemView.resources.getText(item.title)
+            binding.onboardingDescriptionTextView.text = itemView.resources.getText(item.text)
 
-            with(binding.mbAction) {
+            with(binding.getStartedActionMaterialButton) {
                 setOnClickListener { onActionGetStartedClick() }
                 isVisible = item == items.last()
             }
 
-            with(binding.tvActionSkip) {
+            with(binding.actionSkipTextView) {
                 setOnClickListener { onActionSkipClick() }
                 isVisible = item != items.last()
             }
 
-            with(binding.tvActionNext) {
+            with(binding.actionNextTextView) {
                 setOnClickListener { onActionNextClick() }
                 isVisible = item != items.last()
             }
