@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -35,7 +34,8 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
                 items = onboardingViewModel.screens,
                 onActionGetStartedClick = finishOnboarding(),
                 onActionSkipClick = finishOnboarding(),
-                onActionNextClick = showNextOnboardingScreen(this)
+                onActionPrevClick = showPrevOnboardingScreen(),
+                onActionNextClick = showNextOnboardingScreen()
             )
 
             offscreenPageLimit = 1
@@ -46,7 +46,14 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
         dotsIndicator.setViewPager2(viewPager)
     }
 
-    private fun showNextOnboardingScreen(viewPager: ViewPager2): () -> Unit = {
+    private fun showPrevOnboardingScreen(): () -> Unit = {
+        val screens = onboardingViewModel.screens
+        if (viewPager.currentItem != screens.indexOf(screens.first())) {
+            viewPager.currentItem -= 1
+        }
+    }
+
+    private fun showNextOnboardingScreen(): () -> Unit = {
         val screens = onboardingViewModel.screens
         if (viewPager.currentItem != screens.indexOf(screens.last())) {
             viewPager.currentItem += 1

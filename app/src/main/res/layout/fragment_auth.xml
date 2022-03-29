@@ -44,7 +44,7 @@
         android:id="@+id/mbSignin"
         android:layout_width="208dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="96dp"
         android:backgroundTint="@color/custom_color_secondary"
         android:paddingStart="24dp"
         android:paddingTop="8dp"

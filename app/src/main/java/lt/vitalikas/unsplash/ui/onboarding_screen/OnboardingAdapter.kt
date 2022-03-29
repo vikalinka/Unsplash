@@ -12,6 +12,7 @@ class OnboardingAdapter(
     private val items: List<OnboardingItem>,
     private val onActionGetStartedClick: () -> Unit,
     private val onActionSkipClick: () -> Unit,
+    private val onActionPrevClick: () -> Unit,
     private val onActionNextClick: () -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.Holder>() {
 
@@ -24,6 +25,7 @@ class OnboardingAdapter(
             ),
             onActionGetStartedClick = onActionGetStartedClick,
             onActionSkipClick = onActionSkipClick,
+            onActionPrevClick = onActionPrevClick,
             onActionNextClick = onActionNextClick
         )
 
@@ -36,6 +38,7 @@ class OnboardingAdapter(
         private val binding: ItemOnboardingBinding,
         private val onActionGetStartedClick: () -> Unit,
         private val onActionSkipClick: () -> Unit,
+        private val onActionPrevClick: () -> Unit,
         private val onActionNextClick: () -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -57,7 +60,12 @@ class OnboardingAdapter(
                 isVisible = item != items.last()
             }
 
-            with(binding.actionNextTextView) {
+            with(binding.actionPrevButton) {
+                setOnClickListener { onActionPrevClick() }
+                isVisible = item != items.first() && item != items.last()
+            }
+
+            with(binding.actionNextButton) {
                 setOnClickListener { onActionNextClick() }
                 isVisible = item != items.last()
             }
