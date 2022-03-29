@@ -33,7 +33,7 @@ class PhotosRepositoryImpl @Inject constructor(
 ) : PhotosRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getFeedPhotos(
+    override suspend fun getPhotos(
         order: String,
         currentOrder: String
     ): Flow<PagingData<Photo>> {

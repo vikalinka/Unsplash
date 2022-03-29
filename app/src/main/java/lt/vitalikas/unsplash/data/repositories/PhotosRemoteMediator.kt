@@ -66,11 +66,12 @@ class PhotosRemoteMediator(
         }
 
         try {
-            val photos = api.getFeedPhotos(
+            val photos = api.getPhotos(
                 page,
                 ITEMS_PER_PAGE,
                 order
             )
+
             val endOfPaginationReached = photos.isEmpty()
 
             Database.instance.withTransaction {
@@ -82,9 +83,9 @@ class PhotosRemoteMediator(
 
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1
-                val keys = photos.map { feedPhoto ->
+                val keys = photos.map { photo ->
                     RemoteKey(
-                        feedPhotoId = feedPhoto.id,
+                        feedPhotoId = photo.id,
                         prevKey = prevKey,
                         nextKey = nextKey
                     )
@@ -92,7 +93,6 @@ class PhotosRemoteMediator(
                 remoteKeysDao.insertAllKeys(keys)
 
                 val photoEntities = mutableListOf<PhotoEntity>()
-
                 photos.map { photo ->
                     /**
                      * Getting user.
@@ -194,7 +194,7 @@ class PhotosRemoteMediator(
         state.pages.firstOrNull { page ->
             page.data.isNotEmpty()
         }?.data?.firstOrNull()?.let { feedPhoto ->
-            remoteKeysDao.getRemoteKeyByFeedPhotoId(feedPhoto.id)
+            remoteKeysDao.getRemoteKeyByPhotoId(feedPhoto.id)
         }
 
     // LoadType.APPEND
@@ -202,14 +202,14 @@ class PhotosRemoteMediator(
         state.pages.lastOrNull { page ->
             page.data.isNotEmpty()
         }?.data?.lastOrNull()?.let { feedPhoto ->
-            remoteKeysDao.getRemoteKeyByFeedPhotoId(feedPhoto.id)
+            remoteKeysDao.getRemoteKeyByPhotoId(feedPhoto.id)
         }
 
     // LoadType.REFRESH
     private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, PhotoEntity>): RemoteKey? =
         state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { id ->
-                remoteKeysDao.getRemoteKeyByFeedPhotoId(id)
+                remoteKeysDao.getRemoteKeyByPhotoId(id)
             }
         }
 

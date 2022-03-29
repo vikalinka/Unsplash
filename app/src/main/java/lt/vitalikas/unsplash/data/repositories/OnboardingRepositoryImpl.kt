@@ -30,7 +30,7 @@ class OnboardingRepositoryImpl @Inject constructor(
                 .apply()
         }
 
-    override fun createOnboardingItems(): List<OnboardingItem> =
+    override fun getOnboardingItems(): List<OnboardingItem> =
         listOf(
             OnboardingItem(
                 R.drawable.onboarding1,

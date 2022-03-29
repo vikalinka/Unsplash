@@ -5,7 +5,7 @@ import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 
 interface OnboardingRepository {
 
-    fun createOnboardingItems(): List<OnboardingItem>
+    fun getOnboardingItems(): List<OnboardingItem>
     suspend fun getOnboardingStatus(key: String, defaultValue: Boolean): OnboardingStatus
     suspend fun updateOnboardingStatus(key: String, value: Boolean)
 }

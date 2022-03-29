@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Unsplash</string>
     <string name="onboarding_image">onboarding image</string>
-    <string name="onboarding_title_1">onboarding title 1</string>
-    <string name="onboarding_title_2">onboarding title 2</string>
-    <string name="onboarding_title_3">onboarding title 3</string>
-    <string name="onboarding_text_1">onboarding text 1</string>
-    <string name="onboarding_text_2">onboarding text 2</string>
-    <string name="onboarding_text_3">onboarding text 3</string>
+    <string name="onboarding_title_1">UPLOAD.</string>
+    <string name="onboarding_title_2">BROWSE. SEARCH.</string>
+    <string name="onboarding_title_3">DOWNLOAD.</string>
+    <string name="onboarding_text_1">Take and upload a photo.</string>
+    <string name="onboarding_text_2">Browse photo feed. Search photo.</string>
+    <string name="onboarding_text_3">The photos are free to use.</string>
     <string name="onboarding_get_started_button_text">Get started</string>
     <string name="action_next">Next</string>
     <string name="action_skip">Skip</string>

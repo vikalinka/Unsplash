@@ -14,7 +14,7 @@ interface RemoteKeysDao {
     suspend fun insertAllKeys(remoteKeys: List<RemoteKey>)
 
     @Query("SELECT * FROM ${RemoteKeyContract.TABLE_NAME} WHERE ${RemoteKeyContract.Columns.PHOTO_ID} = :id")
-    suspend fun getRemoteKeyByFeedPhotoId(id: String): RemoteKey?
+    suspend fun getRemoteKeyByPhotoId(id: String): RemoteKey?
 
     @Query("DELETE FROM ${RemoteKeyContract.TABLE_NAME}")
     suspend fun deleteAllRemoteKeys()

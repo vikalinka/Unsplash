@@ -14,5 +14,5 @@ class GetFeedPhotosUseCaseImpl @Inject constructor(
         order: String,
         currentOrder: String
     ): Flow<PagingData<Photo>> =
-        photosRepository.getFeedPhotos(order, currentOrder)
+        photosRepository.getPhotos(order, currentOrder)
 }

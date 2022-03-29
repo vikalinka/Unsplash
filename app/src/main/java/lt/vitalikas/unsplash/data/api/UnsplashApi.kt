@@ -17,7 +17,7 @@ interface UnsplashApi {
     suspend fun getCurrentProfile(): Profile
 
     @GET("/photos")
-    suspend fun getFeedPhotos(
+    suspend fun getPhotos(
         @Query("page") page: Int,
         @Query("per_page") perPage: Int,
         @Query("order_by") orderBy: String
