@@ -3,7 +3,7 @@ package lt.vitalikas.unsplash.data.repositories
 import android.content.SharedPreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import lt.vitalikas.unsplash.R
+import lt.vitalikas.unsplash.data.services.OnboardingService
 import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
@@ -11,7 +11,8 @@ import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
     private val sharedPrefs: SharedPreferences,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val onboardingService: OnboardingService
 ) : OnboardingRepository {
 
     override suspend fun getOnboardingStatus(key: String, defaultValue: Boolean): OnboardingStatus =
@@ -30,22 +31,5 @@ class OnboardingRepositoryImpl @Inject constructor(
                 .apply()
         }
 
-    override fun getOnboardingItems(): List<OnboardingItem> =
-        listOf(
-            OnboardingItem(
-                R.drawable.onboarding1,
-                R.string.onboarding_title_1,
-                R.string.onboarding_text_1
-            ),
-            OnboardingItem(
-                R.drawable.onboarding2,
-                R.string.onboarding_title_2,
-                R.string.onboarding_text_2
-            ),
-            OnboardingItem(
-                R.drawable.onboarding3,
-                R.string.onboarding_title_3,
-                R.string.onboarding_text_3
-            )
-        )
+    override fun getOnboardingItems(): List<OnboardingItem> = onboardingService.onboardings
 }

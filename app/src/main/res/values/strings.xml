@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Unsplash</string>
     <string name="onboarding_image">onboarding image</string>
-    <string name="onboarding_title_1">UPLOAD.</string>
-    <string name="onboarding_title_2">EXPLORE.</string>
-    <string name="onboarding_title_3">DOWNLOAD.</string>
+    <string name="onboarding_title_1">UPLOAD</string>
+    <string name="onboarding_title_2">EXPLORE</string>
+    <string name="onboarding_title_3">DOWNLOAD</string>
     <string name="onboarding_text_1">Share your images with millions of people around the world. Upload a photo.</string>
     <string name="onboarding_text_2">Unsplash has over a million free high-resolution photos. Explore these popular photo categories on Unsplash.</string>
     <string name="onboarding_text_3">Beautiful images and photos that you can download and use for any project. The photos are free to use.</string>
@@ -15,6 +15,7 @@
     <string name="welcome_text">Welcome to ImageIn</string>
     <string name="progress">%1$d%%</string>
     <string name="auth_failed">Authorization failed. Please try again.</string>
+    <string name="auth_succeeded">Authorization succeeded.</string>
     <string name="retry">Retry</string>
     <string name="authorization_image">authorization image</string>
     <string name="sign_in_button">Sign in</string>

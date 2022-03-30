@@ -3,6 +3,7 @@ package lt.vitalikas.unsplash.ui.auth_screen
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
@@ -28,27 +29,27 @@ import timber.log.Timber
 class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private val binding by viewBinding(FragmentAuthBinding::bind)
-    private val loading get() = binding.pbLoading
-    private val signin get() = binding.mbSignin
-    private val image get() = binding.ivAuthImage
-    private val text get() = binding.tvAuthTitle
+    private val signIn get() = binding.signInMaterialButton
+    private val image get() = binding.authImageView
+    private val text get() = binding.authTextView
+    private val loading get() = binding.loadingProgressBar
+    private val itemGroup get() = binding.itemGroup
 
     private val authViewModel by viewModels<AuthViewModel>()
 
     private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        val resultCode = result.resultCode
         val intent = result.data
-        if (result.resultCode == Activity.RESULT_OK && intent != null) {
+        if (resultCode == Activity.RESULT_OK && intent != null) {
             val tokenExchangeRequest =
                 AuthorizationResponse.fromIntent(intent)?.createTokenExchangeRequest()
             val exception = AuthorizationException.fromIntent(intent)
             when {
                 exception != null -> {
                     loading.isVisible = false
-                    listOf(image, text, signin).forEach { view ->
-                        view.isVisible = true
-                    }
+                    itemGroup.isVisible = true
                     showSnackbar(R.string.auth_failed)
                     Timber.d("Authorization failed")
                 }
@@ -60,16 +61,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        openLoginPage()
         observeAuthIntent()
         observeAuth()
-        bindData()
-    }
-
-    private fun openLoginPage() {
-        signin.setOnClickListener {
-            authViewModel.openLoginPage()
-        }
+        setupUI()
     }
 
     private fun observeAuthIntent() {
@@ -85,24 +79,21 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                     when (state) {
                         is AuthState.Loading -> {
                             loading.isVisible = true
-                            listOf(image, text, signin).forEach { view ->
-                                view.isVisible = false
-                            }
+                            itemGroup.isVisible = false
                         }
                         is AuthState.LoggedIn -> {
                             loading.isVisible = false
-                            listOf(image, text, signin).forEach { view ->
-                                view.isVisible = false
-                            }
-                            Timber.d("Authorization succeed")
-                            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToHostFragment())
+                            itemGroup.isVisible = false
+                            Timber.d("Authorization succeeded")
+                            showToast(R.string.auth_succeeded)
+                            findNavController().navigate(
+                                AuthFragmentDirections.actionAuthFragmentToHostFragment()
+                            )
                         }
                         is AuthState.Error -> {
                             loading.isVisible = false
-                            listOf(image, text, signin).forEach { view ->
-                                view.isVisible = true
-                            }
-                            showSnackbar(state.id)
+                            itemGroup.isVisible = true
+                            showSnackbar(R.string.auth_failed)
                             Timber.d("Authorization failed")
                         }
                         is AuthState.NotLoggedIn -> {
@@ -112,6 +103,22 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 }
             }
         }
+    }
+
+    private fun setupUI() {
+        text.text = getString(R.string.sign_in_text)
+
+        Glide.with(this)
+            .load(R.drawable.signin)
+            .into(image)
+
+        signIn.setOnClickListener {
+            authViewModel.openLoginPage()
+        }
+    }
+
+    private fun showToast(@StringRes textRes: Int) {
+        Toast.makeText(context, textRes, Toast.LENGTH_SHORT).show()
     }
 
     private fun showSnackbar(@StringRes textRes: Int) {
@@ -125,12 +132,5 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 authViewModel.openLoginPage()
             }
             .show()
-    }
-
-    private fun bindData() {
-        text.text = getString(R.string.sign_in_text)
-        Glide.with(this)
-            .load(R.drawable.signin)
-            .into(image)
     }
 }

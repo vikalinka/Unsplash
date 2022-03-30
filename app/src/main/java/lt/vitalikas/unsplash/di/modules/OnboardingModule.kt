@@ -7,10 +7,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.R
+import lt.vitalikas.unsplash.data.services.OnboardingService
+import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
 
 @Module
 @InstallIn(SingletonComponent::class)
-class SharedPrefsModule {
+class OnboardingModule {
 
     @Provides
     fun provideSharedPrefs(context: Context): SharedPreferences =
@@ -18,4 +20,7 @@ class SharedPrefsModule {
             context.getString(R.string.onboarding_prefs),
             Context.MODE_PRIVATE
         )
+
+    @Provides
+    fun provideOnboardingService(): OnboardingService = OnboardingService()
 }

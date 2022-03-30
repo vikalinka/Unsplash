@@ -57,7 +57,7 @@ class AuthViewModel @Inject constructor(
             authService = authService,
             tokenExchangeRequest = tokenExchangeRequest,
             onComplete = { _authState.value = AuthState.LoggedIn },
-            onError = { _authState.value = AuthState.Error(R.string.auth_failed) }
+            onError = { _authState.value = AuthState.Error }
         )
     }
 }
