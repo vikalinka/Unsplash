@@ -1,18 +1,23 @@
 package lt.vitalikas.unsplash.data.repositories
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.auth.AuthConfig
 import lt.vitalikas.unsplash.data.networking.auth.AuthTokenProvider
-import lt.vitalikas.unsplash.domain.repositories.AuthRepository
+import lt.vitalikas.unsplash.domain.repositories.UserAuthService
 import net.openid.appauth.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
-    private val authService: AuthorizationService
-) : AuthRepository {
+class UserAuthServiceImpl @Inject constructor(
+    private val authService: AuthorizationService,
+    private val context: Context
+) : UserAuthService {
 
     override fun getAuthRequest(): AuthorizationRequest {
         val serviceConfig = AuthorizationServiceConfiguration(
@@ -28,9 +33,19 @@ class AuthRepositoryImpl @Inject constructor(
             AuthConfig.RESPONSE_TYPE,
             redirectUri
         )
-            // unsplash doesn't support pkce
+            // unsplash doesn't support pkce code verifier
             .setCodeVerifier(null)
             .setScope(AuthConfig.SCOPE)
+            .build()
+    }
+
+    override fun getCustomTabsIntent(): CustomTabsIntent {
+        val params = CustomTabColorSchemeParams.Builder()
+            .setToolbarColor(ContextCompat.getColor(context, R.color.custom_color_primary))
+            .build()
+
+        return CustomTabsIntent.Builder()
+            .setDefaultColorSchemeParams(params)
             .build()
     }
 
@@ -49,14 +64,16 @@ class AuthRepositoryImpl @Inject constructor(
         authService.performTokenRequest(
             tokenExchangeRequest,
             clientAuth
-        ) { response, e ->
+        ) { response, exception ->
             if (response != null) {
                 AuthTokenProvider.authToken = response.accessToken.orEmpty()
                 Timber.d(AuthTokenProvider.authToken)
                 onComplete()
-            }
-            if (e != null) {
-                e.message?.let { onError(it) }
+            } else {
+                exception?.message?.let { errorMsg ->
+                    Timber.d(errorMsg)
+                    onError(errorMsg)
+                }
             }
         }
     }

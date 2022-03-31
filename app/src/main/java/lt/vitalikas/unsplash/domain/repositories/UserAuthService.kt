@@ -5,9 +5,11 @@ import androidx.browser.customtabs.CustomTabsIntent
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.TokenRequest
 
-interface AuthRepository {
+interface UserAuthService {
 
     fun getAuthRequest(): AuthorizationRequest
+
+    fun getCustomTabsIntent(): CustomTabsIntent
 
     fun getAuthRequestIntent(
         authRequest: AuthorizationRequest,

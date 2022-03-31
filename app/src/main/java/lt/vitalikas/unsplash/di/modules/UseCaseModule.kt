@@ -13,6 +13,9 @@ class UseCaseModule {
 
     // Using Worker with Hilt @Binds doesn't work
 
+    @Provides
+    fun provideUserAuthUseCase(impl: AuthUserUseCaseImpl): AuthUserUseCase = impl
+
 //    @Binds
 //    abstract fun provideGetProfileDataUseCase(impl: GetProfileDataUseCaseImpl): GetProfileDataUseCase
     @Provides

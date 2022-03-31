@@ -43,18 +43,21 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         val resultCode = result.resultCode
         val intent = result.data
         if (resultCode == Activity.RESULT_OK && intent != null) {
+            /**
+             * Given a successful authorization response carrying an authorization code.
+             * A token request can be made to exchange the code for a refresh token.
+             */
             val tokenRequest =
                 AuthorizationResponse.fromIntent(intent)?.createTokenExchangeRequest()
             val exception = AuthorizationException.fromIntent(intent)
-            when {
-                exception != null -> {
-                    loading.isVisible = false
-                    itemGroup.isVisible = true
-                    exception.message?.let { showSnackbar(it) }
-                    Timber.d(exception)
-                }
-                tokenRequest != null ->
-                    authViewModel.performTokenRequest(tokenRequest)
+
+            if (tokenRequest != null) {
+                authViewModel.getToken(tokenRequest)
+            } else {
+                loading.isVisible = false
+                itemGroup.isVisible = true
+                exception?.message?.let { showSnackbar(it) }
+                Timber.d(exception)
             }
         }
     }
@@ -113,7 +116,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             .into(image)
 
         signIn.setOnClickListener {
-            authViewModel.openLoginPage()
+            authViewModel.authenticateUser()
         }
     }
 
@@ -129,7 +132,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 Snackbar.LENGTH_LONG
             )
             .setAction(getString(R.string.retry)) {
-                authViewModel.openLoginPage()
+                authViewModel.authenticateUser()
             }
             .show()
     }
