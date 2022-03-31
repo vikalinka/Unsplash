@@ -11,6 +11,7 @@ import lt.vitalikas.unsplash.data.networking.auth.AuthTokenInterceptor
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.di.qualifiers.AuthTokenInterceptorQualifier
 import lt.vitalikas.unsplash.di.qualifiers.LoggingInterceptorQualifier
+import net.openid.appauth.AuthorizationService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,6 +39,9 @@ class NetworkModule {
     @Provides
     @AuthTokenInterceptorQualifier
     fun provideAuthTokenInterceptor(): Interceptor = AuthTokenInterceptor()
+
+    @Provides
+    fun provideAuthService(context: Context): AuthorizationService = AuthorizationService(context)
 
     @Provides
     fun provideUnsplashClient(

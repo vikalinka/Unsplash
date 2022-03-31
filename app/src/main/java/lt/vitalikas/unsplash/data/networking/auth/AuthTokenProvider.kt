@@ -1,6 +1,6 @@
 package lt.vitalikas.unsplash.data.networking.auth
 
-object AuthToken {
+object AuthTokenProvider {
 
     var authToken = ""
 }

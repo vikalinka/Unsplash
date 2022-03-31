@@ -43,18 +43,18 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         val resultCode = result.resultCode
         val intent = result.data
         if (resultCode == Activity.RESULT_OK && intent != null) {
-            val tokenExchangeRequest =
+            val tokenRequest =
                 AuthorizationResponse.fromIntent(intent)?.createTokenExchangeRequest()
             val exception = AuthorizationException.fromIntent(intent)
             when {
                 exception != null -> {
                     loading.isVisible = false
                     itemGroup.isVisible = true
-                    showSnackbar(R.string.auth_failed)
-                    Timber.d("Authorization failed")
+                    exception.message?.let { showSnackbar(it) }
+                    Timber.d(exception)
                 }
-                tokenExchangeRequest != null ->
-                    authViewModel.performTokenRequest(tokenExchangeRequest)
+                tokenRequest != null ->
+                    authViewModel.performTokenRequest(tokenRequest)
             }
         }
     }
@@ -93,8 +93,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                         is AuthState.Error -> {
                             loading.isVisible = false
                             itemGroup.isVisible = true
-                            showSnackbar(R.string.auth_failed)
-                            Timber.d("Authorization failed")
+                            showSnackbar(state.errorMsg)
+                            Timber.d(state.errorMsg)
                         }
                         is AuthState.NotLoggedIn -> {
                             Timber.d("Not logged in")
@@ -121,11 +121,11 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         Toast.makeText(context, textRes, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showSnackbar(@StringRes textRes: Int) {
+    private fun showSnackbar(msg: String) {
         Snackbar
             .make(
                 requireView(),
-                getString(textRes),
+                msg,
                 Snackbar.LENGTH_LONG
             )
             .setAction(getString(R.string.retry)) {

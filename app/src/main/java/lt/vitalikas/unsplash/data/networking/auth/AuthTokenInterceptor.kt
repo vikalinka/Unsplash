@@ -9,7 +9,7 @@ class AuthTokenInterceptor : Interceptor {
         val request = chain.request()
 
         val modifiedRequest = request.newBuilder()
-            .addHeader("Authorization", "Bearer ${AuthToken.authToken}")
+            .addHeader("Authorization", "Bearer ${AuthTokenProvider.authToken}")
             .addHeader("Accept-Version", "v1")
             .build()
 

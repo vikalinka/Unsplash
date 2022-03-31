@@ -4,5 +4,5 @@ sealed class AuthState {
     object Loading : AuthState()
     object NotLoggedIn : AuthState()
     object LoggedIn : AuthState()
-    object Error : AuthState()
+    class Error(val errorMsg: String) : AuthState()
 }

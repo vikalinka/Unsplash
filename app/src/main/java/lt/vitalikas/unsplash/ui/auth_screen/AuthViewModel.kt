@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.repositories.AuthRepository
 import lt.vitalikas.unsplash.utils.SingleLiveEvent
-import net.openid.appauth.AuthorizationService
 import net.openid.appauth.TokenRequest
 import javax.inject.Inject
 
@@ -22,8 +21,6 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val context: Application
 ) : ViewModel() {
-
-    private val authService: AuthorizationService = AuthorizationService(context)
 
     private val _authPageIntent = SingleLiveEvent<Intent>()
     val authPageIntent: LiveData<Intent> get() = _authPageIntent
@@ -43,7 +40,7 @@ class AuthViewModel @Inject constructor(
 
         val authRequest = authRepository.getAuthRequest()
 
-        val authPageIntent = authService.getAuthorizationRequestIntent(
+        val authPageIntent = authRepository.getAuthRequestIntent(
             authRequest,
             customTabsIntent
         )
@@ -54,10 +51,9 @@ class AuthViewModel @Inject constructor(
     fun performTokenRequest(tokenExchangeRequest: TokenRequest) {
         _authState.value = AuthState.Loading
         authRepository.performTokenRequest(
-            authService = authService,
             tokenExchangeRequest = tokenExchangeRequest,
             onComplete = { _authState.value = AuthState.LoggedIn },
-            onError = { _authState.value = AuthState.Error }
+            onError = { errorMsg -> _authState.value = AuthState.Error(errorMsg) }
         )
     }
 }
