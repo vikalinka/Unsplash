@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.data.services
+package lt.vitalikas.unsplash.data.services.photo_service
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker

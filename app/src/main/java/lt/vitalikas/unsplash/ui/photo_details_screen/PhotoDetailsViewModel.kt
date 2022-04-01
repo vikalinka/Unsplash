@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
-import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
-import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
-import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
 import timber.log.Timber

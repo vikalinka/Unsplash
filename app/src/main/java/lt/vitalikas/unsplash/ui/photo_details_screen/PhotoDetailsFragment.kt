@@ -24,13 +24,12 @@ import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
-import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
-import lt.vitalikas.unsplash.data.services.DownloadPhotoWorker
-import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.ui.feed_screen.FeedViewModel

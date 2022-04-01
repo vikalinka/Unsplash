@@ -15,11 +15,11 @@
     <string name="welcome_text">Welcome to ImageIn</string>
     <string name="progress">%1$d%%</string>
     <string name="auth_failed">Authorization failed. Please try again.</string>
-    <string name="auth_succeeded">Authorization succeeded.</string>
+    <string name="auth_succeeded">You have been logged in successfully.</string>
     <string name="retry">Retry</string>
     <string name="authorization_image">authorization image</string>
     <string name="sign_in_button">Sign in</string>
-    <string name="sign_in_text">Sign in to your Unsplash account to continue</string>
+    <string name="sign_in_text">Sign in to your Unsplash account to continue.</string>
     <string name="home">Home</string>
     <string name="collections_fragment">Collections</string>
     <string name="profile">Profile</string>
@@ -71,4 +71,5 @@
     <string name="popular">Order by popular</string>
     <string name="no_results_icon">no results icon</string>
     <string name="no_results_found">No results found</string>
+    <string name="sign_in">SIGN IN</string>
 </resources>

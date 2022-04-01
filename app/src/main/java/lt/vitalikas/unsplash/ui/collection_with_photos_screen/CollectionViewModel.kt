@@ -8,8 +8,8 @@ import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
-import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
-import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.use_cases.GetCollectionPhotosUseCase
 import lt.vitalikas.unsplash.domain.use_cases.GetCollectionUseCase
 import javax.inject.Inject

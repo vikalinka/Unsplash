@@ -3,7 +3,7 @@ package lt.vitalikas.unsplash.data.repositories
 import android.content.SharedPreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import lt.vitalikas.unsplash.data.services.OnboardingService
+import lt.vitalikas.unsplash.data.services.onboarding_service.OnboardingService
 import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus

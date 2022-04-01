@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.data.services
+package lt.vitalikas.unsplash.data.services.onboarding_service
 
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem

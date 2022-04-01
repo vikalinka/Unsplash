@@ -7,8 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import lt.vitalikas.unsplash.R
-import lt.vitalikas.unsplash.data.services.OnboardingService
-import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
+import lt.vitalikas.unsplash.data.services.onboarding_service.OnboardingService
 
 @Module
 @InstallIn(SingletonComponent::class)

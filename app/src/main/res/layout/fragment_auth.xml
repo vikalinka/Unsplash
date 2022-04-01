@@ -19,6 +19,21 @@
         tools:src="@tools:sample/avatars" />
 
     <TextView
+        android:id="@+id/authTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/sign_in"
+        android:textAlignment="center"
+        android:textColor="@color/custom_color_secondary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/authImageView"
+        tools:text="SIGN IN" />
+
+    <TextView
         android:id="@+id/authTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -27,8 +42,8 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/authImageView"
-        tools:text="Sign in to your Unsplash account to continue" />
+        app:layout_constraintTop_toBottomOf="@id/authTitleTextView"
+        tools:text="Sign in to your Unsplash account to continue." />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signInMaterialButton"
@@ -64,6 +79,6 @@
         android:id="@+id/itemGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="authImageView,authTextView,signInMaterialButton" />
+        app:constraint_referenced_ids="authTitleTextView,authImageView,authTextView,signInMaterialButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

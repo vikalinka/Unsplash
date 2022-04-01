@@ -1,4 +1,4 @@
-package lt.vitalikas.unsplash.data.services
+package lt.vitalikas.unsplash.data.services.photo_service
 
 import androidx.work.Constraints
 import androidx.work.NetworkType

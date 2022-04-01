@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.*
 import lt.vitalikas.unsplash.data.helpers.LocalChanges
 import lt.vitalikas.unsplash.data.helpers.OnChange
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
-import lt.vitalikas.unsplash.data.services.DislikePhotoWorker
-import lt.vitalikas.unsplash.data.services.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
 import timber.log.Timber
