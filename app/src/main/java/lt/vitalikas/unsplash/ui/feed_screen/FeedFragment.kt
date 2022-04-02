@@ -91,7 +91,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
             adapter = concatAdapter
 
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
 
             setHasFixedSize(true)
 

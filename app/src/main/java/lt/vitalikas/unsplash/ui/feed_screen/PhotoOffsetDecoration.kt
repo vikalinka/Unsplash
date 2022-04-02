@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class PhotoOffsetDecoration @Inject constructor(
-    @ApplicationContext private val context: Context
+class PhotoOffsetDecoration(
+    private val context: Context
 ) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(

@@ -33,7 +33,7 @@ class CollectionAdapter(
             binding.root.setOnClickListener {
                 onItemClick(id)
             }
-            binding.ivPhoto.scaleType = ImageView.ScaleType.CENTER_CROP
+            binding.photoImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         }
 
         fun bind(item: CollectionPhoto) {
@@ -43,19 +43,19 @@ class CollectionAdapter(
                 .load(item.url.regular)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
-                .into(binding.ivPhoto)
+                .into(binding.photoImageView)
 
             Glide.with(itemView)
                 .load(item.user.profileImage.medium)
                 .placeholder(R.drawable.picture)
                 .error(R.drawable.picture)
-                .into(binding.ivAvatar)
+                .into(binding.avatarShapeableImageView)
 
-            binding.tvName.text = item.user.name
-            binding.tvUsername.text =
+            binding.nameTextView.text = item.user.name
+            binding.usernameTextView.text =
                 itemView.resources.getString(R.string.username, item.user.username)
 
-            with(binding.ivLove) {
+            with(binding.likeImageView) {
                 if (item.likedByUser) {
                     setImageResource(R.drawable.ic_love_filled)
                     setColorFilter(ContextCompat.getColor(context, R.color.red))
@@ -70,7 +70,7 @@ class CollectionAdapter(
                     }
                 }
 
-                binding.tvLove.text = item.likes.toString()
+                binding.likeCountTextView.text = item.likes.toString()
             }
         }
     }
