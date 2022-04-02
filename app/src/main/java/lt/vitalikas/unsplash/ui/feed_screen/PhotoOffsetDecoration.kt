@@ -5,8 +5,6 @@ import android.graphics.Rect
 import android.util.DisplayMetrics
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
 class PhotoOffsetDecoration(
     private val context: Context
@@ -18,12 +16,10 @@ class PhotoOffsetDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        val offset = 8.dpToPx(context)
         with(outRect) {
-            left = offset
-            right = offset
-            top = offset
-            bottom = offset
+            left = 8.dpToPx(context)
+            right = 8.dpToPx(context)
+            bottom = 4.dpToPx(context)
         }
     }
 

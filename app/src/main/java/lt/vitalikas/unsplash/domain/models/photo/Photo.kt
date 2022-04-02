@@ -12,7 +12,7 @@ data class Photo(
     @Json(name = "width") val width: Int,
     @Json(name = "height") val height: Int,
     @Json(name = "color") val color: String,
-    @Json(name = "blur_hash") val blurHash: String,
+    @Json(name = "blur_hash") val blurHash: String?,
     @Json(name = "likes") var likes: Int,
     @Json(name = "liked_by_user") var likedByUser: Boolean,
     @Json(name = "description") val description: String?,

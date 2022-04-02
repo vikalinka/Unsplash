@@ -13,27 +13,19 @@ import lt.vitalikas.unsplash.domain.models.photo.Photo
 
 class PhotoAdapter(
     private val onItemClick: (id: String) -> Unit,
+    private val onDownloadClick: (uri: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
 ) : PagingDataAdapter<Photo, PhotoAdapter.PhotoViewHolder>(PhotoComparator()) {
 
     inner class PhotoViewHolder(
         private val binding: ItemFeedBinding,
-        onItemClick: (id: String) -> Unit,
+        private val onDownloadClick: (uri: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
         private val onDislikeClick: (id: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private lateinit var id: String
-
-        init {
-            binding.root.setOnClickListener {
-                onItemClick(id)
-            }
-        }
-
         fun bind(item: Photo) {
-            id = item.id
 
             Glide.with(itemView)
                 .load(item.url.regular)
@@ -47,9 +39,18 @@ class PhotoAdapter(
                 .error(R.drawable.picture)
                 .into(binding.avatarShapeableImageView)
 
+            binding.root.setOnClickListener {
+                onItemClick(item.id)
+            }
+
             binding.nameTextView.text = item.user.name
             binding.usernameTextView.text =
                 itemView.resources.getString(R.string.username, item.user.username)
+
+            binding.downloadImageView.setOnClickListener {
+                val uri = item.link.downloadLocation
+                onDownloadClick(uri)
+            }
 
             with(binding.likeImageView) {
                 if (item.likedByUser) {
@@ -65,8 +66,6 @@ class PhotoAdapter(
                         onLikeClick(item.id)
                     }
                 }
-
-                binding.likeCountTextView.text = item.likes.toString()
             }
         }
     }
@@ -78,7 +77,7 @@ class PhotoAdapter(
                 parent,
                 false
             ),
-            onItemClick = onItemClick,
+            onDownloadClick = onDownloadClick,
             onLikeClick = onLikeClick,
             onDislikeClick = onDislikeClick
         )

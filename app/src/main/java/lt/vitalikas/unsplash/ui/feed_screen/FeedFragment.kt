@@ -46,6 +46,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 val directions = FeedFragmentDirections.actionFeedToDetails1(id)
                 findNavController().navigate(directions)
             },
+            onDownloadClick = { uri ->
+
+            },
             onLikeClick = { id ->
                 this.id = id
 

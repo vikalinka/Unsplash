@@ -69,8 +69,6 @@ class CollectionAdapter(
                         onLikeClick(item.id)
                     }
                 }
-
-                binding.likeCountTextView.text = item.likes.toString()
             }
         }
     }

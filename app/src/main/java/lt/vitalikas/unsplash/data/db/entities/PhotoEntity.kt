@@ -52,7 +52,7 @@ data class PhotoEntity(
     @ColumnInfo(name = PhotoContract.Columns.WIDTH) val width: Int,
     @ColumnInfo(name = PhotoContract.Columns.HEIGHT) val height: Int,
     @ColumnInfo(name = PhotoContract.Columns.COLOR) val color: String,
-    @ColumnInfo(name = PhotoContract.Columns.BLUR_HASH) val blurHash: String,
+    @ColumnInfo(name = PhotoContract.Columns.BLUR_HASH) val blurHash: String?,
     @ColumnInfo(name = PhotoContract.Columns.LIKES) val likes: Int,
     @ColumnInfo(name = PhotoContract.Columns.LIKED_BY_USER) val likedByUser: Boolean,
     @ColumnInfo(name = PhotoContract.Columns.DESCRIPTION) val description: String?,
