@@ -1,6 +1,7 @@
 package lt.vitalikas.unsplash.ui.feed_screen
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -15,6 +16,7 @@ import lt.vitalikas.unsplash.data.helpers.LocalChanges
 import lt.vitalikas.unsplash.data.helpers.OnChange
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotosUseCase
@@ -72,6 +74,13 @@ class FeedViewModel @Inject constructor(
 
         prevOrderBy = order
     }
+
+    fun downloadPhoto(photoId: String, fetchingLocationUri: Uri) = WorkManager.getInstance(context)
+        .enqueueUniqueWork(
+            DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID,
+            ExistingWorkPolicy.REPLACE,
+            DownloadPhotoWorker.downloadPhotoRequest(photoId, fetchingLocationUri)
+        )
 
     fun likePhoto(photoId: String) = WorkManager.getInstance(context)
         .enqueueUniqueWork(

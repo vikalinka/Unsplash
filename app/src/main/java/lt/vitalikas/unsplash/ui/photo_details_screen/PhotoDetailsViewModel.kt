@@ -32,13 +32,6 @@ class PhotoDetailsViewModel @Inject constructor(
         MutableStateFlow<PhotoDetailsFetchingState>(PhotoDetailsFetchingState.Loading)
     val feedDetailsState = _feedDetailsState.asStateFlow()
 
-    fun downloadPhoto(photoId: String, fetchingLocationUri: Uri) = WorkManager.getInstance(context)
-        .enqueueUniqueWork(
-            DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID,
-            ExistingWorkPolicy.REPLACE,
-            DownloadPhotoWorker.downloadPhotoRequest(photoId, fetchingLocationUri)
-        )
-
     fun likePhoto(id: String) = WorkManager.getInstance(context)
         .enqueueUniqueWork(
             LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,

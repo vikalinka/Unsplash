@@ -10,16 +10,16 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import lt.vitalikas.unsplash.R
+import lt.vitalikas.unsplash.ui.feed_screen.FeedViewModel
 import lt.vitalikas.unsplash.ui.feed_screen.PhotoWithPermissionDownloader
 import lt.vitalikas.unsplash.ui.photo_details_screen.PhotoDetailsFragmentDirections
-import lt.vitalikas.unsplash.ui.photo_details_screen.PhotoDetailsViewModel
 import lt.vitalikas.unsplash.utils.hasQ
 import lt.vitalikas.unsplash.utils.showInfo
 
 @AndroidEntryPoint
 class HostActivity : AppCompatActivity(R.layout.activity_host), PhotoWithPermissionDownloader {
 
-    private val feedDetailsViewModel by viewModels<PhotoDetailsViewModel>()
+    private val feedViewModel by viewModels<FeedViewModel>()
 
     private val navController by lazy {
         val navHostFragment =
@@ -90,7 +90,7 @@ class HostActivity : AppCompatActivity(R.layout.activity_host), PhotoWithPermiss
     ) { uri ->
         uri?.let {
             onPhotoDownloadCallback.getLocationUri(it)
-            feedDetailsViewModel.downloadPhoto(photoDownloadUrl, it)
+            feedViewModel.downloadPhoto(photoDownloadUrl, it)
         }
     }
 
