@@ -13,14 +13,14 @@ import lt.vitalikas.unsplash.domain.models.photo.Photo
 
 class PhotoAdapter(
     private val onItemClick: (id: String) -> Unit,
-    private val onDownloadClick: (uri: String) -> Unit,
+    private val onDownloadClick: (id: String, photoDownloadUrl: String) -> Unit,
     private val onLikeClick: (id: String) -> Unit,
     private val onDislikeClick: (id: String) -> Unit
 ) : PagingDataAdapter<Photo, PhotoAdapter.PhotoViewHolder>(PhotoComparator()) {
 
     inner class PhotoViewHolder(
         private val binding: ItemFeedBinding,
-        private val onDownloadClick: (uri: String) -> Unit,
+        private val onDownloadClick: (id: String, photoDownloadUrl: String) -> Unit,
         private val onLikeClick: (id: String) -> Unit,
         private val onDislikeClick: (id: String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -48,8 +48,9 @@ class PhotoAdapter(
                 itemView.resources.getString(R.string.username, item.user.username)
 
             binding.downloadImageView.setOnClickListener {
+                val id = item.id
                 val uri = item.link.downloadLocation
-                onDownloadClick(uri)
+                onDownloadClick(id, uri)
             }
 
             with(binding.likeImageView) {

@@ -4,7 +4,8 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,17 +14,14 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker
 import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
-import lt.vitalikas.unsplash.domain.repositories.PhotosRepository
 import lt.vitalikas.unsplash.domain.use_cases.GetFeedPhotoDetailsUseCase
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class PhotoDetailsViewModel @Inject constructor(
     val context: Application,
     private val getFeedPhotoDetailsUseCase: GetFeedPhotoDetailsUseCase,
-    networkStatusTracker: NetworkStatusTracker,
-    private val photosRepository: PhotosRepository
+    networkStatusTracker: NetworkStatusTracker
 ) : ViewModel() {
 
     private val scope = viewModelScope
@@ -65,14 +63,4 @@ class PhotoDetailsViewModel @Inject constructor(
             _feedDetailsState.value = PhotoDetailsFetchingState.Error(t)
         }
     }
-
-    fun updatePhotoInDatabase(id: String, isLiked: Boolean, likeCount: Int) =
-        viewModelScope.launch {
-            try {
-                photosRepository.updatePhoto(id, isLiked, likeCount)
-            } catch (t: Throwable) {
-                Timber.d(t)
-                _feedDetailsState.value = PhotoDetailsFetchingState.Error(t)
-            }
-        }
 }

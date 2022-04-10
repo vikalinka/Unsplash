@@ -1,5 +1,5 @@
 package lt.vitalikas.unsplash.ui.rationale_screen
 
-interface Launcher {
+interface OnGrantButtonClickCallback {
     fun onGrantButtonClick()
 }

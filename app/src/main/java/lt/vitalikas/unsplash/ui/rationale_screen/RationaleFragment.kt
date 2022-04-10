@@ -8,9 +8,9 @@ import lt.vitalikas.unsplash.R
 
 class RationaleFragment : DialogFragment() {
 
-    private val launcher: Launcher?
+    private val onGrantButtonClickCallback: OnGrantButtonClickCallback?
         get() = parentFragment?.childFragmentManager?.primaryNavigationFragment?.let {
-            it as Launcher
+            it as OnGrantButtonClickCallback
         }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -19,7 +19,7 @@ class RationaleFragment : DialogFragment() {
             .setPositiveButton(
                 getString(R.string.btn_grant)
             ) { _, _ ->
-                launcher?.onGrantButtonClick()
+                onGrantButtonClickCallback?.onGrantButtonClick()
             }
             .setNegativeButton(
                 getString(R.string.btn_cancel),

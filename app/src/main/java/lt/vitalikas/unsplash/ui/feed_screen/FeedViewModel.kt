@@ -6,10 +6,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import androidx.work.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.data.helpers.LocalChanges
 import lt.vitalikas.unsplash.data.helpers.OnChange
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatusTracker

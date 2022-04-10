@@ -1,5 +1,7 @@
 package lt.vitalikas.unsplash.ui.feed_screen
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -10,9 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.*
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -20,14 +21,17 @@ import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedBinding
-import lt.vitalikas.unsplash.utils.autoCleaned
-import lt.vitalikas.unsplash.utils.showInfo
+import lt.vitalikas.unsplash.ui.host_screen.OnPhotoDownloadCallback
+import lt.vitalikas.unsplash.ui.rationale_screen.OnGrantButtonClickCallback
+import lt.vitalikas.unsplash.utils.*
 import timber.log.Timber
 
 @AndroidEntryPoint
-class FeedFragment : Fragment(R.layout.fragment_feed) {
+class FeedFragment : Fragment(R.layout.fragment_feed), OnGrantButtonClickCallback,
+    OnPhotoDownloadCallback {
 
     private val binding by viewBinding(FragmentFeedBinding::bind)
     private val photoList get() = binding.rvFeed
@@ -38,26 +42,34 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val feedViewModel by activityViewModels<FeedViewModel>()
 
-    private lateinit var id: String
+    private lateinit var photoId: String
+    private lateinit var photoUri: Uri
+    private lateinit var photoDownloadUrl: String
+
+    private val photoWithPermissionDownloader: PhotoWithPermissionDownloader
+        get() = requireActivity() as PhotoWithPermissionDownloader
 
     private val feedAdapter by autoCleaned {
         PhotoAdapter(
-            onItemClick = { id ->
-                val directions = FeedFragmentDirections.actionFeedToDetails1(id)
+            onItemClick = { photoId ->
+                val directions = FeedFragmentDirections.actionFeedToDetails1(photoId)
                 findNavController().navigate(directions)
             },
-            onDownloadClick = { uri ->
+            onDownloadClick = { photoId, photoDownloadUrl ->
+                this.photoId = photoId
+                this.photoDownloadUrl = photoDownloadUrl
 
+                photoWithPermissionDownloader.fetchPhotoWithPermission(photoId, photoDownloadUrl)
             },
-            onLikeClick = { id ->
-                this.id = id
+            onLikeClick = { photoId ->
+                this.photoId = photoId
 
-                feedViewModel.likePhoto(id)
+                feedViewModel.likePhoto(photoId)
             },
-            onDislikeClick = { id ->
-                this.id = id
+            onDislikeClick = { photoId ->
+                this.photoId = photoId
 
-                feedViewModel.dislikePhoto(id)
+                feedViewModel.dislikePhoto(photoId)
             }
         ).apply {
             /**
@@ -69,6 +81,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
+    override fun getLocationUri(uri: Uri) {
+        photoUri = uri
+    }
+
+    override fun onGrantButtonClick() =
+        photoWithPermissionDownloader.fetchPhotoWithPermission(photoId, photoDownloadUrl)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
@@ -78,8 +97,26 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         observeData()
         observeNetworkConnection()
         observeAdapterLoadingState()
-        observeLikingPhoto()
-        observeDislikingPhoto()
+
+        observePhotoReaction(
+            listOf(
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_FEED,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FEED
+            )
+        ) { reaction ->
+            updateDataOnPhotoReaction(reaction)
+        }
+
+        observePhotoDownload(
+            listOf(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
+        ) {
+            showInfoWithAction(
+                R.string.download_succeeded,
+                R.string.open
+            ) {
+                sharePhoto(photoUri)
+            }
+        }
     }
 
     private fun initPhotoList() {
@@ -111,7 +148,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun observeAdapterLoadingState() {
         viewLifecycleOwner.lifecycleScope.launch {
             feedAdapter.loadStateFlow.collectLatest { loadStates ->
-
                 loadingProgress.isVisible = loadStates.refresh is LoadState.Loading
             }
         }
@@ -197,79 +233,11 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
-    private fun observeLikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_FEED)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("LIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("LIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("LIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("LIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnPhotoReaction(true)
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("LIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("LIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
-    private fun observeDislikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FEED)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("DISLIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("DISLIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("DISLIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("DISLIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnPhotoReaction(false)
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("DISLIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("DISLIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
     private fun updateDataOnPhotoReaction(reaction: Boolean) {
 
         // getting data from paging adapter`s snapshot
         val photo = feedAdapter.snapshot().firstOrNull { snapshotItem ->
-            snapshotItem?.id == this.id
+            snapshotItem?.id == this.photoId
         }
 
         photo?.let {
@@ -304,9 +272,22 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
     }
 
+    private fun sharePhoto(uri: Uri) {
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = MIME_TYPE
+        }
+
+        val shareIntent = Intent.createChooser(intent, null)
+        startActivity(shareIntent)
+    }
+
     companion object {
         private const val ORDER_BY_LATEST = "latest"
         private const val ORDER_BY_OLDEST = "oldest"
         private const val ORDER_BY_POPULAR = "popular"
+
+        const val MIME_TYPE = "image/jpeg"
     }
 }

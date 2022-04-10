@@ -53,7 +53,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                     SearchFragmentDirections.actionSearchToDetails1(id)
                 findNavController().navigate(directions)
             },
-            onDownloadClick = { uri ->
+            onDownloadClick = {id, uri ->
 
             },
             onLikeClick = { id ->

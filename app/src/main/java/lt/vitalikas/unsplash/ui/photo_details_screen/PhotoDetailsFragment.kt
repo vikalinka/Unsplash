@@ -1,14 +1,9 @@
 package lt.vitalikas.unsplash.ui.photo_details_screen
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,8 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,8 +26,11 @@ import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.ui.feed_screen.FeedViewModel
-import lt.vitalikas.unsplash.ui.rationale_screen.Launcher
-import lt.vitalikas.unsplash.utils.hasQ
+import lt.vitalikas.unsplash.ui.feed_screen.PhotoWithPermissionDownloader
+import lt.vitalikas.unsplash.ui.host_screen.OnPhotoDownloadCallback
+import lt.vitalikas.unsplash.ui.rationale_screen.OnGrantButtonClickCallback
+import lt.vitalikas.unsplash.utils.observePhotoDownload
+import lt.vitalikas.unsplash.utils.observePhotoReaction
 import lt.vitalikas.unsplash.utils.showInfo
 import lt.vitalikas.unsplash.utils.showInfoWithAction
 import timber.log.Timber
@@ -42,7 +38,7 @@ import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
-    Launcher {
+    OnGrantButtonClickCallback, OnPhotoDownloadCallback {
 
     private val binding by viewBinding(FragmentFeedDetailsBinding::bind)
     private val photo get() = binding.photoImageView
@@ -81,30 +77,8 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
     private lateinit var photoDownloadUrl: String
     private lateinit var photoUri: Uri
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsWithStatuses ->
-        if (permissionsWithStatuses.values.all { isGranted ->
-                isGranted == true
-            }) {
-            savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
-        } else {
-            if (isNeedToShowRationale()) {
-                showPermissionRationaleDialog()
-            } else {
-                showInfo(R.string.perm_all)
-            }
-        }
-    }
-
-    private val savePhotoInSelectedFolderLauncher = registerForActivityResult(
-        CreateDocument(MIME_TYPE)
-    ) { uri ->
-        uri?.let {
-            photoUri = it
-            feedDetailsViewModel.downloadPhoto(photoDownloadUrl, it)
-        }
-    }
+    private val photoWithPermissionDownloader: PhotoWithPermissionDownloader
+        get() = requireActivity() as PhotoWithPermissionDownloader
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -119,14 +93,32 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
         setupToolbar()
         observeDataFetching()
         observeNetworkConnection()
-        observeDownload()
-        observeLikingPhoto()
-        observeDislikingPhoto()
+
+        observePhotoReaction(
+            listOf(
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS
+            ),
+        ) { reaction ->
+            updateDataOnPhotoReaction(reaction)
+        }
+
+        observePhotoDownload(
+            listOf(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
+        ) {
+            showInfoWithAction(
+                R.string.download_succeeded,
+                R.string.open
+            ) {
+                sharePhoto(photoUri)
+            }
+        }
+
         handleToolbarNavigation()
     }
 
     override fun onGrantButtonClick() {
-        requestPermissions()
+        photoWithPermissionDownloader.fetchPhotoWithPermission(args.id, photoDownloadUrl)
     }
 
     private fun getFeedPhotoDetails(id: String) {
@@ -221,7 +213,9 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
             showLocationInMap(locationUri)
         }
 
-        val onDownloadClick: () -> Unit = { checkPermissions() }
+        val onDownloadClick: () -> Unit = {
+            photoWithPermissionDownloader.fetchPhotoWithPermission(args.id, photoDownloadUrl)
+        }
 
         val lat = details.location.position.latitude
         val lng = details.location.position.longitude
@@ -311,113 +305,6 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
         startActivity(shareIntent)
     }
 
-    private fun observeLikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("LIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("LIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("LIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("LIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnPhotoReaction(true)
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("LIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("LIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
-    private fun observeDislikingPhoto() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("DISLIKING PHOTO ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("DISLIKING PHOTO RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("DISLIKING PHOTO FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("DISLIKING PHOTO SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        updateDataOnPhotoReaction(false)
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("DISLIKING PHOTO CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("DISLIKING PHOTO BLOCKED")
-                    }
-                }
-            }
-    }
-
-    private fun observeDownload() {
-        WorkManager.getInstance(requireContext())
-            .getWorkInfosForUniqueWorkLiveData(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
-            .observe(viewLifecycleOwner) { workInfos ->
-                if (workInfos.isNullOrEmpty()) {
-                    return@observe
-                }
-                when (workInfos.first().state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Timber.d("DOWNLOAD ENQUEUED")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Timber.d("DOWNLOAD RUNNING")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Timber.d("DOWNLOAD FAILED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Timber.d("DOWNLOAD SUCCEEDED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                        showInfoWithAction(
-                            R.string.download_succeeded,
-                            R.string.open
-                        ) {
-                            sharePhoto(photoUri)
-                        }
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Timber.d("DOWNLOAD CANCELED")
-                        WorkManager.getInstance(requireContext()).pruneWork()
-                    }
-                    WorkInfo.State.BLOCKED -> {
-                        Timber.d("DOWNLOAD BLOCKED")
-                    }
-                }
-            }
-    }
-
     private fun updateDataOnPhotoReaction(reaction: Boolean) {
         val id = args.id
         val newLikeCount = if (reaction) {
@@ -457,45 +344,11 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
         }
     }
 
-    private fun checkPermissions() {
-        if (hasAllPermissions().not()) {
-            requestPermissions()
-        } else {
-            savePhotoInSelectedFolderLauncher.launch("${args.id}.jpg")
-        }
-    }
-
-    private fun hasAllPermissions(): Boolean = PERMISSIONS.all { permission ->
-        ContextCompat.checkSelfPermission(
-            requireContext(),
-            permission
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermissions() =
-        requestPermissionLauncher.launch(PERMISSIONS.toTypedArray())
-
-    private fun isNeedToShowRationale(): Boolean = PERMISSIONS.any { permission ->
-        isNeedRationaleForPermission(permission)
-    }
-
-    private fun isNeedRationaleForPermission(permission: String) =
-        ActivityCompat.shouldShowRequestPermissionRationale(
-            requireActivity(),
-            permission
-        )
-
-    private fun showPermissionRationaleDialog() =
-        findNavController().navigate(PhotoDetailsFragmentDirections.actionDetails1ToRationale1())
-
     private companion object {
-        val PERMISSIONS = listOfNotNull(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE.takeIf {
-                hasQ().not()
-            }
-        )
-
         const val MIME_TYPE = "image/jpeg"
+    }
+
+    override fun getLocationUri(uri: Uri) {
+        photoUri = uri
     }
 }
