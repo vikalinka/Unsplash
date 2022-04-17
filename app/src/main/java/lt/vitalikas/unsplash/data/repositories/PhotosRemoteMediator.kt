@@ -7,8 +7,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import lt.vitalikas.unsplash.data.api.UnsplashApi
-import lt.vitalikas.unsplash.data.db.Database
-import lt.vitalikas.unsplash.data.db.dao.DatabaseDao
+import lt.vitalikas.unsplash.data.db.Db
 import lt.vitalikas.unsplash.data.db.entities.*
 import lt.vitalikas.unsplash.data.db.mappers.UserToUserEntityMapper
 import okio.IOException
@@ -21,7 +20,7 @@ class PhotosRemoteMediator(
     private val api: UnsplashApi,
     private val order: String,
     private val currentOrder: String,
-    private val db: DatabaseDao
+    private val db: Db
 ) : RemoteMediator<Int, PhotoEntity>() {
 
     private val photosDao = db.photosDao()
@@ -74,7 +73,7 @@ class PhotosRemoteMediator(
 
             val endOfPaginationReached = photos.isEmpty()
 
-            Database.instance.withTransaction {
+            db.withTransaction {
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     remoteKeysDao.deleteAllRemoteKeys()

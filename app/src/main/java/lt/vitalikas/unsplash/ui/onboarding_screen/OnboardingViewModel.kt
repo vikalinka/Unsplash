@@ -2,16 +2,17 @@ package lt.vitalikas.unsplash.ui.onboarding_screen
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import lt.vitalikas.unsplash.data.prefsstore.PrefsStore
 import lt.vitalikas.unsplash.domain.repositories.OnboardingRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val repository: OnboardingRepository
+    repository: OnboardingRepository,
+    private val prefsStore: PrefsStore
 ) : ViewModel() {
 
-    val screens = repository.getOnboardingItems()
+    val screens = repository.onboardingItems
 
-    suspend fun updateStatus(key: String, value: Boolean) =
-        repository.updateOnboardingStatus(key, value)
+    suspend fun finishOnboardings() = prefsStore.finishOnboardings()
 }

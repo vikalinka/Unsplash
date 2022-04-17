@@ -4,12 +4,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import lt.vitalikas.unsplash.data.services.onboarding_service.OnboardingService
+import lt.vitalikas.unsplash.data.prefsstore.PrefsStore
+import lt.vitalikas.unsplash.data.prefsstore.PrefsStoreImpl
 
 @Module
 @InstallIn(SingletonComponent::class)
-class OnboardingModule {
+class DataStoreModule {
 
     @Provides
-    fun provideOnboardingService(): OnboardingService = OnboardingService()
+    fun provideDataStore(impl: PrefsStoreImpl): PrefsStore = impl
 }

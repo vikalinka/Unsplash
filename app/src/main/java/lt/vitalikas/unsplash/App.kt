@@ -6,7 +6,6 @@ import android.os.StrictMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
-import lt.vitalikas.unsplash.data.db.Database
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,7 +24,7 @@ class App : Application(), Configuration.Provider {
         super.onCreate()
         initTimber()
         detectLongOperations()
-        Database.init(this)
+//        Database.init(this)
     }
 
     private fun initTimber() {

@@ -11,11 +11,9 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.databinding.FragmentSplashBinding
-import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 
 @AndroidEntryPoint
 class SplashFragment : Fragment(R.layout.fragment_splash) {
@@ -49,8 +47,11 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
                             3 -> {
                                 progress.progress = step * 33
                                 progressText.text = getString(R.string.progress, step * 33)
-                                val onboardingStatus = splashViewModel.onboardingStatus
-                                navigateOnStatus(onboardingStatus)
+                                splashViewModel.onboardingsStatus
+                                    .collect { status ->
+                                        navigateOnStatus(status)
+                                    }
+
                             }
                         }
                     }
@@ -66,13 +67,14 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
             .into(welcomeImage)
     }
 
-    private fun navigateOnStatus(status: OnboardingStatus) {
-        when (status) {
-            OnboardingStatus.NotFinished -> findNavController().navigate(
-                SplashFragmentDirections.actionStartFragmentToOnboardingFragment()
-            )
-            OnboardingStatus.Finished -> findNavController().navigate(
+    private fun navigateOnStatus(isFinishedStatus: Boolean) {
+        if (isFinishedStatus) {
+            findNavController().navigate(
                 SplashFragmentDirections.actionStartFragmentToAuthFragment()
+            )
+        } else {
+            findNavController().navigate(
+                SplashFragmentDirections.actionStartFragmentToOnboardingFragment()
             )
         }
     }

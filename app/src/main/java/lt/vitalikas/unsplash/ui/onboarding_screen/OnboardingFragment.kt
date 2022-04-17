@@ -62,10 +62,7 @@ class OnboardingFragment : Fragment(R.layout.fragment_onboarding) {
 
     private fun finishOnboarding(): () -> Unit = {
         lifecycleScope.launch {
-            onboardingViewModel.updateStatus(
-                getString(R.string.onboarding_finished),
-                true
-            )
+            onboardingViewModel.finishOnboardings()
         }
 
         findNavController().navigate(

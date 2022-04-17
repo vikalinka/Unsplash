@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import lt.vitalikas.unsplash.data.api.UnsplashApi
+import lt.vitalikas.unsplash.data.db.Db
 import lt.vitalikas.unsplash.data.db.dao.DatabaseDao
 import lt.vitalikas.unsplash.data.db.entities.PhotoEntity
 import lt.vitalikas.unsplash.data.db.mappers.LinkEntityToLinkMapper
@@ -27,7 +28,7 @@ import javax.inject.Inject
 
 class PhotosRepositoryImpl @Inject constructor(
     private val unsplashApi: UnsplashApi,
-    private val db: DatabaseDao,
+    private val db: Db,
     private val context: Context,
     private val dispatcherIo: CoroutineDispatcher
 ) : PhotosRepository {

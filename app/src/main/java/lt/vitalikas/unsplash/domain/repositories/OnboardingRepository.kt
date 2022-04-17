@@ -1,11 +1,8 @@
 package lt.vitalikas.unsplash.domain.repositories
 
 import lt.vitalikas.unsplash.domain.models.onboarding.OnboardingItem
-import lt.vitalikas.unsplash.ui.onboarding_screen.OnboardingStatus
 
 interface OnboardingRepository {
 
-    fun getOnboardingItems(): List<OnboardingItem>
-    suspend fun getOnboardingStatus(key: String, defaultValue: Boolean): OnboardingStatus
-    suspend fun updateOnboardingStatus(key: String, value: Boolean)
+    val onboardingItems: List<OnboardingItem>
 }
