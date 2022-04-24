@@ -24,7 +24,7 @@
         android:label="AuthFragment"
         tools:layout="@layout/fragment_auth">
         <action
-            android:id="@+id/action_authFragment_to_hostFragment"
+            android:id="@+id/action_authFragment_to_loggedFragment"
             app:destination="@id/loggedFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:popEnterAnim="@android:anim/slide_in_left"
@@ -51,11 +51,15 @@
             app:popUpTo="@id/startFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <include app:graph="@navigation/nav_graph_logged" />
     <fragment
         android:id="@+id/loggedFragment"
         android:name="lt.vitalikas.unsplash.ui.host_screen.LoggedFragment"
-        android:label="HostFragment"
-        tools:layout="@layout/fragment_logged" />
-
-    <include app:graph="@navigation/nav_graph_logged" />
+        android:label="LoggedFragment"
+        tools:layout="@layout/fragment_logged">
+        <action
+            android:id="@+id/action_loggedFragment_to_nav_graph_logged2"
+            app:destination="@id/nav_graph_logged" />
+    </fragment>
 </navigation>

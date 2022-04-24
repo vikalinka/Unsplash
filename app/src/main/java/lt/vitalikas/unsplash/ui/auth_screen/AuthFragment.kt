@@ -89,7 +89,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                             Timber.d("Authorization succeeded")
                             showToast(R.string.auth_succeeded)
                             findNavController().navigate(
-                                AuthFragmentDirections.actionAuthFragmentToHostFragment()
+                                AuthFragmentDirections.actionAuthFragmentToLoggedFragment()
                             )
                         }
                         is AuthState.Error -> {
