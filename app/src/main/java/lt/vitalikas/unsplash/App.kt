@@ -1,7 +1,6 @@
 package lt.vitalikas.unsplash
 
 import android.app.Application
-import android.content.pm.ApplicationInfo
 import android.os.StrictMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -32,7 +31,7 @@ class App : Application(), Configuration.Provider {
     }
 
     private fun detectLongOperations() {
-        if (applicationContext.applicationInfo.flags != 0 && ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+        if (BuildConfig.DEBUG) {
             StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
                 .detectDiskWrites()

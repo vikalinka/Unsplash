@@ -47,7 +47,7 @@
 
             <!-- nav_graph for implicit deeplink -->
             <!-- https://unsplash.com/photos/OY9kWXMt-EE -->
-            <nav-graph android:value="@navigation/nav_graph_feed" />
+            <nav-graph android:value="@navigation/nav_graph_auth" />
         </activity>
 
         <provider
