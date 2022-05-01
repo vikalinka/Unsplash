@@ -60,7 +60,7 @@
         android:label="LoggedFragment"
         tools:layout="@layout/fragment_logged">
         <action
-            android:id="@+id/action_loggedFragment_to_nav_graph_logged2"
+            android:id="@+id/action_loggedFragment_to_nav_graph_logged"
             app:destination="@id/nav_graph_logged" />
     </fragment>
 </navigation>
