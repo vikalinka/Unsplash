@@ -21,6 +21,7 @@ import lt.vitalikas.unsplash.R
 import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.WorkType
 import timber.log.Timber
 
 fun hasQ(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
@@ -74,6 +75,120 @@ fun Fragment.showInfoWithAction(
             action()
         }
         .show()
+}
+
+fun Fragment.observeWorks(
+    workIds: List<String>,
+    callbackOnWorkFinish: (type: WorkType) -> Unit
+) {
+    workIds.forEach { workId ->
+        when (workId) {
+            LikePhotoWorker.LIKE_PHOTO_WORK_ID_FEED,
+            LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
+            LikePhotoWorker.LIKE_PHOTO_WORK_ID_COLLECTION -> {
+                WorkManager.getInstance(requireContext())
+                    .getWorkInfosForUniqueWorkLiveData(workId)
+                    .observe(viewLifecycleOwner) { workInfos ->
+                        if (workInfos.isNullOrEmpty()) {
+                            return@observe
+                        }
+                        when (workInfos.first().state) {
+                            WorkInfo.State.ENQUEUED -> {
+                                Timber.d("LIKING PHOTO ENQUEUED")
+                            }
+                            WorkInfo.State.RUNNING -> {
+                                Timber.d("LIKING PHOTO RUNNING")
+                            }
+                            WorkInfo.State.FAILED -> {
+                                Timber.d("LIKING PHOTO FAILED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.SUCCEEDED -> {
+                                Timber.d("LIKING PHOTO SUCCEEDED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                                callbackOnWorkFinish(WorkType.Reaction(true))
+                            }
+                            WorkInfo.State.CANCELLED -> {
+                                Timber.d("LIKING PHOTO CANCELED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.BLOCKED -> {
+                                Timber.d("LIKING PHOTO BLOCKED")
+                            }
+                        }
+                    }
+            }
+            DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_FEED,
+            DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS,
+            DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_COLLECTION -> {
+                WorkManager.getInstance(requireContext())
+                    .getWorkInfosForUniqueWorkLiveData(workId)
+                    .observe(viewLifecycleOwner) { workInfos ->
+                        if (workInfos.isNullOrEmpty()) {
+                            return@observe
+                        }
+                        when (workInfos.first().state) {
+                            WorkInfo.State.ENQUEUED -> {
+                                Timber.d("DISLIKING PHOTO ENQUEUED")
+                            }
+                            WorkInfo.State.RUNNING -> {
+                                Timber.d("DISLIKING PHOTO RUNNING")
+                            }
+                            WorkInfo.State.FAILED -> {
+                                Timber.d("DISLIKING PHOTO FAILED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.SUCCEEDED -> {
+                                Timber.d("DISLIKING PHOTO SUCCEEDED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                                callbackOnWorkFinish(WorkType.Reaction(false))
+                            }
+                            WorkInfo.State.CANCELLED -> {
+                                Timber.d("DISLIKING PHOTO CANCELED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.BLOCKED -> {
+                                Timber.d("DISLIKING PHOTO BLOCKED")
+                            }
+                        }
+                    }
+            }
+            DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID -> {
+                WorkManager.getInstance(requireContext())
+                    .getWorkInfosForUniqueWorkLiveData(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
+                    .observe(viewLifecycleOwner) { workInfos ->
+                        if (workInfos.isNullOrEmpty()) {
+                            return@observe
+                        }
+                        when (workInfos.first().state) {
+                            WorkInfo.State.ENQUEUED -> {
+                                Timber.d("DOWNLOAD ENQUEUED")
+                            }
+                            WorkInfo.State.RUNNING -> {
+                                Timber.d("DOWNLOAD RUNNING")
+                            }
+                            WorkInfo.State.FAILED -> {
+                                Timber.d("DOWNLOAD FAILED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.SUCCEEDED -> {
+                                Timber.d("DOWNLOAD SUCCEEDED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                                callbackOnWorkFinish(WorkType.Download)
+                            }
+                            WorkInfo.State.CANCELLED -> {
+                                Timber.d("DOWNLOAD CANCELED")
+                                WorkManager.getInstance(requireContext()).pruneWork()
+                            }
+                            WorkInfo.State.BLOCKED -> {
+                                Timber.d("DOWNLOAD BLOCKED")
+                            }
+                        }
+                    }
+            }
+            else -> error("No handler for work id = $workId")
+        }
+    }
 }
 
 fun Fragment.observePhotoReaction(

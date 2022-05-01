@@ -23,16 +23,14 @@ import lt.vitalikas.unsplash.data.networking.status_tracker.NetworkStatus
 import lt.vitalikas.unsplash.data.services.photo_service.DislikePhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.DownloadPhotoWorker
 import lt.vitalikas.unsplash.data.services.photo_service.LikePhotoWorker
+import lt.vitalikas.unsplash.data.services.photo_service.WorkType
 import lt.vitalikas.unsplash.databinding.FragmentFeedDetailsBinding
 import lt.vitalikas.unsplash.domain.models.photo_details.PhotoDetails
 import lt.vitalikas.unsplash.ui.feed_screen.FeedViewModel
 import lt.vitalikas.unsplash.ui.feed_screen.PhotoWithPermissionDownloader
 import lt.vitalikas.unsplash.ui.host_screen.OnPhotoDownloadCallback
 import lt.vitalikas.unsplash.ui.rationale_screen.OnGrantButtonClickCallback
-import lt.vitalikas.unsplash.utils.observePhotoDownload
-import lt.vitalikas.unsplash.utils.observePhotoReaction
-import lt.vitalikas.unsplash.utils.showInfo
-import lt.vitalikas.unsplash.utils.showInfoWithAction
+import lt.vitalikas.unsplash.utils.*
 import timber.log.Timber
 import kotlin.properties.Delegates
 
@@ -82,38 +80,11 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        /**
-         * DeepLink
-         * https://unsplash.com/photos/4oovIxttThA
-         * Implicit DeepLink uses args parameter for automatic parsing
-         */
-
         getFeedPhotoDetails(args.id)
         setupToolbar()
         observeDataFetching()
         observeNetworkConnection()
-
-        observePhotoReaction(
-            listOf(
-                LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
-                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS
-            ),
-        ) { reaction ->
-            updateDataOnPhotoReaction(reaction)
-        }
-
-        observePhotoDownload(
-            listOf(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
-        ) {
-            showInfoWithAction(
-                R.string.download_succeeded,
-                R.string.open
-            ) {
-                sharePhoto(photoUri)
-            }
-        }
-
+        observeWorks()
         handleToolbarNavigation()
     }
 
@@ -305,12 +276,55 @@ class PhotoDetailsFragment : Fragment(R.layout.fragment_feed_details),
         startActivity(shareIntent)
     }
 
+    private fun observeWorks() {
+//        observePhotoReaction(
+//            listOf(
+//                LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
+//                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS
+//            ),
+//        ) { reaction ->
+//            updateDataOnPhotoReaction(reaction)
+//        }
+//
+//        observePhotoDownload(
+//            listOf(DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID)
+//        ) {
+//            showInfoWithAction(
+//                R.string.download_succeeded,
+//                R.string.open
+//            ) {
+//                sharePhoto(photoUri)
+//            }
+//        }
+        observeWorks(
+            listOf(
+                LikePhotoWorker.LIKE_PHOTO_WORK_ID_DETAILS,
+                DislikePhotoWorker.DISLIKE_PHOTO_WORK_ID_DETAILS,
+                DownloadPhotoWorker.DOWNLOAD_PHOTO_WORK_ID
+            )
+        ) { type ->
+            when (type) {
+                is WorkType.Reaction -> updateDataOnPhotoReaction(type.reaction)
+                is WorkType.Download -> {
+                    showInfoWithAction(
+                        R.string.download_succeeded,
+                        R.string.open
+                    ) {
+                        sharePhoto(photoUri)
+                    }
+                }
+            }
+        }
+    }
+
     private fun updateDataOnPhotoReaction(reaction: Boolean) {
         val id = args.id
         val newLikeCount = if (reaction) {
-            likeCount + 1
+            likeCount += 1
+            likeCount
         } else {
-            likeCount - 1
+            likeCount -= 1
+            likeCount
         }
 
         totalLikes.text = newLikeCount.toString()
